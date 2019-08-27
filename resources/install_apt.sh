@@ -13,10 +13,16 @@ echo 10 > ${PROGRESS_FILE}
 echo "Installation des dépendances apt"
 sudo apt-get -y install python3-dev python3-pip
 
-echo 50 > ${PROGRESS_FILE}
+echo 30 > ${PROGRESS_FILE}
 if [ $(pip3 list | grep pexpect | wc -l) -eq 0 ]; then
     echo "Installation du module pexpect pour python"
     sudo pip3 install pexpect
+fi
+
+echo 70 > ${PROGRESS_FILE}
+if [ $(pip3 list | grep BaseHTTPServer | wc -l) -eq 0 ]; then
+    echo "Installation du module BaseHTTPServer pour python"
+    sudo pip3 install BaseHTTPServer
 fi
 
 echo 100 > /${PROGRESS_FILE}

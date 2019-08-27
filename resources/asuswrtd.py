@@ -13,7 +13,6 @@ from os import environ
 import logging
 import re
 import socket
-import telnetlib
 import threading
 import json
 from collections import namedtuple
@@ -216,61 +215,9 @@ class AsusWrtDeviceScanner:
             _LOGGER.error("Unexpected response from router: %s", exc)
             return None
 
-    def telnet_connection(self):
-        """Retrieve data from ASUSWRT via the telnet protocol."""
-        try:
-            telnet = telnetlib.Telnet(self.host)
-            telnet.read_until(b'login: ')
-            telnet.write((self.username + '\n').encode('ascii'))
-            telnet.read_until(b'Password: ')
-            telnet.write((self.password + '\n').encode('ascii'))
-            prompt_string = telnet.read_until(b'#').split(b'\n')[-1]
-            telnet.write('{}\n'.format(_IP_NEIGH_CMD).encode('ascii'))
-            neighbors = telnet.read_until(prompt_string).split(b'\n')[1:-1]
-            if self.mode == 'ap':
-                telnet.write('{}\n'.format(_ARP_CMD).encode('ascii'))
-                arp_result = (telnet.read_until(prompt_string).
-                              split(b'\n')[1:-1])
-                telnet.write('{}\n'.format(_WL_CMD).encode('ascii'))
-                leases_result = (telnet.read_until(prompt_string).
-                                 split(b'\n')[1:-1])
-                telnet.write('{}\n'.format(_NVRAM_CMD).encode('ascii'))
-                nvram_result = (telnet.read_until(prompt_string).
-                                split(b'\n')[1].split(b'<')[1:])
-            else:
-                arp_result = ['']
-                nvram_result = ['']
-                telnet.write('{}\n'.format(_LEASES_CMD).encode('ascii'))
-                leases_result = (telnet.read_until(prompt_string).
-                                 split(b'\n')[1:-1])
-            telnet.write('exit\n'.encode('ascii'))
-            return AsusWrtResult(neighbors, leases_result, arp_result,
-                                 nvram_result)
-        except EOFError:
-            _LOGGER.error("Unexpected response from router")
-            return None
-        except socket.gaierror as exc:
-            _LOGGER.error("Socket exception: %s", exc)
-            return None
-        except OSError as exc:
-            _LOGGER.error("OSError: %s", exc)
-            return None
-
     def get_asuswrt_data(self):
         """Retrieve data from ASUSWRT and return parsed result."""
-        if self.protocol == 'ssh':
-            result = self.ssh_connection()
-        elif self.protocol == 'telnet':
-            result = self.telnet_connection()
-        else:
-            # autodetect protocol
-            result = self.ssh_connection()
-            if result:
-                self.protocol = 'ssh'
-            else:
-                result = self.telnet_connection()
-                if result:
-                    self.protocol = 'telnet'
+        result = self.ssh_connection()
 
         if not result:
             return {}
