@@ -54,7 +54,7 @@ if (!isConnect()) {
       type: "POST", // methode de transmission des données au fichier php
       url: "plugins/asuswrt/core/ajax/asuswrt.ajax.php", // url du fichier php
       data: {
-        action: "postSave",
+        action: "discover",
       },
       dataType: 'json',
       error: function (request, status, error) {
