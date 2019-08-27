@@ -8,7 +8,7 @@ For more details about this platform, please refer to the documentation at
 https://home-assistant.io/components/device_tracker.asuswrt/
 """
 import argparse
-from BaseHTTPServer import BaseHTTPRequestHandler,HTTPServer
+from http.server import BaseHTTPRequestHandler,HTTPServer
 from os import environ
 import logging
 import re

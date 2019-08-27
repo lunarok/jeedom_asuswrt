@@ -55,7 +55,7 @@ class asuswrt extends eqLogic {
 		$return['progress_file'] = jeedom::getTmpFolder('asuswrt') . '/dependancy';
 		$cmd = "pip3 list | grep pexpect";
 		exec($cmd, $output, $return_var);
-		$cmd = "pip3 list | grep BaseHTTPServer";
+		$cmd = "pip3 list | grep http.server";
 		exec($cmd, $output2, $return_var);
 		$return['state'] = 'nok';
 		if (array_key_exists(0,$output) && array_key_exists(0,$output2)) {
