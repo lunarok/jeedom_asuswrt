@@ -1,0 +1,78 @@
+{
+  "commands": [
+    {
+      "name": "Définir niveau fermé en %",
+      "type": "action",
+      "subtype": "slider",
+      "display": {
+        "generic_type": "FLAP_SLIDER"
+      },
+      "configuration" : {
+        "action" : "set",
+        "minValue" : 0,
+        "maxValue" : 100
+      },
+      "value": "Niveau Ouverture",
+      "isVisible": 1,
+      "logicalId": "position_slider"
+    },
+    {
+      "name": "Ouvrir",
+      "type": "action",
+      "subtype": "other",
+      "display": {
+        "icon": "<i class=\"fas fa-arrow-up\"><\/i>",
+        "generic_type": "FLAP_UP",
+        "forceReturnLineBefore": 1
+      },
+      "configuration" : {
+        "action" : "set",
+        "value" : 0
+      },
+      "isVisible": 1,
+      "logicalId": "open"
+    },
+    {
+      "name": "Fermer",
+      "type": "action",
+      "subtype": "other",
+      "display": {
+        "icon": "<i class=\"fas fa-arrow-down\"><\/i>",
+        "generic_type": "FLAP_DOWN"
+      },
+      "configuration" : {
+        "action" : "set",
+        "value" : 100
+      },
+      "isVisible": 1,
+      "logicalId": "close"
+    },
+    {
+      "name": "Arrêter",
+      "type": "action",
+      "subtype": "other",
+      "display": {
+        "icon": "<i class=\"fas fa-stop\"><\/i>",
+        "generic_type": "FLAP_STOP"
+      },
+      "configuration" : {
+        "action" : "stop"
+      },
+      "isVisible": 1,
+      "logicalId": "stop"
+    },
+    {
+      "name": "Rafraichir",
+      "type": "action",
+      "subtype": "other",
+      "display": {
+        "generic_type": "DONT"
+      },
+      "configuration" : {
+        "action" : "refresh"
+      },
+      "isVisible": 1,
+      "logicalId": "refresh"
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+	"id" : "asuswrt",
+	"name" : "AsusWRT",
+	"description" : "Ce plugin permet d'utiliser un routeur Asuswrt pour vérifier la présence sur le réseau des équipements.",
+	"licence" : "AGPL",
+	"author" : "lunarok",
+	"require" : "3.2",
+	"category" : "home automation protocol",
+	"hasDependency" : 1,
+	"hasOwnDeamon" : 1,
+	"language" : ["fr_FR","en_US"],
+	"compatibility" : ["miniplus","smart","rpi","docker","diy","mobile"],
+	"changelog" : "https://lunarok.github.io/jeedom_docs/plugins/asuswrt/changelog.html",
+	"documentation" : "https://lunarok.github.io/jeedom_docs/plugins/asuswrt/"
+}
