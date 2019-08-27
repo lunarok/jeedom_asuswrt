@@ -19,12 +19,6 @@ if [ $(pip3 list | grep pexpect | wc -l) -eq 0 ]; then
     sudo pip3 install pexpect
 fi
 
-echo 70 > ${PROGRESS_FILE}
-if [ $(pip3 list | grep http.server | wc -l) -eq 0 ]; then
-    echo "Installation du module http.server pour python"
-    sudo pip3 install http.server
-fi
-
 echo 100 > /${PROGRESS_FILE}
 echo "********************************************************"
 echo "*             Installation terminée                    *"
