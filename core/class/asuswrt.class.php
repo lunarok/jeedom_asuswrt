@@ -50,99 +50,87 @@ class asuswrt extends eqLogic {
 		}
 	}
 
-	public static function dependancy_info() {
-		$return = array();
-		$return['progress_file'] = jeedom::getTmpFolder('asuswrt') . '/dependancy';
-		$cmd = "pip3 list | grep pexpect";
-		exec($cmd, $output, $return_var);
-		$return['state'] = 'nok';
-		if (array_key_exists(0,$output)) {
-		    if ($output[0] != "") {
-			$return['state'] = 'ok';
-		    }
-		}
-		return $return;
+	public static function cron() {
+		asuswrt::scan();
 	}
 
-	public static function dependancy_install() {
-		$dep_info = self::dependancy_info();
-		log::remove(__CLASS__ . '_dep');
-		if ($dep_info['state'] != 'ok') {
-			$resource_path = realpath(dirname(__FILE__) . '/../../resources');
-			passthru('/bin/bash ' . $resource_path . '/install_apt.sh ' . jeedom::getTmpFolder('asuswrt') . '/dependancy > ' . log::getPathToLog(__CLASS__ . '_dep') . ' 2>&1 &');
+	public static function scan() {
+		$result = array();
+		foreach (eqLogic::byType('asuswrt' as $asuswrt) {
+			$result[$asuswrt->getConfiguration('mac')]['status'] = "OFFLINE";
 		}
-	}
 
-	public static function deamon_info() {
-		$return = array();
-		$return['log'] = 'asuswrt';
-		$return['state'] = 'nok';
-		$pid = trim( shell_exec ('ps ax | grep "asuswrt/resources/asuswrtd.py" | grep -v "grep" | wc -l') );
-		if ($pid != '' && $pid != '0') {
-			$return['state'] = 'ok';
+		if (!$connection = ssh2_connect(config::byKey('addr', 'asuswrt'),'22')) {
+      log::add('asuswrt', 'error', 'connexion SSH KO');
+      return 'error connecting';
+    }
+		if (!ssh2_auth_password($connection,config::byKey('user', 'asuswrt'),config::byKey('password', 'asuswrt'))){
+			log::add('sshcommander', 'error', 'Authentification SSH KO');
+			return 'error connecting';
 		}
-		$return['launchable'] = 'ok';
-		if (config::byKey('addr', 'asuswrt', '') == '' || config::byKey('user', 'asuswrt', '') == '' || config::byKey('password', 'asuswrt', '') == '') {
-			$return['launchable'] = 'nok';
-		}
-		return $return;
-	}
 
-	public static function deamon_start() {
-		log::remove(__CLASS__ . '_update');
-		log::remove(__CLASS__ . '_node');
-		self::deamon_stop();
-		$deamon_info = self::deamon_info();
-		if ($deamon_info['launchable'] != 'ok') {
-			throw new Exception(__('Veuillez vérifier la configuration', __FILE__));
+		$stream = ssh2_exec($connection, 'cat /var/lib/misc/dnsmasq.leases');
+    stream_set_blocking($stream, true);
+		while($line = fgets($stream)) {
+			//84529 01:e0:4c:68:15:8e 192.168.0.102 host2 01:00:e0:4c:68:15:8e
+			//55822 28:5c:07:f6:97:80 192.168.0.32 host *
+			$array=explode(" ", $line);
+			$result[$array[1]]['mac'] = array[1];
+			$result[$array[1]]['ip'] = array[0];
+			$result[$array[1]]['hostname'] = array[2];
+			$result[$array[4]]['connexion'] = 'ethernet';
+			$result[$array[4]]['status'] = 'UNKNOWN';
+    }
+		fclose($stream);
+
+		$stream = ssh2_exec($connection, 'arp -n');
+    stream_set_blocking($stream, true);
+    while($line = fgets($stream)) {
+			//? (192.168.0.23) at 64:db:8b:7c:b8:2b [ether]  on br0
+			//? (192.168.0.67) at 04:cf:8c:9c:51:e4 [ether]  on br0
+			$array=explode(" ", $line);
+			$result[$array[3]]['status'] = 'ARP';
 		}
-		$asuswrt_path = realpath(dirname(__FILE__) . '/../../resources/');
-		$cmd = '/usr/bin/python3 ' . $asuswrt_path . '/asuswrtd.py';
-		$cmd .= ' ' . config::byKey('addr', 'asuswrt');
-		$cmd .= ' ' . config::byKey('user', 'asuswrt');
-		$cmd .= ' ' . config::byKey('password', 'asuswrt');
-		log::add('asuswrt', 'info', 'Lancement démon asuswrt : ' . $cmd);
-		$result = exec($cmd . ' >> ' . log::getPathToLog('asuswrt') . ' 2>&1 &');
-		$i = 0;
-		while ($i < 30) {
-			$deamon_info = self::deamon_info();
-			if ($deamon_info['state'] == 'ok') {
-				break;
+		fclose($stream);
+
+		$stream = ssh2_exec($connection, 'ip neigh');
+    stream_set_blocking($stream, true);
+    while($line = fgets($stream)) {
+			//192.168.0.23 dev br0 lladdr 64:db:8b:7c:b8:2b REACHABLE
+			//192.168.0.67 dev br0 lladdr 04:cf:8c:9c:51:e4 STALE
+			$array=explode(" ", $line);
+			if ($array[3] == 'lladdr') {
+			    $result[$array[4]]['status'] = $array[5];
+			    $result[$array[4]]['connexion'] = 'ethernet';
 			}
-			sleep(1);
-			$i++;
 		}
-		if ($i >= 30) {
-			log::add('asuswrt', 'error', 'Impossible de lancer le démon asuswrtd. Vérifiez le log.', 'unableStartDeamon');
-			return false;
-		}
-		message::removeAll('asuswrt', 'unableStartDeamon');
-		return true;
-	}
+		fclose($stream);
 
-	public static function deamon_stop() {
-		exec('kill $(ps aux | grep "/asuswrtd.py" | awk \'{print $2}\')');
-		log::add('asuswrt', 'info', 'Arrêt du service asuswrt');
-		$deamon_info = self::deamon_info();
-		if ($deamon_info['state'] == 'ok') {
-			sleep(1);
-			exec('kill -9 $(ps aux | grep "/asuswrtd.py" | awk \'{print $2}\')');
+		$stream = ssh2_exec($connection, 'wl -i eth1 assoclist');
+    stream_set_blocking($stream, true);
+    while($line = fgets($stream)) {
+			//assoclist 1C:F2:9A:34:4D:37
+			//assoclist 44:07:0B:4A:A9:96
+			$array=explode(" ", $line);
+			$result[$array[1]]['connexion'] = 'wifi2.4';
 		}
-		$deamon_info = self::deamon_info();
-		if ($deamon_info['state'] == 'ok') {
-			sleep(1);
-			exec('sudo kill -9 $(ps aux | grep "/asuswrtd.py" | awk \'{print $2}\')');
-		}
-	}
+		fclose($stream);
 
-	public function scanDevices() {
-		asuswrt::deamon_start();
-		if (config::byKey('addr', 'klf200', '') == '' || config::byKey('password', 'klf200', '') == '') {
-			return;
+		$stream = ssh2_exec($connection, 'wl -i eth2 assoclist');
+    stream_set_blocking($stream, true);
+    while($line = fgets($stream)) {
+			$array=explode(" ", $line);
+			$result[$array[1]]['connexion'] = 'wifi5';
 		}
-		$http = new com_http('http://localhost:9090/');
-		$return = json_decode($http->exec(15,2),true);
-		log::add('klf200', 'debug', 'Scan Devices, result ' . print_r($return, true));
+		fclose($stream);
+
+		$closesession = ssh2_exec($connection, 'exit');
+		stream_set_blocking($closesession, true);
+		stream_get_contents($closesession);
+
+		//REACHABLE, DELAY, STABLE, ARP
+		log::add('asuswrt', 'debug', 'Scan Asus, result ' . print_r($result, true));
+		return $result;
 	}
 
 }
