@@ -129,7 +129,6 @@ class asuswrt extends eqLogic {
 			$result[$mac]['mac'] = $mac;
 			$result[$mac]['ip'] = $array[2];
 			$result[$mac]['hostname'] = $array[3];
-			$result[$mac]['connexion'] = 'ethernet';
 			$result[$mac]['rssi'] = 0;
 			$result[$mac]['status'] = 'UNKNOWN';
 		}
