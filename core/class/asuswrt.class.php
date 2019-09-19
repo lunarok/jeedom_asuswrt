@@ -75,11 +75,12 @@ class asuswrt extends eqLogic {
 			//84529 01:e0:4c:68:15:8e 192.168.0.102 host2 01:00:e0:4c:68:15:8e
 			//55822 28:5c:07:f6:97:80 192.168.0.32 host *
 			$array=explode(" ", $line);
-			$result[$array[1]]['mac'] = $array[1];
-			$result[$array[1]]['ip'] = $array[0];
-			$result[$array[1]]['hostname'] = $array[2];
-			$result[$array[4]]['connexion'] = 'ethernet';
-			$result[$array[4]]['status'] = 'UNKNOWN';
+			$mac = strtolower($array[1]);
+			$result[$mac]['mac'] = $mac;
+			$result[$mac]['ip'] = $array[2];
+			$result[$mac]['hostname'] = $array[3];
+			$result[$mac]['connexion'] = 'ethernet';
+			$result[$mac]['status'] = 'UNKNOWN';
     }
 		fclose($stream);
 
@@ -89,7 +90,8 @@ class asuswrt extends eqLogic {
 			//? (192.168.0.23) at 64:db:8b:7c:b8:2b [ether]  on br0
 			//? (192.168.0.67) at 04:cf:8c:9c:51:e4 [ether]  on br0
 			$array=explode(" ", $line);
-			$result[$array[3]]['status'] = 'ARP';
+	    		$mac = strtolower($array[3]);
+			$result[$mac]['status'] = 'ARP';
 		}
 		fclose($stream);
 
@@ -100,8 +102,9 @@ class asuswrt extends eqLogic {
 			//192.168.0.67 dev br0 lladdr 04:cf:8c:9c:51:e4 STALE
 			$array=explode(" ", $line);
 			if ($array[3] == 'lladdr') {
-			    $result[$array[4]]['status'] = $array[5];
-			    $result[$array[4]]['connexion'] = 'ethernet';
+				$mac = strtolower($array[4]);
+			    $result[$mac]['status'] = $array[5];
+			    $result[$mac]['connexion'] = 'ethernet';
 			}
 		}
 		fclose($stream);
@@ -112,7 +115,8 @@ class asuswrt extends eqLogic {
 			//assoclist 1C:F2:9A:34:4D:37
 			//assoclist 44:07:0B:4A:A9:96
 			$array=explode(" ", $line);
-			$result[$array[1]]['connexion'] = 'wifi2.4';
+	    	$mac = strtolower($array[1]);
+			$result[$mac]['connexion'] = 'wifi2.4';
 		}
 		fclose($stream);
 
@@ -120,7 +124,8 @@ class asuswrt extends eqLogic {
     stream_set_blocking($stream, true);
     while($line = fgets($stream)) {
 			$array=explode(" ", $line);
-			$result[$array[1]]['connexion'] = 'wifi5';
+	    		$mac = strtolower($array[1]);
+			$result[$mac]['connexion'] = 'wifi5';
 		}
 		fclose($stream);
 
