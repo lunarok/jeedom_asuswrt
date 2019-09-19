@@ -75,7 +75,7 @@ class asuswrt extends eqLogic {
 			//84529 01:e0:4c:68:15:8e 192.168.0.102 host2 01:00:e0:4c:68:15:8e
 			//55822 28:5c:07:f6:97:80 192.168.0.32 host *
 			$array=explode(" ", $line);
-			$mac = strtolower($array[1]);
+			$mac = trim(strtolower($array[1]));
 			$result[$mac]['mac'] = $mac;
 			$result[$mac]['ip'] = $array[2];
 			$result[$mac]['hostname'] = $array[3];
@@ -90,7 +90,7 @@ class asuswrt extends eqLogic {
 			//? (192.168.0.23) at 64:db:8b:7c:b8:2b [ether]  on br0
 			//? (192.168.0.67) at 04:cf:8c:9c:51:e4 [ether]  on br0
 			$array=explode(" ", $line);
-	    		$mac = strtolower($array[3]);
+	    		$mac = trim(strtolower($array[3]));
 			$result[$mac]['status'] = 'ARP';
 		}
 		fclose($stream);
@@ -102,7 +102,7 @@ class asuswrt extends eqLogic {
 			//192.168.0.67 dev br0 lladdr 04:cf:8c:9c:51:e4 STALE
 			$array=explode(" ", $line);
 			if ($array[3] == 'lladdr') {
-				$mac = strtolower($array[4]);
+				$mac = trim(strtolower($array[4]));
 			    $result[$mac]['status'] = $array[5];
 			    $result[$mac]['connexion'] = 'ethernet';
 			}
@@ -115,7 +115,7 @@ class asuswrt extends eqLogic {
 			//assoclist 1C:F2:9A:34:4D:37
 			//assoclist 44:07:0B:4A:A9:96
 			$array=explode(" ", $line);
-	    	$mac = strtolower($array[1]);
+	    	$mac = trim(strtolower($array[1]));
 			$result[$mac]['connexion'] = 'wifi2.4';
 		}
 		fclose($stream);
@@ -124,7 +124,7 @@ class asuswrt extends eqLogic {
     stream_set_blocking($stream, true);
     while($line = fgets($stream)) {
 			$array=explode(" ", $line);
-	    		$mac = strtolower($array[1]);
+	    		$mac = trim(strtolower($array[1]));
 			$result[$mac]['connexion'] = 'wifi5';
 		}
 		fclose($stream);
@@ -134,7 +134,7 @@ class asuswrt extends eqLogic {
 		stream_get_contents($closesession);
 
 		//REACHABLE, DELAY, STABLE, ARP
-		log::add('asuswrt', 'debug', 'Scan Asus, result ' . print_r($result, true));
+		log::add('asuswrt', 'debug', 'Scan Asus, result ' . json_encode($result));
 		return $result;
 	}
 
