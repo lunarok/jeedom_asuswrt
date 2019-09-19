@@ -207,7 +207,6 @@ class asuswrt extends eqLogic {
 
 		$stream = ssh2_exec($connection, 'cat /sys/class/net/eth0/statistics/rx_bytes');
 		stream_set_blocking($stream, true);
-		$result = stream_get_contents($stream);
 		$result['rxtotal'] = stream_get_contents($stream);
 		fclose($stream);
 
