@@ -51,7 +51,22 @@ class asuswrt extends eqLogic {
 	}
 
 	public static function cron() {
-		asuswrt::scan();
+		$result = asuswrt::scan();
+		foreach ($result as $asuswrt) {
+			$eqlogic=asuswrt::byLogicalId($asuswrt['mac'], 'asuswrt');
+		    if (!is_object($eqlogic)) {
+		      $eqlogic = new asuswrt();
+		      $eqlogic->setEqType_name('asuswrt');
+		      $eqlogic->setLogicalId($asuswrt['mac']);
+		      $eqlogic->setIsEnable(1);
+		      $eqlogic->setIsVisible(0);
+		      $eqlogic->setName($asuswrt['hostname']);
+		      $eqlogic->setConfiguration('hostname', $asuswrt['hostname']);
+		      $eqlogic->setConfiguration('mac', $asuswrt['mac']);
+		      //$eqlogic->setConfiguration('connexion', $asuswrt['connexion']);
+		      $eqlogic->save();
+		    }
+		}
 	}
 
 	public static function scan() {
@@ -134,7 +149,7 @@ class asuswrt extends eqLogic {
 		stream_get_contents($closesession);
 
 		//REACHABLE, DELAY, STABLE, ARP
-		log::add('asuswrt', 'debug', 'Scan Asus, result ' . json_encode($result));
+		log::add('asuswrt', 'debug', 'Scan Asus, result ' . print_r($result, true));
 		return $result;
 	}
 
