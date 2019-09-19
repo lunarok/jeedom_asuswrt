@@ -56,7 +56,7 @@ class asuswrt extends eqLogic {
 
 	public static function scan() {
 		$result = array();
-		foreach (eqLogic::byType('asuswrt' as $asuswrt) {
+		foreach (eqLogic::byType('asuswrt') as $asuswrt) {
 			$result[$asuswrt->getConfiguration('mac')]['status'] = "OFFLINE";
 		}
 
@@ -75,9 +75,9 @@ class asuswrt extends eqLogic {
 			//84529 01:e0:4c:68:15:8e 192.168.0.102 host2 01:00:e0:4c:68:15:8e
 			//55822 28:5c:07:f6:97:80 192.168.0.32 host *
 			$array=explode(" ", $line);
-			$result[$array[1]]['mac'] = array[1];
-			$result[$array[1]]['ip'] = array[0];
-			$result[$array[1]]['hostname'] = array[2];
+			$result[$array[1]]['mac'] = $array[1];
+			$result[$array[1]]['ip'] = $array[0];
+			$result[$array[1]]['hostname'] = $array[2];
 			$result[$array[4]]['connexion'] = 'ethernet';
 			$result[$array[4]]['status'] = 'UNKNOWN';
     }
