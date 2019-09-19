@@ -111,6 +111,20 @@ $eqLogics = eqLogic::byType('asuswrt');
                 <label class="checkbox-inline"><input type="checkbox" class="eqLogicAttr" data-l1key="isVisible" checked/>{{Visible}}</label>
               </div>
             </div>
+            
+            <div class="form-group">
+              <label class="col-sm-3 control-label">{{Adresse MAC}}</label>
+              <div class="col-sm-8">
+                <span class="eqLogicAttr" data-l1key="configuration" data-l2key="mac"></span>
+              </div>
+            </div>
+            
+            <div class="form-group">
+              <label class="col-sm-3 control-label">{{Hostname}}</label>
+              <div class="col-sm-8">
+                <span class="eqLogicAttr" data-l1key="configuration" data-l2key="hostname"></span>
+              </div>
+            </div>
 
           </fieldset>
         </form>
