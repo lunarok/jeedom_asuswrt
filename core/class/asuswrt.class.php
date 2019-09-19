@@ -66,6 +66,7 @@ class asuswrt extends eqLogic {
 		      //$eqlogic->setConfiguration('connexion', $asuswrt['connexion']);
 		      $eqlogic->save();
 		    }
+			$eqlogic->loadCmdFromConf('client');
 		}
 	}
 
