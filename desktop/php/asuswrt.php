@@ -32,14 +32,6 @@ $eqLogics = eqLogic::byType('asuswrt');
         <span style="font-size : 1.1em;position:relative; top : 15px;word-break: break-all;white-space: pre-wrap;word-wrap: break-word;color:#767676"><center>{{Configuration}}</center></span>
       </div>
 
-
-      <div class="cursor eqLogicAction discover" data-action="scanasuswrt" style="background-color : #ffffff; height : 120px;margin-bottom : 10px;padding : 5px;border-radius: 2px;width : 160px;margin-left : 10px;">
-        <center>
-          <i class="icon jeedom2-bright4" style="font-size : 6em;color:#767676;"></i>
-        </center>
-        <span style="font-size : 1.1em;position:relative; top : 15px;word-break: break-all;white-space: pre-wrap;word-wrap: break-word;color:#767676"><center>{{Scan asuswrt}}</center></span>
-      </div>
-
     </div>
 
     <legend><i class="fas fa-home"></i> {{Mes Equipements Réseau}}</legend>
@@ -72,7 +64,7 @@ $eqLogics = eqLogic::byType('asuswrt');
         <form class="form-horizontal">
           <fieldset>
             <div class="form-group">
-              <label class="col-sm-3 control-label">{{Nom du asuswrt}}</label>
+              <label class="col-sm-3 control-label">{{Nom du Périphérique}}</label>
               <div class="col-sm-3">
                 <input type="text" class="eqLogicAttr form-control" data-l1key="id" style="display : none;" />
                 <input type="text" class="eqLogicAttr form-control" data-l1key="name" placeholder="{{Nom de l'équipement asuswrt}}"/>
@@ -111,14 +103,14 @@ $eqLogics = eqLogic::byType('asuswrt');
                 <label class="checkbox-inline"><input type="checkbox" class="eqLogicAttr" data-l1key="isVisible" checked/>{{Visible}}</label>
               </div>
             </div>
-            
+
             <div class="form-group">
               <label class="col-sm-3 control-label">{{Adresse MAC}}</label>
               <div class="col-sm-8">
                 <span class="eqLogicAttr" data-l1key="configuration" data-l2key="mac"></span>
               </div>
             </div>
-            
+
             <div class="form-group">
               <label class="col-sm-3 control-label">{{Hostname}}</label>
               <div class="col-sm-8">
