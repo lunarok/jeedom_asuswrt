@@ -24,9 +24,26 @@ try {
     throw new Exception(__('401 - Accès non autorisé', __FILE__));
   }
 
-  if (init('action') == 'discover') {
-    asuswrt::scanDevices();
-    ajax::success();
+  if (init('action') == 'getAsuswrt') {
+    $return['devices'] = array();
+    foreach (eqLogic::byType('asuswrt',true) as $eqLogic) {
+      if ($eqLogic->getLogicalId('id') == 'router') {
+        continue;
+      }
+      $hostname = $eqLogic->getCmd(null, 'hostname');
+      $ip = $eqLogic->getCmd(null, 'ip');
+      $mac = $eqLogic->getCmd(null, 'mac');
+      $connexion = $eqLogic->getCmd(null, 'connexion');
+      $presence = $eqLogic->getCmd(null, 'presence');
+      $return['devices'][] = array( 'name' => $eqLogic->getName(),
+                                    'hostname' => $hostname->execCmd(),
+                                    'ip' => $ip->execCmd(),
+                                    'mac' => $mac->execCmd(),
+                                    'connexion' => $connexion->execCmd(),
+                                    'presence' => $presence->execCmd(),
+                                  );
+    }
+    ajax::success($return);
   }
 
   throw new Exception(__('Aucune methode correspondante à : ', __FILE__) . init('action'));

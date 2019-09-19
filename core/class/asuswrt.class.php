@@ -60,7 +60,7 @@ class asuswrt extends eqLogic {
 				$eqlogic->setLogicalId($asuswrt['mac']);
 				$eqlogic->setIsEnable(1);
 				$eqlogic->setIsVisible(0);
-				$eqlogic->setName($asuswrt['hostname'] ' - ' $asuswrt['ip']);
+				$eqlogic->setName($asuswrt['hostname'] . ' - ' . $asuswrt['ip']);
 				$eqlogic->setConfiguration('hostname', $asuswrt['hostname']);
 				$eqlogic->setConfiguration('mac', $asuswrt['mac']);
 				//$eqlogic->setConfiguration('connexion', $asuswrt['connexion']);
