@@ -89,12 +89,12 @@ class asuswrt extends eqLogic {
 			$eqlogic->save();
 		}
 		$eqlogic->loadCmdFromConf('router');
-		$cmd = cmd::byEqLogicIdAndLogicalId($eqLogic->getId(),'txtotal');
+		$cmd = cmd::byEqLogicIdAndLogicalId($eqlogic->getId(),'txtotal');
 		$past = $cmd->execCmd();
 		$speed = ($result['txtotal'] - $past)/60000000;
 		$eqlogic->checkAndUpdateCmd('txtotal', $result['txtotal']);
 		$eqlogic->checkAndUpdateCmd('txspeed', $speed);
-		$cmd = cmd::byEqLogicIdAndLogicalId($eqLogic->getId(),'rxtotal');
+		$cmd = cmd::byEqLogicIdAndLogicalId($eqlogic->getId(),'rxtotal');
 		$past = $cmd->execCmd();
 		$speed = ($result['rxtotal'] - $past)/60000000;
 		$eqlogic->checkAndUpdateCmd('rxtotal', $result['txtotal']);
