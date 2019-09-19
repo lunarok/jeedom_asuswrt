@@ -67,6 +67,11 @@ class asuswrt extends eqLogic {
 		      $eqlogic->save();
 		    }
 			$eqlogic->loadCmdFromConf('client');
+			foreach ($asuswrt as $logicalid => $value) {
+				$eqlogic->checkAndUpdateCmd($logicalid, $value);
+			}
+			$presence = ($asuswrt['status'] == 'UNKNOW') ? 0 : 1;
+			$eqlogic->checkAndUpdateCmd('presence', $presence);
 		}
 	}
 
