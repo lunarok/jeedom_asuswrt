@@ -41,6 +41,13 @@
       "subtype": "string",
       "isVisible": 0,
       "logicalId": "connexion"
+    },
+    {
+      "name": "RSSI",
+      "type": "info",
+      "subtype": "numeric",
+      "isVisible": 0,
+      "logicalId": "rssi"
     }
   ]
 }

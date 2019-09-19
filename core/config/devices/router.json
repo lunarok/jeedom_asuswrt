@@ -1,0 +1,36 @@
+{
+  "commands": [
+    {
+      "name": "Envoi Total",
+      "type": "info",
+      "subtype": "numeric",
+      "unite": "B",
+      "isVisible": 0,
+      "logicalId": "txtotal"
+    },
+    {
+      "name": "Envoi Vitesse",
+      "type": "info",
+      "subtype": "numeric",
+      "unite": "MB/s",
+      "isVisible": 1,
+      "logicalId": "txspeed"
+    },
+    {
+      "name": "Réception Total",
+      "type": "info",
+      "subtype": "numeric",
+      "unite": "B",
+      "isVisible": 0,
+      "logicalId": "rxtotal"
+    },
+    {
+      "name": "Réception Vitesse",
+      "type": "info",
+      "subtype": "numeric",
+      "unite": "MB/s",
+      "isVisible": 1,
+      "logicalId": "rxspeed"
+    }
+  ]
+}
