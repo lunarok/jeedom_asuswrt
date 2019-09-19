@@ -1,0 +1,46 @@
+{
+  "commands": [
+    {
+      "name": "Statut",
+      "type": "info",
+      "subtype": "string",
+      "isVisible": 0,
+      "logicalId": "status"
+    },
+    {
+      "name": "Présence",
+      "type": "info",
+      "subtype": "binary",
+      "isVisible": 1,
+      "logicalId": "presence"
+    },
+    {
+      "name": "Adresse IP",
+      "type": "info",
+      "subtype": "string",
+      "isVisible": 0,
+      "logicalId": "ip"
+    },
+    {
+      "name": "Adresse MAC",
+      "type": "info",
+      "subtype": "string",
+      "isVisible": 0,
+      "logicalId": "mac"
+    },
+    {
+      "name": "Hostname",
+      "type": "info",
+      "subtype": "string",
+      "isVisible": 0,
+      "logicalId": "hostname"
+    },
+    {
+      "name": "Connexion",
+      "type": "info",
+      "subtype": "string",
+      "isVisible": 0,
+      "logicalId": "connexion"
+    }
+  ]
+}
