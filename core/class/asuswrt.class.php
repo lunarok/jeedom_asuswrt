@@ -53,6 +53,9 @@ class asuswrt extends eqLogic {
 	public static function cron() {
 		$result = asuswrt::scan();
 		foreach ($result as $asuswrt) {
+			if ($asuswrt['mac'] == '' && $asuswrt['ip'] == '' && $asuswrt['hostname'] == '') {
+				continue;
+			}
 			$eqlogic=asuswrt::byLogicalId($asuswrt['mac'], 'asuswrt');
 			if (!is_object($eqlogic)) {
 				$eqlogic = new asuswrt();
