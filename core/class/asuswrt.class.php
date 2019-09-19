@@ -70,7 +70,7 @@ class asuswrt extends eqLogic {
 			foreach ($asuswrt as $logicalid => $value) {
 				$eqlogic->checkAndUpdateCmd($logicalid, $value);
 			}
-			$presence = ($asuswrt['status'] == 'UNKNOW') ? 0 : 1;
+			$presence = ($asuswrt['status'] == 'UNKNOWN') ? 0 : 1;
 			$eqlogic->checkAndUpdateCmd('presence', $presence);
 		}
 	}
