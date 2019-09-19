@@ -91,12 +91,12 @@ class asuswrt extends eqLogic {
 		$eqlogic->loadCmdFromConf('router');
 		$cmd = cmd::byEqLogicIdAndLogicalId($eqlogic->getId(),'txtotal');
 		$past = $cmd->execCmd();
-		$speed = ($result['txtotal'] - $past)/60000000;
+		$speed = round(($result['txtotal'] - $past)/60000000,2);
 		$eqlogic->checkAndUpdateCmd('txtotal', $result['txtotal']);
 		$eqlogic->checkAndUpdateCmd('txspeed', $speed);
 		$cmd = cmd::byEqLogicIdAndLogicalId($eqlogic->getId(),'rxtotal');
 		$past = $cmd->execCmd();
-		$speed = ($result['rxtotal'] - $past)/60000000;
+		$speed = round(($result['rxtotal'] - $past)/60000000,2);
 		$eqlogic->checkAndUpdateCmd('rxtotal', $result['txtotal']);
 		$eqlogic->checkAndUpdateCmd('rxspeed', $speed);
 	}
@@ -104,6 +104,9 @@ class asuswrt extends eqLogic {
 	public static function scan() {
 		$result = array();
 		foreach (eqLogic::byType('asuswrt') as $asuswrt) {
+			if ($asuswrt->getLogicalId('id') == 'router') {
+        continue;
+      }
 			$result[$asuswrt->getConfiguration('mac')]['status'] = "OFFLINE";
 		}
 
