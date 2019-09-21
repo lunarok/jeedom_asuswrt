@@ -168,6 +168,7 @@ class asuswrt extends eqLogic {
 			$mac = trim(strtolower($array[0]));
 			$result[$mac]['connexion'] = 'wifi2.4';
 			$result[$mac]['rssi'] = $array[1];
+			log::add('sshcommander', 'debug', 'Wifi 2.4 ' . $array[0]);
 		}
 		fclose($stream);
 
@@ -178,6 +179,7 @@ class asuswrt extends eqLogic {
 			$mac = trim(strtolower($array[0]));
 			$result[$mac]['connexion'] = 'wifi5';
 			$result[$mac]['rssi'] = $array[1];
+			log::add('sshcommander', 'debug', 'Wifi 5 ' . $array[0]);
 		}
 		fclose($stream);
 
@@ -186,7 +188,7 @@ class asuswrt extends eqLogic {
 		stream_get_contents($closesession);
 
 		//REACHABLE, DELAY, STABLE, ARP
-		log::add('asuswrt', 'debug', 'Scan Asus, result ' . print_r($result, true));
+		//log::add('asuswrt', 'debug', 'Scan Asus, result ' . print_r($result, true));
 		return $result;
 	}
 
