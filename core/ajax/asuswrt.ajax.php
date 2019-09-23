@@ -34,12 +34,14 @@ try {
       $ip = $eqLogic->getCmd(null, 'ip');
       $mac = $eqLogic->getCmd(null, 'mac');
       $connexion = $eqLogic->getCmd(null, 'connexion');
+      $rssi = $eqLogic->getCmd(null, 'rssi');
       $presence = $eqLogic->getCmd(null, 'presence');
       $return['devices'][] = array( 'name' => $eqLogic->getName(),
                                     'hostname' => $hostname->execCmd(),
                                     'ip' => $ip->execCmd(),
                                     'mac' => $mac->execCmd(),
                                     'connexion' => $connexion->execCmd(),
+                                    'rssi' => $rssi->execCmd(),
                                     'presence' => $presence->execCmd(),
                                   );
     }

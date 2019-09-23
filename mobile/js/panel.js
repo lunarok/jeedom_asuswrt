@@ -44,6 +44,7 @@ function getKlf200State(){
 			table += '<td>' + device['mac'] + '</td>';
 			table += '<td>' + device['ip'] + '</td>';
 			table += '<td>' + device['connexion'] + '</td>';
+			table += '<td>' + device['rssi'] + '</td>';
 			table += '<td>' + device['presence'] + '</td>';
 			table += '</tr>';
 		}
