@@ -164,7 +164,7 @@ class asuswrt extends eqLogic {
 		stream_set_blocking($stream, true);
 		$ethernet = explode("[",stream_get_contents($stream));
 		$ethernet = explode("]", $ethernet[1]);
-		$ethernet = explode(",", $ethernet[1]);
+		$ethernet = explode(",", $ethernet[0]);
 		foreach ($ethernet as $value) {
 			$mac = trim(strtolower($value),'"');
 			$result[$mac]['connexion'] = 'ethernet';
