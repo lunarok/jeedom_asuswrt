@@ -169,7 +169,7 @@ class asuswrt extends eqLogic {
 			$mac = trim(strtolower($array[0]));
 			$result[$mac]['connexion'] = 'wifi2.4';
 			$wifi[] = $mac;
-			//log::add('sshcommander', 'debug', 'Wifi 2.4 ' . $array[0]);
+			//log::add('asuswrt', 'debug', 'Wifi 2.4 ' . $array[0]);
 		}
 		fclose($stream);
 
@@ -180,7 +180,7 @@ class asuswrt extends eqLogic {
 			$mac = trim(strtolower($array[0]));
 			$result[$mac]['connexion'] = 'wifi5';
 			$wifi[] = $mac;
-			log::add('sshcommander', 'debug', 'Wifi 5 ' . $array[0]);
+			log::add('asuswrt', 'debug', 'Wifi 5 ' . $array[0]);
 		}
 		fclose($stream);
 
