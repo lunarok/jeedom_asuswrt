@@ -103,6 +103,7 @@ class asuswrt extends eqLogic {
 
 	public static function scan() {
 		$result = array();
+		$wifi = array();
 		foreach (eqLogic::byType('asuswrt') as $asuswrt) {
 			if ($asuswrt->getLogicalId('id') == 'router') {
         continue;
@@ -159,7 +160,7 @@ class asuswrt extends eqLogic {
 		}
 		fclose($stream);
 
-		$stream = ssh2_exec($connection, "wl -i eth1 assoclist | cut -d' ' -f2 | while read MAC; do PWR=`wl -i eth2 rssi \$MAC`; echo $MAC $PWR; done");
+		$stream = ssh2_exec($connection, "wl -i eth1 assoclist | cut -d' ' -f2");
 		stream_set_blocking($stream, true);
 		while($line = fgets($stream)) {
 			//assoclist 1C:F2:9A:34:4D:37
@@ -167,21 +168,28 @@ class asuswrt extends eqLogic {
 			$array=explode(" ", $line);
 			$mac = trim(strtolower($array[0]));
 			$result[$mac]['connexion'] = 'wifi2.4';
-			$result[$mac]['rssi'] = $array[1];
-			log::add('sshcommander', 'debug', 'Wifi 2.4 ' . $array[0]);
+			$wifi[] = $mac;
+			//log::add('sshcommander', 'debug', 'Wifi 2.4 ' . $array[0]);
 		}
 		fclose($stream);
 
-		$stream = ssh2_exec($connection, "wl -i eth2 assoclist | cut -d' ' -f2 | while read MAC; do PWR=`wl -i eth2 rssi \$MAC`; echo $MAC $PWR; done");
+		$stream = ssh2_exec($connection, "wl -i eth2 assoclist | cut -d' ' -f2");
 		stream_set_blocking($stream, true);
 		while($line = fgets($stream)) {
 			$array=explode(" ", $line);
 			$mac = trim(strtolower($array[0]));
 			$result[$mac]['connexion'] = 'wifi5';
-			$result[$mac]['rssi'] = $array[1];
+			$wifi[] = $mac;
 			log::add('sshcommander', 'debug', 'Wifi 5 ' . $array[0]);
 		}
 		fclose($stream);
+
+		foreach ($wifi as $value) {
+			$stream = ssh2_exec($connection, 'wl -i eth2 rssi ' . $value);
+			stream_set_blocking($stream, true);
+			$result[$value]['rssi'] = stream_get_contents($stream);
+			fclose($stream);
+		}
 
 		$closesession = ssh2_exec($connection, 'exit');
 		stream_set_blocking($closesession, true);
