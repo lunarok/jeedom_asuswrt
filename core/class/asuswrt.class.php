@@ -160,6 +160,19 @@ class asuswrt extends eqLogic {
 		}
 		fclose($stream);
 
+		$stream = ssh2_exec($connection, 'cat /tmp/wiredclientlist.json');
+		stream_set_blocking($stream, true);
+		$ethernet = explode("[",stream_get_contents($stream));
+		$ethernet = explode("]", $ethernet[1]);
+		$ethernet = explode(",", $ethernet[1]);
+		foreach ($ethernet as $value) {
+			$mac = trim(strtolower($value),'"');
+			$result[$mac]['connexion'] = 'ethernet';
+			log::add('asuswrt', 'debug', 'Ethernet ' . $mac);
+			fclose($stream);
+		}
+		fclose($stream);
+
 		$stream = ssh2_exec($connection, "wl -i eth1 assoclist | cut -d' ' -f2");
 		stream_set_blocking($stream, true);
 		while($line = fgets($stream)) {
@@ -180,7 +193,7 @@ class asuswrt extends eqLogic {
 			$mac = trim(strtolower($array[0]));
 			$result[$mac]['connexion'] = 'wifi5';
 			$wifi[] = $mac;
-			log::add('asuswrt', 'debug', 'Wifi 5 ' . $array[0]);
+			//log::add('asuswrt', 'debug', 'Wifi 5 ' . $array[0]);
 		}
 		fclose($stream);
 
