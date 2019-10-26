@@ -111,8 +111,8 @@ class asuswrt extends eqLogic {
 		$blocked = array();
 		foreach (eqLogic::byType('asuswrt') as $asuswrt) {
 			if ($asuswrt->getLogicalId('id') == 'router') {
-        continue;
-      }
+				continue;
+			}
 			$result[$asuswrt->getConfiguration('mac')]['status'] = "OFFLINE";
 		}
 
@@ -342,5 +342,5 @@ class asuswrtCmd extends cmd {
 	}
 
 }
-}
+
 ?>
