@@ -99,11 +99,16 @@ class asuswrt extends eqLogic {
 		$speed = round(($result['rxtotal'] - $past)/60000000,2);
 		$eqlogic->checkAndUpdateCmd('rxtotal', $result['txtotal']);
 		$eqlogic->checkAndUpdateCmd('rxspeed', $speed);
+		$eqlogic->checkAndUpdateCmd('wifi24', $result['wifi24']);
+		$eqlogic->checkAndUpdateCmd('wifi5', $result['wifi5']);
+		$eqlogic->checkAndUpdateCmd('guest24', $result['guest24']);
+		$eqlogic->checkAndUpdateCmd('guest5', $result['guest5']);
 	}
 
 	public static function scan() {
 		$result = array();
 		$wifi = array();
+		$blocked = array();
 		foreach (eqLogic::byType('asuswrt') as $asuswrt) {
 			if ($asuswrt->getLogicalId('id') == 'router') {
         continue;
@@ -204,6 +209,17 @@ class asuswrt extends eqLogic {
 			fclose($stream);
 		}
 
+		//	iptables -S | grep "FORWARD -s" | grep DROP
+		$stream = ssh2_exec($connection, 'iptables -S | grep "FORWARD -s" | grep DROP');
+		stream_set_blocking($stream, true);
+		while($line = fgets($stream)) {
+			$array=explode(" ", $line);
+			$array2 =explode("/", $array[3]);
+			$blocked[] = $array2[0];
+			log::add('asuswrt', 'debug', 'Blocked ' . $array2[0]);
+		}
+		fclose($stream);
+
 		$closesession = ssh2_exec($connection, 'exit');
 		stream_set_blocking($closesession, true);
 		stream_get_contents($closesession);
@@ -235,6 +251,26 @@ class asuswrt extends eqLogic {
 		$result['rxtotal'] = stream_get_contents($stream);
 		fclose($stream);
 
+		$stream = ssh2_exec($connection, 'nvram get wl0_radio');
+		stream_set_blocking($stream, true);
+		$result['wifi24'] = stream_get_contents($stream);
+		fclose($stream);
+
+		$stream = ssh2_exec($connection, 'nvram get wl1.1_radio');
+		stream_set_blocking($stream, true);
+		$result['wifi5'] = stream_get_contents($stream);
+		fclose($stream);
+
+		$stream = ssh2_exec($connection, 'nvram get wl0.1_radio');
+		stream_set_blocking($stream, true);
+		$result['guest24'] = stream_get_contents($stream);
+		fclose($stream);
+
+		$stream = ssh2_exec($connection, 'nvram get wl1.1_radio');
+		stream_set_blocking($stream, true);
+		$result['guest5'] = stream_get_contents($stream);
+		fclose($stream);
+
 		$closesession = ssh2_exec($connection, 'exit');
 		stream_set_blocking($closesession, true);
 		stream_get_contents($closesession);
@@ -243,9 +279,68 @@ class asuswrt extends eqLogic {
 		return $result;
 	}
 
+	public function manageWifi($_enable = true, $_wifi = '0') {
+		if (!$connection = ssh2_connect(config::byKey('addr', 'asuswrt'),'22')) {
+			log::add('asuswrt', 'error', 'connexion SSH KO');
+			return 'error connecting';
+		}
+		if (!ssh2_auth_password($connection,config::byKey('user', 'asuswrt'),config::byKey('password', 'asuswrt'))){
+			log::add('sshcommander', 'error', 'Authentification SSH KO');
+			return 'error connecting';
+		}
+		//active wifi5, wifi24 c'est wl0, couper c'est 0, statut : nvram get wl1_radio
+		//nvram set wl1_radio=1
+		//nvram commit
+		//service restart_wireless
+
+		$active = ($_enable) ? '1' : '0';
+		$stream = ssh2_exec($connection, 'nvram set wl' . $_wifi . '_radio=' . $active);
+		$stream = ssh2_exec($connection, 'nvram commit');
+		$stream = ssh2_exec($connection, 'service restart_wireless');
+
+		$closesession = ssh2_exec($connection, 'exit');
+		stream_set_blocking($closesession, true);
+		stream_get_contents($closesession);
+	}
+
+	public function manageInternet($_enable = true) {
+		if (!$connection = ssh2_connect(config::byKey('addr', 'asuswrt'),'22')) {
+			log::add('asuswrt', 'error', 'connexion SSH KO');
+			return 'error connecting';
+		}
+		if (!ssh2_auth_password($connection,config::byKey('user', 'asuswrt'),config::byKey('password', 'asuswrt'))){
+			log::add('sshcommander', 'error', 'Authentification SSH KO');
+			return 'error connecting';
+		}
+
+		//iptables -I FORWARD -s 192.168.2.100 -j DROP
+		//iptables -D FORWARD -s 192.168.2.101 -j DROP
+		$active = ($_enable) ? 'D' : 'I';
+		$ip = cmd::byEqLogicIdAndLogicalId($this->getId(),'ip')->execute();
+		log::add('asuswrt', 'debug', 'Commande : iptables -' . $active . ' FORWARD -s ' . $ip . ' -j DROP');
+		//$stream = ssh2_exec($connection, 'iptables -' . $active . ' FORWARD -s ' . $ip . ' -j DROP');
+
+		$closesession = ssh2_exec($connection, 'exit');
+		stream_set_blocking($closesession, true);
+		stream_get_contents($closesession);
+	}
+
 }
 
 class asuswrtCmd extends cmd {
+	public function execute($_options = null) {
+		if ($this->getType() == "info") {
+		} else {
+			$eqLogic = $this->getEqLogic();
+			if ($this->getConfiguration('type') == 'wifi') {
+				$eqLogic->manageWifi($this->getConfiguration('enable'),$this->getConfiguration('wifi'));
+			}
+			if ($this->getConfiguration('type') == 'internet') {
+				$eqLogic->manageWifi($this->getConfiguration('enable'));
+			}
+		}
+	}
 
+}
 }
 ?>

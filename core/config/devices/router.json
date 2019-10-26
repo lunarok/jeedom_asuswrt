@@ -31,6 +31,131 @@
       "unite": "MB/s",
       "isVisible": 1,
       "logicalId": "rxspeed"
+    },
+    {
+      "name": "Statut Wifi 2.4",
+      "type": "info",
+      "subtype": "binary",
+      "isVisible": 0,
+      "logicalId": "wifi24"
+    },
+    {
+      "name": "Activer Wifi 2.4",
+      "type": "action",
+      "subtype": "other",
+      "isVisible": 0,
+      "logicalId": "wifi24Enable",
+      "configuration" : {
+  			"enable" : true,
+        "wifi" : "0",
+        "type" : "wifi"
+  		}
+    },
+    {
+      "name": "Désactiver Wifi 2.4",
+      "type": "action",
+      "subtype": "other",
+      "isVisible": 0,
+      "logicalId": "wifi24Disable",
+      "configuration" : {
+  			"enable" : false,
+        "wifi" : "0",
+        "type" : "wifi"
+  		}
+    },
+    {
+      "name": "Statut Wifi 5",
+      "type": "info",
+      "subtype": "binary",
+      "isVisible": 0,
+      "logicalId": "wifi5"
+    },
+    {
+      "name": "Activer Wifi 5",
+      "type": "action",
+      "subtype": "other",
+      "isVisible": 0,
+      "logicalId": "wifi5Enable",
+      "configuration" : {
+  			"enable" : true,
+        "wifi" : "1",
+        "type" : "wifi"
+  		}
+    },
+    {
+      "name": "Désactiver Wifi 5",
+      "type": "action",
+      "subtype": "other",
+      "isVisible": 0,
+      "logicalId": "wifi5Disable",
+      "configuration" : {
+  			"enable" : false,
+        "wifi" : "1",
+        "type" : "wifi"
+  		}
+    },
+    {
+      "name": "Statut Guest 2.4",
+      "type": "info",
+      "subtype": "binary",
+      "isVisible": 0,
+      "logicalId": "guest24"
+    },
+    {
+      "name": "Activer Guest 2.4",
+      "type": "action",
+      "subtype": "other",
+      "isVisible": 0,
+      "logicalId": "guest24Enable",
+      "configuration" : {
+  			"enable" : true,
+        "wifi" : "0.1",
+        "type" : "wifi"
+  		}
+    },
+    {
+      "name": "Désactiver Guest 2.4",
+      "type": "action",
+      "subtype": "other",
+      "isVisible": 0,
+      "logicalId": "guest24Disable"
+      ,
+      "configuration" : {
+  			"enable" : false,
+        "wifi" : "0.1",
+        "type" : "wifi"
+  		}
+    },
+    {
+      "name": "Statut Guest 5",
+      "type": "info",
+      "subtype": "binary",
+      "isVisible": 0,
+      "logicalId": "guest5"
+    },
+    {
+      "name": "Activer Guest 5",
+      "type": "action",
+      "subtype": "other",
+      "isVisible": 0,
+      "logicalId": "guest5Enable",
+      "configuration" : {
+  			"enable" : true,
+        "wifi" : "1.1",
+        "type" : "wifi"
+  		}
+    },
+    {
+      "name": "Désactiver Guest 5",
+      "type": "action",
+      "subtype": "other",
+      "isVisible": 0,
+      "logicalId": "guest5Disable",
+      "configuration" : {
+  			"enable" : false,
+        "wifi" : "1.1",
+        "type" : "wifi"
+  		}
     }
   ]
 }

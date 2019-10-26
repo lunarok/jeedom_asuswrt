@@ -48,6 +48,35 @@
       "subtype": "numeric",
       "isVisible": 0,
       "logicalId": "rssi"
+    },
+    {
+      "name": "Accès Internet",
+      "type": "info",
+      "subtype": "binary",
+      "isVisible": 0,
+      "logicalId": "internet"
+    },
+    {
+      "name": "Interdire Internet",
+      "type": "action",
+      "subtype": "other",
+      "isVisible": 0,
+      "logicalId": "internetDisable",
+      "configuration" : {
+  			"enable" : false,
+        "type" : "internet"
+  		}
+    },
+    {
+      "name": "Rétablir Internet",
+      "type": "action",
+      "subtype": "other",
+      "isVisible": 0,
+      "logicalId": "internetEnable",
+      "configuration" : {
+  			"enable" : true,
+        "type" : "internet"
+  		}
     }
   ]
 }
