@@ -328,7 +328,7 @@ class asuswrt extends eqLogic {
 		//iptables -I FORWARD -s 192.168.2.100 -j DROP
 		//iptables -D FORWARD -s 192.168.2.101 -j DROP
 		$active = ($_enable) ? 'D' : 'I';
-		$ip = cmd::byEqLogicIdAndLogicalId($this->getId(),'ip')->execute();
+		$ip = $this->getConfiguration('ip');
 		log::add('asuswrt', 'debug', 'Commande : iptables -' . $active . ' FORWARD -s ' . $ip . ' -j DROP');
 		$stream = ssh2_exec($connection, 'iptables -' . $active . ' FORWARD -s ' . $ip . ' -j DROP');
 
