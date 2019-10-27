@@ -66,7 +66,12 @@ class asuswrt extends eqLogic {
 				$eqlogic->setName($asuswrt['hostname'] . ' - ' . $asuswrt['ip']);
 				$eqlogic->setConfiguration('hostname', $asuswrt['hostname']);
 				$eqlogic->setConfiguration('mac', $asuswrt['mac']);
-				//$eqlogic->setConfiguration('connexion', $asuswrt['connexion']);
+				$eqlogic->setConfiguration('ip', $asuswrt['ip']);
+				$eqlogic->save();
+			}
+			if (($eqlogic->setConfiguration('hostname') !=  $asuswrt['hostname']) || ($eqlogic->setConfiguration('ip') !=  $asuswrt['ip'])) {
+				$eqlogic->setConfiguration('hostname', $asuswrt['hostname']);
+				$eqlogic->setConfiguration('ip', $asuswrt['ip']);
 				$eqlogic->save();
 			}
 			$eqlogic->loadCmdFromConf('client');
@@ -137,6 +142,7 @@ class asuswrt extends eqLogic {
 			$result[$mac]['hostname'] = $array[3];
 			$result[$mac]['rssi'] = 0;
 			$result[$mac]['status'] = 'UNKNOWN';
+			$result[$mac]['internet'] = 1;
 		}
 		fclose($stream);
 
@@ -219,6 +225,12 @@ class asuswrt extends eqLogic {
 			log::add('asuswrt', 'debug', 'Blocked ' . $array2[0]);
 		}
 		fclose($stream);
+
+		foreach ($result as $mac => $array ) {
+			if (array_key_exists($array['ip'], $blocked)) {
+				$result[$mac]['internet'] = 0;
+			}
+		}
 
 		$closesession = ssh2_exec($connection, 'exit');
 		stream_set_blocking($closesession, true);
@@ -318,7 +330,7 @@ class asuswrt extends eqLogic {
 		$active = ($_enable) ? 'D' : 'I';
 		$ip = cmd::byEqLogicIdAndLogicalId($this->getId(),'ip')->execute();
 		log::add('asuswrt', 'debug', 'Commande : iptables -' . $active . ' FORWARD -s ' . $ip . ' -j DROP');
-		//$stream = ssh2_exec($connection, 'iptables -' . $active . ' FORWARD -s ' . $ip . ' -j DROP');
+		$stream = ssh2_exec($connection, 'iptables -' . $active . ' FORWARD -s ' . $ip . ' -j DROP');
 
 		$closesession = ssh2_exec($connection, 'exit');
 		stream_set_blocking($closesession, true);
@@ -336,7 +348,7 @@ class asuswrtCmd extends cmd {
 				$eqLogic->manageWifi($this->getConfiguration('enable'),$this->getConfiguration('wifi'));
 			}
 			if ($this->getConfiguration('type') == 'internet') {
-				$eqLogic->manageWifi($this->getConfiguration('enable'));
+				$eqLogic->manageInternet($this->getConfiguration('enable'));
 			}
 		}
 	}

@@ -95,9 +95,6 @@ function addCmdToTable(_cmd) {
         //tr += '<input class="cmdAttr" data-l1key="configuration" data-l2key="virtualAction" value="1" style="display:none;" >';
         tr += '</td>';
          tr += '<td>';
-		tr += '<span class="cmdAttr form-control input-sm" data-l1key="configuration" data-l2key="request"></span>';
-		tr +='</select></span>';
-        tr += '</td><td>';
         tr += '<span><label class="checkbox-inline"><input type="checkbox" class="cmdAttr checkbox-inline" data-l1key="isVisible" checked/>{{Afficher}}</label></span> ';
         tr += '</td>';
         tr += '<td>';
