@@ -243,7 +243,7 @@ class asuswrt extends eqLogic {
 		stream_get_contents($closesession);
 
 		//REACHABLE, DELAY, STABLE, ARP
-		log::add('asuswrt', 'debug', 'Scan Asus, result ' . print_r($result, true));
+		log::add('asuswrt', 'debug', 'Scan Asus, result ' . json_encode($result));
 		return $result;
 	}
 
@@ -293,7 +293,7 @@ class asuswrt extends eqLogic {
 		stream_set_blocking($closesession, true);
 		stream_get_contents($closesession);
 
-		log::add('asuswrt', 'debug', 'Speed Asus, result ' . print_r($result, true));
+		log::add('asuswrt', 'debug', 'Speed Asus, result ' . json_encode($result));
 		return $result;
 	}
 
