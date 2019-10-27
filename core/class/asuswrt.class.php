@@ -171,7 +171,6 @@ class asuswrt extends eqLogic {
 			if ($array[3] == 'lladdr') {
 				$mac = trim(strtolower($array[4]));
 				$result[$mac]['status'] = $array[5];
-				$result[$mac]['connexion'] = 'ethernet';
 			}
 		}
 		fclose($stream);
