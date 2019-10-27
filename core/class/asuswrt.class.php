@@ -131,7 +131,7 @@ class asuswrt extends eqLogic {
 			return 'error connecting';
 		}
 		if (!ssh2_auth_password($connection,config::byKey('user', 'asuswrt'),config::byKey('password', 'asuswrt'))){
-			log::add('sshcommander', 'error', 'Authentification SSH KO');
+			log::add('asuswrt', 'error', 'Authentification SSH KO');
 			return 'error connecting';
 		}
 
@@ -184,7 +184,7 @@ class asuswrt extends eqLogic {
 		foreach ($ethernet as $value) {
 			$mac = trim(strtolower($value),'"');
 			$result[$mac]['connexion'] = 'ethernet';
-			log::add('asuswrt', 'debug', 'Ethernet ' . $mac);
+			//log::add('asuswrt', 'debug', 'Ethernet ' . $mac);
 			fclose($stream);
 		}
 		fclose($stream);
@@ -243,7 +243,7 @@ class asuswrt extends eqLogic {
 		stream_get_contents($closesession);
 
 		//REACHABLE, DELAY, STABLE, ARP
-		//log::add('asuswrt', 'debug', 'Scan Asus, result ' . print_r($result, true));
+		log::add('asuswrt', 'debug', 'Scan Asus, result ' . print_r($result, true));
 		return $result;
 	}
 
