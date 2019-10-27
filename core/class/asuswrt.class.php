@@ -79,6 +79,11 @@ class asuswrt extends eqLogic {
 				$eqlogic->checkAndUpdateCmd($logicalid, $value);
 			}
 			$presence = ($asuswrt['status'] == 'UNKNOWN') ? 0 : 1;
+			if (($presence != asuswrtCmd::byEqLogicIdAndLogicalId($eqlogic->getId(),'presence')->execCmd()) && ($eqlogic->getConfiguration('activation') != '')) {
+				$manageEq = eqLogic::byLogicalId($eqlogic->getConfiguration('ip'),$eqlogic->getConfiguration('activation'));
+				$manageEq->setIsEnable($presence);
+				$manageEq->save();
+			}
 			$eqlogic->checkAndUpdateCmd('presence', $presence);
 		}
 
@@ -226,9 +231,9 @@ class asuswrt extends eqLogic {
 		}
 		fclose($stream);
 
-		foreach ($result as $mac => $array ) {
+		foreach ($result as $array ) {
 			if (array_key_exists($array['ip'], $blocked)) {
-				$result[$mac]['internet'] = 0;
+				$result[$array['mac']]['internet'] = 0;
 			}
 		}
 

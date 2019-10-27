@@ -118,6 +118,25 @@ $eqLogics = eqLogic::byType('asuswrt');
               </div>
             </div>
 
+            <div class="form-group">
+              <label class="col-sm-3 control-label">{{Hostname}}</label>
+              <div class="col-sm-8">
+                <span class="eqLogicAttr" data-l1key="configuration" data-l2key="hostname"></span>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="col-sm-3 control-label" >{{Activation Automatique}}</label>
+              <div class="col-sm-3">
+                <select class="form-control eqLogicAttr" data-l1key="configuration" data-l2key="activation">
+                  <option value="">{{Aucune}}</option>
+                  <option value="xiaomihome">{{Xiaomi Home}}</option>
+                  <option value="shelly">{{Shelly}}</option>
+                  <option value="hikvision">{{Hikvision}}</option>
+                </select>
+              </div>
+            </div>
+
           </fieldset>
         </form>
       </div>
