@@ -197,9 +197,20 @@ class asuswrt extends eqLogic {
 			$mac = trim(strtolower($array[0]));
 			$result[$mac]['connexion'] = 'wifi2.4';
 			$wifi[] = $mac;
+			if ($result[$mac]['status'] == 'UNKNOWN') {
+				$result[$mac]['status'] = 'WIFI';
+			}
 			//log::add('asuswrt', 'debug', 'Wifi 2.4 ' . $array[0]);
 		}
 		fclose($stream);
+
+		foreach ($wifi as $value) {
+			$stream = ssh2_exec($connection, 'wl -i eth1 rssi ' . $value);
+			stream_set_blocking($stream, true);
+			$result[$value]['rssi'] = stream_get_contents($stream);
+			fclose($stream);
+		}
+		$wifi = array();
 
 		$stream = ssh2_exec($connection, "wl -i eth2 assoclist | cut -d' ' -f2");
 		stream_set_blocking($stream, true);
@@ -208,6 +219,9 @@ class asuswrt extends eqLogic {
 			$mac = trim(strtolower($array[0]));
 			$result[$mac]['connexion'] = 'wifi5';
 			$wifi[] = $mac;
+			if ($result[$mac]['status'] == 'UNKNOWN') {
+				$result[$mac]['status'] = 'WIFI';
+			}
 			//log::add('asuswrt', 'debug', 'Wifi 5 ' . $array[0]);
 		}
 		fclose($stream);
