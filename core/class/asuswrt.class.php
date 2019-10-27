@@ -226,14 +226,15 @@ class asuswrt extends eqLogic {
 		while($line = fgets($stream)) {
 			$array=explode(" ", $line);
 			$array2 =explode("/", $array[3]);
-			$blocked[] = $array2[0];
-			log::add('asuswrt', 'debug', 'Blocked ' . $array2[0]);
+			$blocked[$array2[0]] = $array2[0];
+			//log::add('asuswrt', 'debug', 'Blocked ' . $array2[0]);
 		}
 		fclose($stream);
 
 		foreach ($result as $array ) {
 			if (array_key_exists($array['ip'], $blocked)) {
 				$result[$array['mac']]['internet'] = 0;
+				log::add('asuswrt', 'debug', 'Blocked ' . $array['ip']);
 			}
 		}
 
