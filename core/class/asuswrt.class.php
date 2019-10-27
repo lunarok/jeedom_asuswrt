@@ -51,6 +51,11 @@ class asuswrt extends eqLogic {
 	}
 
 	public static function cron() {
+		asuswrt::scanDevices();
+		asuswrt::scanRouteur();
+	}
+
+	public static function scanDevices() {
 		$result = asuswrt::scan();
 		foreach ($result as $asuswrt) {
 			if ($asuswrt['mac'] == '' && $asuswrt['ip'] == '' && $asuswrt['hostname'] == '') {
@@ -86,7 +91,9 @@ class asuswrt extends eqLogic {
 			}
 			$eqlogic->checkAndUpdateCmd('presence', $presence);
 		}
+	}
 
+	public static function scanRouteur() {
 		$result = asuswrt::speed();
 		$eqlogic=asuswrt::byLogicalId('router', 'asuswrt');
 		if (!is_object($eqlogic)) {

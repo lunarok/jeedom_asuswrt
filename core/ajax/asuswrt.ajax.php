@@ -48,6 +48,10 @@ try {
     ajax::success($return);
   }
 
+  if (init('action') == 'discover') {
+    ajax::success(asus::scanDevices());
+  }
+
   throw new Exception(__('Aucune methode correspondante à : ', __FILE__) . init('action'));
   /*     * *********Catch exeption*************** */
 } catch (Exception $e) {
