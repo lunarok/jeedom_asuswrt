@@ -119,9 +119,9 @@ $eqLogics = eqLogic::byType('asuswrt');
             </div>
 
             <div class="form-group">
-              <label class="col-sm-3 control-label">{{Hostname}}</label>
+              <label class="col-sm-3 control-label">{{IP}}</label>
               <div class="col-sm-8">
-                <span class="eqLogicAttr" data-l1key="configuration" data-l2key="hostname"></span>
+                <span class="eqLogicAttr" data-l1key="configuration" data-l2key="ip"></span>
               </div>
             </div>
 
