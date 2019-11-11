@@ -156,6 +156,16 @@
         "wifi" : "1.1",
         "type" : "wifi"
   		}
+    },
+    {
+      "name": "Reboot",
+      "type": "action",
+      "subtype": "other",
+      "isVisible": 0,
+      "logicalId": "restart",
+      "configuration" : {
+        "type" : "restart"
+  		}
     }
   ]
 }
