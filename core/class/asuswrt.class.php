@@ -362,6 +362,23 @@ class asuswrt extends eqLogic {
 		stream_set_blocking($closesession, true);
 		stream_get_contents($closesession);
 	}
+	
+	public function restartAsus() {
+		if (!$connection = ssh2_connect(config::byKey('addr', 'asuswrt'),'22')) {
+			log::add('asuswrt', 'error', 'connexion SSH KO');
+			return 'error connecting';
+		}
+		if (!ssh2_auth_password($connection,config::byKey('user', 'asuswrt'),config::byKey('password', 'asuswrt'))){
+			log::add('sshcommander', 'error', 'Authentification SSH KO');
+			return 'error connecting';
+		}
+
+		$stream = ssh2_exec($connection, 'sudo reboot');
+
+		$closesession = ssh2_exec($connection, 'exit');
+		stream_set_blocking($closesession, true);
+		stream_get_contents($closesession);
+	}
 
 }
 
@@ -375,6 +392,9 @@ class asuswrtCmd extends cmd {
 			}
 			if ($this->getConfiguration('type') == 'internet') {
 				$eqLogic->manageInternet($this->getConfiguration('enable'));
+			}
+			if ($this->getConfiguration('type') == 'restart') {
+				$eqLogic->restartAsus();
 			}
 		}
 	}
