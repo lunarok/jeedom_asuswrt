@@ -363,6 +363,25 @@ class asuswrt extends eqLogic {
 		stream_get_contents($closesession);
 	}
 	
+	public function wakeOnLan() {
+		if (!$connection = ssh2_connect(config::byKey('addr', 'asuswrt'),'22')) {
+			log::add('asuswrt', 'error', 'connexion SSH KO');
+			return 'error connecting';
+		}
+		if (!ssh2_auth_password($connection,config::byKey('user', 'asuswrt'),config::byKey('password', 'asuswrt'))){
+			log::add('sshcommander', 'error', 'Authentification SSH KO');
+			return 'error connecting';
+		}
+
+		$mac = $this->getConfiguration('mac');
+		log::add('asuswrt', 'debug', 'Commande : /usr/sbin/ether-wake ' . $mac);
+		$stream = ssh2_exec($connection, '/usr/sbin/ether-wake ' . $mac);
+
+		$closesession = ssh2_exec($connection, 'exit');
+		stream_set_blocking($closesession, true);
+		stream_get_contents($closesession);
+	}
+	
 	public function restartAsus() {
 		if (!$connection = ssh2_connect(config::byKey('addr', 'asuswrt'),'22')) {
 			log::add('asuswrt', 'error', 'connexion SSH KO');
@@ -395,6 +414,9 @@ class asuswrtCmd extends cmd {
 			}
 			if ($this->getConfiguration('type') == 'restart') {
 				$eqLogic->restartAsus();
+			}
+			if ($this->getConfiguration('type') == 'wol') {
+				$eqLogic->wakeOnLan();
 			}
 		}
 	}
