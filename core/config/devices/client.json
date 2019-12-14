@@ -76,6 +76,16 @@
       "configuration" : {
   			"enable" : true,
         "type" : "internet"
+  		},
+    {
+      "name": "Wake On Lan",
+      "type": "action",
+      "subtype": "other",
+      "isVisible": 0,
+      "logicalId": "wol",
+      "configuration" : {
+  			"enable" : true,
+        "type" : "wol"
   		}
     }
   ]
