@@ -84,10 +84,13 @@ class asuswrt extends eqLogic {
 				$eqlogic->checkAndUpdateCmd($logicalid, $value);
 			}
 			$presence = ($asuswrt['status'] == 'UNKNOWN') ? 0 : 1;
-			if (($presence != asuswrtCmd::byEqLogicIdAndLogicalId($eqlogic->getId(),'presence')->execCmd()) && ($eqlogic->getConfiguration('activation') != '')) {
-				$manageEq = eqLogic::byLogicalId($eqlogic->getConfiguration('ip'),$eqlogic->getConfiguration('activation'));
-				$manageEq->setIsEnable($presence);
-				$manageEq->save();
+			$cmd = asuswrtCmd::byEqLogicIdAndLogicalId($eqlogic->getId(),'presence');
+			if (is_object($cmd)) {
+				if (($presence != asuswrtCmd::byEqLogicIdAndLogicalId($eqlogic->getId(),'presence')->execCmd()) && ($eqlogic->getConfiguration('activation') != '')) {
+					$manageEq = eqLogic::byLogicalId($eqlogic->getConfiguration('ip'),$eqlogic->getConfiguration('activation'));
+					$manageEq->setIsEnable($presence);
+					$manageEq->save();
+				}
 			}
 			$eqlogic->checkAndUpdateCmd('presence', $presence);
 		}
@@ -362,7 +365,7 @@ class asuswrt extends eqLogic {
 		stream_set_blocking($closesession, true);
 		stream_get_contents($closesession);
 	}
-	
+
 	public function wakeOnLan() {
 		if (!$connection = ssh2_connect(config::byKey('addr', 'asuswrt'),'22')) {
 			log::add('asuswrt', 'error', 'connexion SSH KO');
@@ -381,7 +384,7 @@ class asuswrt extends eqLogic {
 		stream_set_blocking($closesession, true);
 		stream_get_contents($closesession);
 	}
-	
+
 	public function restartAsus() {
 		if (!$connection = ssh2_connect(config::byKey('addr', 'asuswrt'),'22')) {
 			log::add('asuswrt', 'error', 'connexion SSH KO');
