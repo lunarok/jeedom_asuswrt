@@ -84,14 +84,14 @@ class asuswrt extends eqLogic {
 				$eqlogic->checkAndUpdateCmd($logicalid, $value);
 			}
 			$presence = ($asuswrt['status'] == 'UNKNOWN') ? 0 : 1;
-			$cmd = asuswrtCmd::byEqLogicIdAndLogicalId($eqlogic->getId(),'presence');
+			/*$cmd = asuswrtCmd::byEqLogicIdAndLogicalId($eqlogic->getId(),'presence');
 			if (is_object($cmd)) {
 				if (($presence != asuswrtCmd::byEqLogicIdAndLogicalId($eqlogic->getId(),'presence')->execCmd()) && ($eqlogic->getConfiguration('activation') != '')) {
 					$manageEq = eqLogic::byLogicalId($eqlogic->getConfiguration('ip'),$eqlogic->getConfiguration('activation'));
 					$manageEq->setIsEnable($presence);
 					$manageEq->save();
 				}
-			}
+			}*/
 			$eqlogic->checkAndUpdateCmd('presence', $presence);
 		}
 	}
