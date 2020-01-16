@@ -30,7 +30,7 @@ $eqLogics = eqLogic::byType('asuswrt');
       <div class="cursor eqLogicAction" data-action="gotoPluginConf">
           <i class="fas fa-wrench" style="font-size : 6em;color:#00979c;"></i>
           <br/>
-        <span style="color:#00979c">{{Configuration}}></span>
+        <span style="color:#00979c">{{Configuration}}</span>
       </div>
 
     <input class="form-control" placeholder="{{Rechercher}}" id="in_searchEqlogic" />
