@@ -165,7 +165,75 @@
       "logicalId": "restart",
       "configuration" : {
         "type" : "restart"
-  		}
+  		},
+    {
+      "name": "WAN 0 Etat",
+      "type": "info",
+      "subtype": "string",
+      "isVisible": 1,
+      "logicalId": "wan0_state"
+    },
+    {
+      "name": "WAN 0 IP",
+      "type": "info",
+      "subtype": "string",
+      "isVisible": 1,
+      "logicalId": "wan0_ipaddr"
+    },
+    {
+      "name": "WAN 0 Ethernet",
+      "type": "info",
+      "subtype": "string",
+      "logicalId": "wan0_ifname"
+    },
+    {
+      "name": "WAN 1 Etat",
+      "type": "info",
+      "subtype": "string",
+      "logicalId": "wan1_state"
+    },
+    {
+      "name": "WAN 1 IP",
+      "type": "info",
+      "subtype": "string",
+      "logicalId": "wan1_ipaddr"
+    },
+    {
+      "name": "WAN 1 Ethernet",
+      "type": "info",
+      "subtype": "string",
+      "logicalId": "wan1_ifname"
+    },
+    {
+      "name": "VPN Client 1",
+      "type": "info",
+      "subtype": "string",
+      "logicalId": "vpn_client1_state"
+    },
+    {
+      "name": "VPN Client 2",
+      "type": "info",
+      "subtype": "string",
+      "logicalId": "vpn_client2_state"
+    },
+    {
+      "name": "VPN Client 3",
+      "type": "info",
+      "subtype": "string",
+      "logicalId": "vpn_client3_state"
+    },
+    {
+      "name": "VPN Client 4",
+      "type": "info",
+      "subtype": "string",
+      "logicalId": "vpn_client4_state"
+    },
+    {
+      "name": "VPN Client 5",
+      "type": "info",
+      "subtype": "string",
+      "logicalId": "vpn_client5_state"
+    }
     }
   ]
 }
