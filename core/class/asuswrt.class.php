@@ -297,7 +297,7 @@ class asuswrt extends eqLogic {
 		$result['wifi24'] = stream_get_contents($stream);
 		fclose($stream);
 
-		$stream = ssh2_exec($connection, 'nvram get wl1.1_radio');
+		$stream = ssh2_exec($connection, 'nvram get wl1_radio');
 		stream_set_blocking($stream, true);
 		$result['wifi5'] = stream_get_contents($stream);
 		fclose($stream);
