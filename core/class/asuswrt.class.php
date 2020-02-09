@@ -311,6 +311,71 @@ class asuswrt extends eqLogic {
 		stream_set_blocking($stream, true);
 		$result['guest5'] = stream_get_contents($stream);
 		fclose($stream);
+		
+		$stream = ssh2_exec($connection, 'nvram get wan0_state_t');
+		stream_set_blocking($stream, true);
+		$result['wan0_state'] = stream_get_contents($stream);
+		fclose($stream);
+		
+		/*0) WAN0_STATE_DESC="Stopped" ;;
+		    1) WAN0_STATE_DESC="Connecting..." ;;
+		    2) WAN0_STATE_DESC="Connected" ;;
+		    *) WAN0_STATE_DESC="Unknown State" ;;*/
+		
+		$stream = ssh2_exec($connection, 'nvram get wan0_ipaddr');
+		stream_set_blocking($stream, true);
+		$result['wan0_ipaddr'] = stream_get_contents($stream);
+		fclose($stream);
+		
+		$stream = ssh2_exec($connection, 'nvram get wan0_ifname');
+		stream_set_blocking($stream, true);
+		$result['wan0_ifname'] = stream_get_contents($stream);
+		fclose($stream);
+		
+		$stream = ssh2_exec($connection, 'nvram get wan1_state_t');
+		stream_set_blocking($stream, true);
+		$result['wan1_state'] = stream_get_contents($stream);
+		fclose($stream);
+		
+		$stream = ssh2_exec($connection, 'nvram get wan1_ipaddr');
+		stream_set_blocking($stream, true);
+		$result['wan1_ipaddr'] = stream_get_contents($stream);
+		fclose($stream);
+		
+		$stream = ssh2_exec($connection, 'nvram get wan1_ifname');
+		stream_set_blocking($stream, true);
+		$result['wan1_ifname'] = stream_get_contents($stream);
+		fclose($stream);
+		
+		$stream = ssh2_exec($connection, 'nvram get vpn_client1_state');
+		stream_set_blocking($stream, true);
+		$result['vpn_client1_state'] = stream_get_contents($stream);
+		fclose($stream);
+		
+		/*0) OVPNC5_STATE_DESC="Stopped" ;;
+		    1) OVPNC5_STATE_DESC="Connecting..." ;;
+		    2) OVPNC5_STATE_DESC="Connected" ;;
+		    *) OVPNC5_STATE_DESC="Unknown State" ;;*/
+		
+		$stream = ssh2_exec($connection, 'nvram get vpn_client2_state');
+		stream_set_blocking($stream, true);
+		$result['vpn_client2_state'] = stream_get_contents($stream);
+		fclose($stream);
+		
+		$stream = ssh2_exec($connection, 'nvram get vpn_client3_state');
+		stream_set_blocking($stream, true);
+		$result['vpn_client3_state'] = stream_get_contents($stream);
+		fclose($stream);
+		
+		$stream = ssh2_exec($connection, 'nvram get vpn_client4_state');
+		stream_set_blocking($stream, true);
+		$result['vpn_client4_state'] = stream_get_contents($stream);
+		fclose($stream);
+		
+		$stream = ssh2_exec($connection, 'nvram get vpn_client5_state');
+		stream_set_blocking($stream, true);
+		$result['vpn_client5_state'] = stream_get_contents($stream);
+		fclose($stream);
 
 		$closesession = ssh2_exec($connection, 'exit');
 		stream_set_blocking($closesession, true);
@@ -319,6 +384,14 @@ class asuswrt extends eqLogic {
 		log::add('asuswrt', 'debug', 'Speed Asus, result ' . json_encode($result));
 		return $result;
 	}
+	
+	/*# robocfg showports | tail -n +2
+	Port 0:   DOWN enabled stp: none vlan: 1 jumbo: off mac: 00:00:00:00:00:00
+	Port 1:   DOWN enabled stp: none vlan: 1 jumbo: off mac: 00:00:00:00:00:00
+	Port 2:   DOWN enabled stp: none vlan: 1 jumbo: off mac: 00:00:00:00:00:00
+	Port 3:   DOWN enabled stp: none vlan: 1 jumbo: off mac: 00:00:00:00:00:00
+	Port 4: 1000FD enabled stp: none vlan: 2 jumbo: off mac: 34:27:92:42:d7:03*/
+
 
 	public function manageWifi($_enable = true, $_wifi = '0') {
 		if (!$connection = ssh2_connect(config::byKey('addr', 'asuswrt'),'22')) {
