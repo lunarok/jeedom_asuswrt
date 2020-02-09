@@ -112,17 +112,39 @@ class asuswrt extends eqLogic {
 		$cmd = cmd::byEqLogicIdAndLogicalId($eqlogic->getId(),'txtotal');
 		$past = $cmd->execCmd();
 		$speed = round(($result['txtotal'] - $past)/60000000,2);
-		$eqlogic->checkAndUpdateCmd('txtotal', $result['txtotal']);
 		$eqlogic->checkAndUpdateCmd('txspeed', $speed);
 		$cmd = cmd::byEqLogicIdAndLogicalId($eqlogic->getId(),'rxtotal');
 		$past = $cmd->execCmd();
 		$speed = round(($result['rxtotal'] - $past)/60000000,2);
-		$eqlogic->checkAndUpdateCmd('rxtotal', $result['txtotal']);
 		$eqlogic->checkAndUpdateCmd('rxspeed', $speed);
-		$eqlogic->checkAndUpdateCmd('wifi24', $result['wifi24']);
-		$eqlogic->checkAndUpdateCmd('wifi5', $result['wifi5']);
-		$eqlogic->checkAndUpdateCmd('guest24', $result['guest24']);
-		$eqlogic->checkAndUpdateCmd('guest5', $result['guest5']);
+		foreach ($result as $logicalid => $value) {
+			if ($logicalid == "ethernet") {
+				$cmdlogic = asuswrtCmd::byEqLogicIdAndLogicalId($eqlogic->getId(),'ethernet' . $logicalid . 'link');
+				      if (!is_object($cmdlogic)) {
+					$cmdlogic = new vigilancemeteoCmd();
+					$cmdlogic->setName('Ethernet ' . $logicalid . ' Lien');
+					$cmdlogic->setEqLogic_id($eqlogic->getId());
+					$cmdlogic->setLogicalId('ethernet' . $logicalid . 'link');
+					$cmdlogic->setType('info');
+					$cmdlogic->setSubType('string');
+					$cmdlogic->save();
+				      }
+				$eqlogic->checkAndUpdateCmd('ethernet' . $logicalid . 'link', $result['ethernet'][$logicalid]['speed']);
+				$cmdlogic = asuswrtCmd::byEqLogicIdAndLogicalId($eqlogic->getId(),'ethernet' . $logicalid . 'mac');
+				      if (!is_object($cmdlogic)) {
+					$cmdlogic = new vigilancemeteoCmd();
+					$cmdlogic->setName('Ethernet ' . $logicalid . ' MAC');
+					$cmdlogic->setEqLogic_id($eqlogic->getId());
+					$cmdlogic->setLogicalId('ethernet' . $logicalid . 'mac');
+					$cmdlogic->setType('info');
+					$cmdlogic->setSubType('string');
+					$cmdlogic->save();
+				      }
+				  $eqlogic->checkAndUpdateCmd('ethernet' . $logicalid . 'link', $result['ethernet'][$logicalid]['mac']);
+			} else {
+				$eqlogic->checkAndUpdateCmd($logicalid, $value);
+			}
+		}
 	}
 
 	public static function scan() {
