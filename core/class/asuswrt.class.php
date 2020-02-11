@@ -398,11 +398,12 @@ class asuswrt extends eqLogic {
 	Port 2:   DOWN enabled stp: none vlan: 1 jumbo: off mac: 00:00:00:00:00:00
 	Port 3:   DOWN enabled stp: none vlan: 1 jumbo: off mac: 00:00:00:00:00:00
 	Port 4: 1000FD enabled stp: none vlan: 2 jumbo: off mac: 34:27:92:42:d7:03*/
-			$array=explode(" ", $line);
-			$mac = trim(strtolower($array[11]));
-			$indice = str_replace(':','',$array[1]);
+			$array=explode(": ", $line);
+			$mac = trim(strtolower($array[5]));
+			$indice = str_replace('Port ','',$array[0]);
+			$array2=explode(" ", trim($array[1]));
 			$result['ethernet'][$indice]['mac'] = $mac;
-			$result['ethernet'][$indice]['link'] = $array[2];
+			$result['ethernet'][$indice]['link'] = $array2[0];
 		}
 		fclose($stream);
 
@@ -414,15 +415,15 @@ class asuswrt extends eqLogic {
 		return $result;
 	}
 	
-	public function vpnStatus($_value = 0) {
+	public function vpnStatus($_value = '0') {
 		switch (stream_get_contents($_value)) {
-		    case 0:
+		    case '0':
 			$result = "Stopped";
 			break;
-		    case 1:
+		    case '1':
 			$result = "Connecting";
 			break;
-		case 2:
+		case '2':
 			$result = "Connected";
 			break;
 		default:
