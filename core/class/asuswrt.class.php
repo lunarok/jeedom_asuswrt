@@ -1,4 +1,4 @@
-<?php
+  <?php
 
 /* This file is part of Jeedom.
 *
@@ -98,7 +98,6 @@ class asuswrt extends eqLogic {
 
 	public static function scanRouteur() {
 		$result = asuswrt::speed();
-		$ethernet = asuswrt::ethernet();
 		$eqlogic=asuswrt::byLogicalId('router', 'asuswrt');
 		if (!is_object($eqlogic)) {
 			$eqlogic = new asuswrt();
@@ -119,69 +118,35 @@ class asuswrt extends eqLogic {
 		$speed = round(($result['rxtotal'] - $past)/60000000,2);
 		$eqlogic->checkAndUpdateCmd('rxspeed', $speed);
 		foreach ($result as $logicalid => $value) {
-			$eqlogic->checkAndUpdateCmd($logicalid, $value);
+			if ($logicalid == "ethernet") {
+				foreach ($value as $id => $values) {
+					$cmdlogic = asuswrtCmd::byEqLogicIdAndLogicalId($eqlogic->getId(),'ethernet' . $id . 'link');
+					      if (!is_object($cmdlogic)) {
+						$cmdlogic = new vigilancemeteoCmd();
+						$cmdlogic->setName('Ethernet ' . $id . ' Lien');
+						$cmdlogic->setEqLogic_id($eqlogic->getId());
+						$cmdlogic->setLogicalId('ethernet' . $id . 'link');
+						$cmdlogic->setType('info');
+						$cmdlogic->setSubType('string');
+						$cmdlogic->save();
+					      }
+					$eqlogic->checkAndUpdateCmd('ethernet' . $id . 'link', $result['ethernet'][$id]['speed']);
+					$cmdlogic = asuswrtCmd::byEqLogicIdAndLogicalId($eqlogic->getId(),'ethernet' . $id . 'mac');
+					      if (!is_object($cmdlogic)) {
+						$cmdlogic = new vigilancemeteoCmd();
+						$cmdlogic->setName('Ethernet ' . $id . ' MAC');
+						$cmdlogic->setEqLogic_id($eqlogic->getId());
+						$cmdlogic->setLogicalId('ethernet' . $id . 'mac');
+						$cmdlogic->setType('info');
+						$cmdlogic->setSubType('string');
+						$cmdlogic->save();
+					      }
+					  $eqlogic->checkAndUpdateCmd('ethernet' . $id . 'link', $result['ethernet'][$id]['mac']);
+				}
+			} else {
+				$eqlogic->checkAndUpdateCmd($logicalid, $value);
+			}
 		}
-		foreach ($ethernet as $id => $values) {
-			$cmdlogic = asuswrtCmd::byEqLogicIdAndLogicalId($eqlogic->getId(),'ethernet' . $id . 'link');
-			      if (!is_object($cmdlogic)) {
-				$cmdlogic = new vigilancemeteoCmd();
-				$cmdlogic->setName('Ethernet ' . $id . ' Lien');
-				$cmdlogic->setEqLogic_id($eqlogic->getId());
-				$cmdlogic->setLogicalId('ethernet' . $id . 'link');
-				$cmdlogic->setType('info');
-				$cmdlogic->setSubType('string');
-				$cmdlogic->save();
-			      }
-			$eqlogic->checkAndUpdateCmd('ethernet' . $logicalid . 'link', $values['speed']);
-			$cmdlogic = asuswrtCmd::byEqLogicIdAndLogicalId($eqlogic->getId(),'ethernet' . $id . 'mac');
-			      if (!is_object($cmdlogic)) {
-				$cmdlogic = new vigilancemeteoCmd();
-				$cmdlogic->setName('Ethernet ' . $id . ' MAC');
-				$cmdlogic->setEqLogic_id($eqlogic->getId());
-				$cmdlogic->setLogicalId('ethernet' . $id . 'mac');
-				$cmdlogic->setType('info');
-				$cmdlogic->setSubType('string');
-				$cmdlogic->save();
-			      }
-			  $eqlogic->checkAndUpdateCmd('ethernet' . $logicalid . 'link', $values['mac']);
-		}
-	}
-	
-	public static function ethernet() {
-		if (!$connection = ssh2_connect(config::byKey('addr', 'asuswrt'),'22')) {
-			log::add('asuswrt', 'error', 'connexion SSH KO');
-			return 'error connecting';
-		}
-		if (!ssh2_auth_password($connection,config::byKey('user', 'asuswrt'),config::byKey('password', 'asuswrt'))){
-			log::add('asuswrt', 'error', 'Authentification SSH KO');
-			return 'error connecting';
-		}
-		
-		$result = array();
-		$stream = ssh2_exec($connection, 'robocfg showports | tail -n +2');
-		stream_set_blocking($stream, true);
-		while($line = fgets($stream)) {
-			/*# robocfg showports | tail -n +2
-	Port 0:   DOWN enabled stp: none vlan: 1 jumbo: off mac: 00:00:00:00:00:00
-	Port 1:   DOWN enabled stp: none vlan: 1 jumbo: off mac: 00:00:00:00:00:00
-	Port 2:   DOWN enabled stp: none vlan: 1 jumbo: off mac: 00:00:00:00:00:00
-	Port 3:   DOWN enabled stp: none vlan: 1 jumbo: off mac: 00:00:00:00:00:00
-	Port 4: 1000FD enabled stp: none vlan: 2 jumbo: off mac: 34:27:92:42:d7:03*/
-			$array=explode(": ", $line);
-			$mac = trim(strtolower($array[5]));
-			$indice = str_replace('Port ','',$array[0]);
-			$array2=explode(" ", trim($array[1]));
-			$result[$indice]['mac'] = $mac;
-			$result[$indice]['link'] = $array2[0];
-		}
-		fclose($stream);
-
-		$closesession = ssh2_exec($connection, 'exit');
-		stream_set_blocking($closesession, true);
-		stream_get_contents($closesession);
-		
-		return $result;
-		
 	}
 
 	public static function scan() {
@@ -426,6 +391,24 @@ class asuswrt extends eqLogic {
 		$result['vpn_client5_state'] = asuswrt::vpnStatus(stream_get_contents($stream));
 		fclose($stream);
 		
+		$stream = ssh2_exec($connection, 'robocfg showports | tail -n +2');
+		stream_set_blocking($stream, true);
+		while($line = fgets($stream)) {
+			/*# robocfg showports | tail -n +2
+	Port 0:   DOWN enabled stp: none vlan: 1 jumbo: off mac: 00:00:00:00:00:00
+	Port 1:   DOWN enabled stp: none vlan: 1 jumbo: off mac: 00:00:00:00:00:00
+	Port 2:   DOWN enabled stp: none vlan: 1 jumbo: off mac: 00:00:00:00:00:00
+	Port 3:   DOWN enabled stp: none vlan: 1 jumbo: off mac: 00:00:00:00:00:00
+	Port 4: 1000FD enabled stp: none vlan: 2 jumbo: off mac: 34:27:92:42:d7:03*/
+			$array=explode(": ", $line);
+			$mac = trim(strtolower($array[5]));
+			$indice = str_replace('Port ','',$array[0]);
+			$array2=explode(" ", trim($array[1]));
+			$result['ethernet'][$indice]['mac'] = $mac;
+			$result['ethernet'][$indice]['link'] = $array2[0];
+		}
+		fclose($stream);
+
 		$closesession = ssh2_exec($connection, 'exit');
 		stream_set_blocking($closesession, true);
 		stream_get_contents($closesession);
@@ -434,23 +417,24 @@ class asuswrt extends eqLogic {
 		return $result;
 	}
 	
-	public function vpnStatus($_value = '0') {
-		switch (stream_get_contents($_value)) {
-		    case '0':
-			$result = "Stopped";
-			break;
-		    case '1':
-			$result = "Connecting";
-			break;
-		case '2':
-			$result = "Connected";
-			break;
-		default:
-			$result = "Unknow";
-			break;	
-		}
-		return $result;
-	}
+  public function vpnStatus($_value = 0) {
+  		$_value = intval($_value);
+  		switch (stream_get_contents($_value)) {
+  		    case 0:
+  			$result = "Stopped";
+  			break;
+  		    case 1:
+  			$result = "Connecting";
+  			break;
+  		case 2:
+  			$result = "Connected";
+  			break;
+  		default:
+  			$result = "Unknow";
+  			break;	
+  		}
+  		return $result;
+  	}
 
 	public function manageWifi($_enable = true, $_wifi = '0') {
 		if (!$connection = ssh2_connect(config::byKey('addr', 'asuswrt'),'22')) {
