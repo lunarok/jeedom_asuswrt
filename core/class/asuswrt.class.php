@@ -119,28 +119,30 @@ class asuswrt extends eqLogic {
 		$eqlogic->checkAndUpdateCmd('rxspeed', $speed);
 		foreach ($result as $logicalid => $value) {
 			if ($logicalid == "ethernet") {
-				$cmdlogic = asuswrtCmd::byEqLogicIdAndLogicalId($eqlogic->getId(),'ethernet' . $logicalid . 'link');
-				      if (!is_object($cmdlogic)) {
-					$cmdlogic = new vigilancemeteoCmd();
-					$cmdlogic->setName('Ethernet ' . $logicalid . ' Lien');
-					$cmdlogic->setEqLogic_id($eqlogic->getId());
-					$cmdlogic->setLogicalId('ethernet' . $logicalid . 'link');
-					$cmdlogic->setType('info');
-					$cmdlogic->setSubType('string');
-					$cmdlogic->save();
-				      }
-				$eqlogic->checkAndUpdateCmd('ethernet' . $logicalid . 'link', $result['ethernet'][$logicalid]['speed']);
-				$cmdlogic = asuswrtCmd::byEqLogicIdAndLogicalId($eqlogic->getId(),'ethernet' . $logicalid . 'mac');
-				      if (!is_object($cmdlogic)) {
-					$cmdlogic = new vigilancemeteoCmd();
-					$cmdlogic->setName('Ethernet ' . $logicalid . ' MAC');
-					$cmdlogic->setEqLogic_id($eqlogic->getId());
-					$cmdlogic->setLogicalId('ethernet' . $logicalid . 'mac');
-					$cmdlogic->setType('info');
-					$cmdlogic->setSubType('string');
-					$cmdlogic->save();
-				      }
-				  $eqlogic->checkAndUpdateCmd('ethernet' . $logicalid . 'link', $result['ethernet'][$logicalid]['mac']);
+				foreach ($value as $id => $values) {
+					$cmdlogic = asuswrtCmd::byEqLogicIdAndLogicalId($eqlogic->getId(),'ethernet' . $id . 'link');
+					      if (!is_object($cmdlogic)) {
+						$cmdlogic = new vigilancemeteoCmd();
+						$cmdlogic->setName('Ethernet ' . $id . ' Lien');
+						$cmdlogic->setEqLogic_id($eqlogic->getId());
+						$cmdlogic->setLogicalId('ethernet' . $id . 'link');
+						$cmdlogic->setType('info');
+						$cmdlogic->setSubType('string');
+						$cmdlogic->save();
+					      }
+					$eqlogic->checkAndUpdateCmd('ethernet' . $logicalid . 'link', $result['ethernet'][$id]['speed']);
+					$cmdlogic = asuswrtCmd::byEqLogicIdAndLogicalId($eqlogic->getId(),'ethernet' . $id . 'mac');
+					      if (!is_object($cmdlogic)) {
+						$cmdlogic = new vigilancemeteoCmd();
+						$cmdlogic->setName('Ethernet ' . $id . ' MAC');
+						$cmdlogic->setEqLogic_id($eqlogic->getId());
+						$cmdlogic->setLogicalId('ethernet' . $id . 'mac');
+						$cmdlogic->setType('info');
+						$cmdlogic->setSubType('string');
+						$cmdlogic->save();
+					      }
+					  $eqlogic->checkAndUpdateCmd('ethernet' . $logicalid . 'link', $result['ethernet'][$id]['mac']);
+				}
 			} else {
 				$eqlogic->checkAndUpdateCmd($logicalid, $value);
 			}
