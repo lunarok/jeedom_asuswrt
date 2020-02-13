@@ -338,9 +338,7 @@ class asuswrt extends eqLogic {
 		
 		$stream = ssh2_exec($connection, 'nvram get wan0_state_t');
 		stream_set_blocking($stream, true);
-		$variable = stream_get_contents($stream);
-		log::add('asuswrt', 'debug', 'Check ' . $variable);
-		$result['wan0_state'] = asuswrt::vpnStatus($variable);
+		$result['wan0_state'] = asuswrt::vpnStatus(stream_get_contents($stream));
 		fclose($stream);
 		
 		$stream = ssh2_exec($connection, 'nvram get wan0_ipaddr');
@@ -419,9 +417,8 @@ class asuswrt extends eqLogic {
 		return $result;
 	}
 	
-  public function vpnStatus($_value = 0) {
-  		$_value = intval($_value);
-  		switch (stream_get_contents($_value)) {
+  public function vpnStatus($_value) {
+  		switch (intval($_value)) {
   		    case 0:
   			$result = "Stopped";
   			break;
@@ -435,6 +432,7 @@ class asuswrt extends eqLogic {
   			$result = "Unknow";
   			break;	
   		}
+	  
   		return $result;
   	}
 
