@@ -338,7 +338,9 @@ class asuswrt extends eqLogic {
 		
 		$stream = ssh2_exec($connection, 'nvram get wan0_state_t');
 		stream_set_blocking($stream, true);
-		$result['wan0_state'] = asuswrt::vpnStatus(stream_get_contents($stream));
+		$variable = asuswrt::vpnStatus(stream_get_contents($stream));
+		log::add('asuswrt', 'debug', 'Check ' . $variable);
+		$result['wan0_state'] = $variable;
 		fclose($stream);
 		
 		$stream = ssh2_exec($connection, 'nvram get wan0_ipaddr');
