@@ -165,7 +165,8 @@
       "logicalId": "restart",
       "configuration" : {
         "type" : "restart"
-  		},
+  		}
+    },
     {
       "name": "WAN 0 Etat",
       "type": "info",
@@ -233,7 +234,6 @@
       "type": "info",
       "subtype": "string",
       "logicalId": "vpn_client5_state"
-    }
     }
   ]
 }
