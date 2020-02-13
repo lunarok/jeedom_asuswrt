@@ -76,7 +76,7 @@
       "configuration" : {
   			"enable" : true,
         "type" : "internet"
-  		},
+  		}
     },
     {
       "name": "Wake On Lan",
