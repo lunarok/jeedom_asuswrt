@@ -122,7 +122,7 @@ class asuswrt extends eqLogic {
 				foreach ($value as $id => $values) {
 					$cmdlogic = asuswrtCmd::byEqLogicIdAndLogicalId($eqlogic->getId(),'ethernet' . $id . 'link');
 					      if (!is_object($cmdlogic)) {
-						$cmdlogic = new vigilancemeteoCmd();
+						$cmdlogic = new asuswrtCmd();
 						$cmdlogic->setName('Ethernet ' . $id . ' Lien');
 						$cmdlogic->setEqLogic_id($eqlogic->getId());
 						$cmdlogic->setLogicalId('ethernet' . $id . 'link');
@@ -133,7 +133,7 @@ class asuswrt extends eqLogic {
 					$eqlogic->checkAndUpdateCmd('ethernet' . $id . 'link', $result['ethernet'][$id]['link']);
 					$cmdlogic = asuswrtCmd::byEqLogicIdAndLogicalId($eqlogic->getId(),'ethernet' . $id . 'mac');
 					      if (!is_object($cmdlogic)) {
-						$cmdlogic = new vigilancemeteoCmd();
+						$cmdlogic = new asuswrtCmd();
 						$cmdlogic->setName('Ethernet ' . $id . ' MAC');
 						$cmdlogic->setEqLogic_id($eqlogic->getId());
 						$cmdlogic->setLogicalId('ethernet' . $id . 'mac');
