@@ -190,8 +190,19 @@ class asuswrt extends eqLogic {
 		while($line = fgets($stream)) {
 			//? (192.168.0.23) at 64:db:8b:7c:b8:2b [ether]  on br0
 			//? (192.168.0.67) at 04:cf:8c:9c:51:e4 [ether]  on br0
-			$array=explode(" ", $line);
-			$mac = trim(strtolower($array[3]));
+			$array=explode(" (", $line);
+			$hostname = trim(strtolower($array[0]));
+			$array2=explode(") at ", $array[1]);
+			$ip = trim(strtolower($array2[0]));
+			$array3=explode(" ", $array[2]);
+			$mac = trim(strtolower($array3[0]));
+			if (!array_key_exists($mac,$result) {
+				$result[$mac]['mac'] = $mac;
+				$result[$mac]['ip'] = $ip;
+				$result[$mac]['hostname'] = $hostname;
+				$result[$mac]['rssi'] = 0;
+				$result[$mac]['internet'] = 1
+			}
 			$result[$mac]['status'] = 'ARP';
 		}
 		fclose($stream);
@@ -204,6 +215,13 @@ class asuswrt extends eqLogic {
 			$array=explode(" ", $line);
 			if ($array[3] == 'lladdr') {
 				$mac = trim(strtolower($array[4]));
+				if (!array_key_exists($mac,$result) {
+					$result[$mac]['mac'] = $mac;
+					$result[$mac]['ip'] = $array[0];
+					$result[$mac]['hostname'] = "?";
+					$result[$mac]['rssi'] = 0;
+					$result[$mac]['internet'] = 1
+				}
 				$result[$mac]['status'] = $array[5];
 			}
 		}
