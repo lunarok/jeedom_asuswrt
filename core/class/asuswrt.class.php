@@ -182,6 +182,7 @@ class asuswrt extends eqLogic {
 			$result[$mac]['rssi'] = 0;
 			$result[$mac]['status'] = 'UNKNOWN';
 			$result[$mac]['internet'] = 1;
+			$result[$mac]['connexion'] = 'ethernet';
 		}
 		fclose($stream);
 
@@ -196,12 +197,13 @@ class asuswrt extends eqLogic {
 			$ip = trim(strtolower($array2[0]));
 			$array3=explode(" ", $array[2]);
 			$mac = trim(strtolower($array3[0]));
-			if (!array_key_exists($mac,$result) {
+			if (!array_key_exists($mac,$result)) {
 				$result[$mac]['mac'] = $mac;
 				$result[$mac]['ip'] = $ip;
 				$result[$mac]['hostname'] = $hostname;
 				$result[$mac]['rssi'] = 0;
-				$result[$mac]['internet'] = 1
+				$result[$mac]['internet'] = 1;
+				$result[$mac]['connexion'] = 'ethernet';
 			}
 			$result[$mac]['status'] = 'ARP';
 		}
@@ -215,19 +217,20 @@ class asuswrt extends eqLogic {
 			$array=explode(" ", $line);
 			if ($array[3] == 'lladdr') {
 				$mac = trim(strtolower($array[4]));
-				if (!array_key_exists($mac,$result) {
+				if (!array_key_exists($mac,$result)) {
 					$result[$mac]['mac'] = $mac;
 					$result[$mac]['ip'] = $array[0];
 					$result[$mac]['hostname'] = "?";
 					$result[$mac]['rssi'] = 0;
-					$result[$mac]['internet'] = 1
+					$result[$mac]['internet'] = 1;
+					$result[$mac]['connexion'] = 'ethernet';
 				}
 				$result[$mac]['status'] = $array[5];
 			}
 		}
 		fclose($stream);
 
-		$stream = ssh2_exec($connection, 'cat /tmp/wiredclientlist.json');
+		/*$stream = ssh2_exec($connection, 'cat /tmp/wiredclientlist.json');
 		stream_set_blocking($stream, true);
 		$ethernet = explode("[",stream_get_contents($stream));
 		$ethernet = explode("]", $ethernet[1]);
@@ -237,7 +240,7 @@ class asuswrt extends eqLogic {
 			$result[$mac]['connexion'] = 'ethernet';
 			//log::add('asuswrt', 'debug', 'Ethernet ' . $mac);
 		}
-		fclose($stream);
+		fclose($stream);*/
 				    
 		$stream = ssh2_exec($connection, "nvram get wl_ifnames");
 		stream_set_blocking($stream, true);
@@ -281,7 +284,7 @@ class asuswrt extends eqLogic {
 			}
 			$result[$mac]['connexion'] = 'wifi5';
 			$wifi[] = $mac;
-			if (($result[$mac]['status'] == 'UNKNOWN') {
+			if ($result[$mac]['status'] == 'UNKNOWN') {
 				$result[$mac]['status'] = 'WIFI';
 			}
 			//log::add('asuswrt', 'debug', 'Wifi 5 ' . $array[0]);
@@ -307,7 +310,7 @@ class asuswrt extends eqLogic {
 		fclose($stream);
 
 		foreach ($result as $array ) {
-			if (array_key_exists('ip',$array) {
+			if (array_key_exists('ip',$array)) {
 				if (array_key_exists($array['ip'], $blocked)) {
 					$result[$array['mac']]['internet'] = 0;
 					log::add('asuswrt', 'debug', 'Blocked ' . $array['ip']);
