@@ -218,7 +218,6 @@ class asuswrt extends eqLogic {
 			$mac = trim(strtolower($value),'"');
 			$result[$mac]['connexion'] = 'ethernet';
 			//log::add('asuswrt', 'debug', 'Ethernet ' . $mac);
-			fclose($stream);
 		}
 		fclose($stream);
 
@@ -251,9 +250,12 @@ class asuswrt extends eqLogic {
 		while($line = fgets($stream)) {
 			$array=explode(" ", $line);
 			$mac = trim(strtolower($array[0]));
+			if ($mac == '') {
+				continue;
+			}
 			$result[$mac]['connexion'] = 'wifi5';
 			$wifi[] = $mac;
-			if ($result[$mac]['status'] == 'UNKNOWN') {
+			if (($result[$mac]['status'] == 'UNKNOWN') {
 				$result[$mac]['status'] = 'WIFI';
 			}
 			//log::add('asuswrt', 'debug', 'Wifi 5 ' . $array[0]);
@@ -279,9 +281,11 @@ class asuswrt extends eqLogic {
 		fclose($stream);
 
 		foreach ($result as $array ) {
-			if (array_key_exists($array['ip'], $blocked)) {
-				$result[$array['mac']]['internet'] = 0;
-				log::add('asuswrt', 'debug', 'Blocked ' . $array['ip']);
+			if (array_key_exists('ip',$array) {
+				if (array_key_exists($array['ip'], $blocked)) {
+					$result[$array['mac']]['internet'] = 0;
+					log::add('asuswrt', 'debug', 'Blocked ' . $array['ip']);
+				}
 			}
 		}
 
