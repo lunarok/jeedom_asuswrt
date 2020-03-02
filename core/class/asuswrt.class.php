@@ -185,7 +185,7 @@ class asuswrt extends eqLogic {
 		}
 		fclose($stream);
 
-		$stream = ssh2_exec($connection, 'arp -n');
+		$stream = ssh2_exec($connection, 'arp -v');
 		stream_set_blocking($stream, true);
 		while($line = fgets($stream)) {
 			//? (192.168.0.23) at 64:db:8b:7c:b8:2b [ether]  on br0
@@ -238,8 +238,16 @@ class asuswrt extends eqLogic {
 			//log::add('asuswrt', 'debug', 'Ethernet ' . $mac);
 		}
 		fclose($stream);
+				    
+		$stream = ssh2_exec($connection, "nvram get wl_ifnames");
+		stream_set_blocking($stream, true);
+		$wls = stream_get_contents($stream);
+		$array=explode(" ", $line);
+		$wl0 = $array[0];
+		$wl1 = $array[1];
+		fclose($stream);
 
-		$stream = ssh2_exec($connection, "wl -i eth1 assoclist | cut -d' ' -f2");
+		$stream = ssh2_exec($connection, "wl -i " . $wl0 . " assoclist | cut -d' ' -f2");
 		stream_set_blocking($stream, true);
 		while($line = fgets($stream)) {
 			//assoclist 1C:F2:9A:34:4D:37
@@ -256,14 +264,14 @@ class asuswrt extends eqLogic {
 		fclose($stream);
 
 		foreach ($wifi as $value) {
-			$stream = ssh2_exec($connection, 'wl -i eth1 rssi ' . $value);
+			$stream = ssh2_exec($connection, 'wl -i " . $wl0 . " rssi ' . $value);
 			stream_set_blocking($stream, true);
 			$result[$value]['rssi'] = stream_get_contents($stream);
 			fclose($stream);
 		}
 		$wifi = array();
 
-		$stream = ssh2_exec($connection, "wl -i eth2 assoclist | cut -d' ' -f2");
+		$stream = ssh2_exec($connection, "wl -i " . $wl1 . " assoclist | cut -d' ' -f2");
 		stream_set_blocking($stream, true);
 		while($line = fgets($stream)) {
 			$array=explode(" ", $line);
@@ -281,7 +289,7 @@ class asuswrt extends eqLogic {
 		fclose($stream);
 
 		foreach ($wifi as $value) {
-			$stream = ssh2_exec($connection, 'wl -i eth2 rssi ' . $value);
+			$stream = ssh2_exec($connection, 'wl -i " . $wl1 . " rssi ' . $value);
 			stream_set_blocking($stream, true);
 			$result[$value]['rssi'] = stream_get_contents($stream);
 			fclose($stream);
