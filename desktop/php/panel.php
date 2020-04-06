@@ -41,21 +41,27 @@ $eqLogics = asuswrt::byType('asuswrt');
       if ($eqLogic->getLogicalId('id') == 'router') {
         continue;
       }
-      $hostname = $eqLogic->getCmd(null, 'hostname');
-      $ip = $eqLogic->getCmd(null, 'ip');
-      $mac = $eqLogic->getCmd(null, 'mac');
-      $connexion = $eqLogic->getCmd(null, 'connexion');
-      $rssi = $eqLogic->getCmd(null, 'rssi');
-      $presence = $eqLogic->getCmd(null, 'presence');
+      $cmd = $eqLogic->getCmd(null, 'hostname');
+      $hotsname = (is_object($cmd)) ? $cmd->execCmd():'';
+      $cmd = $eqLogic->getCmd(null, 'ip');
+      $ip = (is_object($cmd)) ? $cmd->execCmd():'';
+      $cmd = $eqLogic->getCmd(null, 'mac');
+      $mac = (is_object($cmd)) ? $cmd->execCmd():'';
+      $cmd = $eqLogic->getCmd(null, 'connexion');
+      $connexion = (is_object($cmd)) ? $cmd->execCmd():'';
+      $cmd = $eqLogic->getCmd(null, 'rssi');
+      $rssi = (is_object($cmd)) ? $cmd->execCmd():'';
+      $cmd = $eqLogic->getCmd(null, 'presence');
+      $presence = (is_object($cmd)) ? $cmd->execCmd():'';
       echo '<tr>';
       echo '<td><a href="' . $eqLogic->getLinkToConfiguration() . '" style="text-decoration: none;">' . $eqLogic->getHumanName(true) . '</a></td>';
       echo '<td><span class="label label-info" style="font-size : 1em; cursor : default;">' . $eqLogic->getId() . '</span></td>';
-      echo '<td><center><span class="label label-info" style="font-size : 0.8em;cursor:default">' . $hostname->execCmd() . '</span></br></br>';
-      echo '<td><center><span class="label label-info" style="font-size : 0.8em;cursor:default">' . $ip->execCmd() . '</span></br></br>';
-      echo '<td><center><span class="label label-info" style="font-size : 0.8em;cursor:default">' . $mac->execCmd() . '</span></br></br>';
-      echo '<td><center><span class="label label-info" style="font-size : 0.8em;cursor:default">' . $connexion->execCmd() . '</span></br></br>';
-      echo '<td><center><span class="label label-info" style="font-size : 0.8em;cursor:default">' . $rssi->execCmd() . '</span></br></br>';
-      echo '<td><center><span class="label label-info" style="font-size : 0.8em;cursor:default">' . $presence->execCmd() . '</span></br></br>';
+      echo '<td><center><span class="label label-info" style="font-size : 0.8em;cursor:default">' . $hotsname . '</span></br></br>';
+      echo '<td><center><span class="label label-info" style="font-size : 0.8em;cursor:default">' . $ip . '</span></br></br>';
+      echo '<td><center><span class="label label-info" style="font-size : 0.8em;cursor:default">' . $mac . '</span></br></br>';
+      echo '<td><center><span class="label label-info" style="font-size : 0.8em;cursor:default">' . $connexion . '</span></br></br>';
+      echo '<td><center><span class="label label-info" style="font-size : 0.8em;cursor:default">' . $rssi . '</span></br></br>';
+      echo '<td><center><span class="label label-info" style="font-size : 0.8em;cursor:default">' . $presence . '</span></br></br>';
       echo '</tr>';
     }
     ?>
