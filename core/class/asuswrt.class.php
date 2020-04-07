@@ -325,7 +325,7 @@ class asuswrt extends eqLogic {
 		stream_set_blocking($closesession, true);
 		stream_get_contents($closesession);
 
-    if (config::byKey('user', 'aimesh') != '') {
+    if (config::byKey('aimesh', 'asuswrt') != '') {
       $aimeshs = explode(';',config::byKey('user', 'aimesh'));
       foreach ($aimeshs as $aimesh) {
         log::add('asuswrt', 'debug', 'AP AIMesh ' . $aimesh);
