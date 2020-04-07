@@ -246,12 +246,12 @@ class asuswrt extends eqLogic {
 		fclose($stream);*/
 
 		$stream = ssh2_exec($connection, "nvram get wl_ifnames");
-		stream_set_blocking($stream, true);
-		$wls = stream_get_contents($stream);
-		$array=explode(" ", $line);
-		$wl0 = $array[0];
-		$wl1 = $array[1];
-		fclose($stream);
+    stream_set_blocking($stream, true);
+    $line = stream_get_contents($stream);
+    fclose($stream);
+    $array=explode(" ", $line);
+    $wl0 = $array[0];
+    $wl1 = $array[1];
 
 		$stream = ssh2_exec($connection, "wl -i " . $wl0 . " assoclist | cut -d' ' -f2");
 		stream_set_blocking($stream, true);
@@ -340,12 +340,11 @@ class asuswrt extends eqLogic {
 
         $stream = ssh2_exec($connection, "nvram get wl_ifnames");
     		stream_set_blocking($stream, true);
-    		$wls = stream_get_contents($stream);
-    		$array=explode(" ", $line);
-        log::add('asuswrt', 'debug', 'Cards ' . $line);
-    		$wl0 = $array[0];
-    		$wl1 = $array[1];
-    		fclose($stream);
+        $line = stream_get_contents($stream);
+        fclose($stream);
+        $array=explode(" ", $line);
+        $wl0 = $array[0];
+        $wl1 = $array[1];
 
         if (strpos($wl0,'ath') === false) {
           log::add('asuswrt', 'debug', 'AP AIMesh non Atheros ' . $wl0 . ' ' . $wl1);
