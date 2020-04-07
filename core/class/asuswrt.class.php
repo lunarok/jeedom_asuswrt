@@ -400,12 +400,12 @@ class asuswrt extends eqLogic {
           $stream = ssh2_exec($connection, "wlanconfig " . $wl0 . " list sta | sed '1 d'");
           stream_set_blocking($stream, true);
       		while($line = fgets($stream)) {
-      			$array=explode(" ", $line);
+      			$array=explode("   ", $line);
       			$mac = trim(strtolower($array[0]));
       			if ($mac == '') { continue; }
       			$result[$mac]['connexion'] = 'wifi2.4';
-            $result[$mac]['rssi'] = $array[5];
-            log::add('asuswrt', 'debug', '2.4 : ' . $mac . ' rssi ' . $array[5]);
+            $result[$mac]['rssi'] = $array[3];
+            log::add('asuswrt', 'debug', '2.4 : ' . $mac . ' rssi ' . $array[3]);
       			if ($result[$mac]['status'] == 'UNKNOWN') {
       				$result[$mac]['status'] = 'WIFI';
       			}
@@ -416,12 +416,12 @@ class asuswrt extends eqLogic {
           $stream = ssh2_exec($connection, "wlanconfig " . $wl1 . " list sta | sed '1 d'");
           stream_set_blocking($stream, true);
       		while($line = fgets($stream)) {
-      			$array=explode(" ", $line);
+      			$array=explode("   ", $line);
       			$mac = trim(strtolower($array[0]));
       			if ($mac == '') { continue; }
       			$result[$mac]['connexion'] = 'wifi5';
-            $result[$mac]['rssi'] = $array[5];
-            log::add('asuswrt', 'debug', '5 : ' . $mac . ' rssi ' . $array[5]);
+            $result[$mac]['rssi'] = $array[3];
+            log::add('asuswrt', 'debug', '5 : ' . $mac . ' rssi ' . $array[3]);
       			if ($result[$mac]['status'] == 'UNKNOWN') {
       				$result[$mac]['status'] = 'WIFI';
       			}
