@@ -326,7 +326,7 @@ class asuswrt extends eqLogic {
 		stream_get_contents($closesession);
 
     if (config::byKey('aimesh', 'asuswrt') != '') {
-      $aimeshs = explode(';',config::byKey('user', 'aimesh'));
+      $aimeshs = explode(';',config::byKey('aimesh', 'asuswrt'));
       foreach ($aimeshs as $aimesh) {
         log::add('asuswrt', 'debug', 'AP AIMesh ' . $aimesh);
         if (!$connection = ssh2_connect($aimesh,'22')) {
