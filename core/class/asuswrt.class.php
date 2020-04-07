@@ -316,7 +316,7 @@ class asuswrt extends eqLogic {
 			if (array_key_exists('ip',$array)) {
 				if (array_key_exists($array['ip'], $blocked)) {
 					$result[$array['mac']]['internet'] = 0;
-					log::add('asuswrt', 'debug', 'Blocked ' . $array['ip']);
+					log::add('asuswrt', 'debug', 'IP Blocked ' . $array['ip']);
 				}
 			}
 		}
@@ -328,6 +328,7 @@ class asuswrt extends eqLogic {
     if (config::byKey('user', 'aimesh') != '') {
       $aimeshs = explode(';',config::byKey('user', 'aimesh'));
       foreach ($aimeshs as $aimesh) {
+        log::add('asuswrt', 'debug', 'AP AIMesh ' . $aimesh);
         if (!$connection = ssh2_connect($aimesh,'22')) {
           log::add('asuswrt', 'error', 'connexion SSH KO');
           return 'error connecting';
@@ -346,6 +347,7 @@ class asuswrt extends eqLogic {
     		fclose($stream);
 
         if (strpos($wl0,'ath') === false) {
+          log::add('asuswrt', 'debug', 'AP AIMesh non Atheros');
           $stream = ssh2_exec($connection, "wl -i " . $wl0 . " assoclist | cut -d' ' -f2");
           stream_set_blocking($stream, true);
       		while($line = fgets($stream)) {
@@ -394,9 +396,11 @@ class asuswrt extends eqLogic {
       			fclose($stream);
       		}
         } else {
+          log::add('asuswrt', 'debug', 'AP AIMesh Atheros');
           $stream = ssh2_exec($connection, "wlanconfig " . $wl0 . " list sta sed '1 d'");
           stream_set_blocking($stream, true);
       		while($line = fgets($stream)) {
+            log::add('asuswrt', 'debug', '2.4 : ' . $line);
       			$array=explode(" ", $line);
       			$mac = trim(strtolower($array[0]));
       			if ($mac == '') {
@@ -414,6 +418,7 @@ class asuswrt extends eqLogic {
           $stream = ssh2_exec($connection, "wlanconfig " . $wl1 . " list sta sed '1 d'");
           stream_set_blocking($stream, true);
       		while($line = fgets($stream)) {
+            log::add('asuswrt', 'debug', '2.4 : ' . $line);
       			$array=explode(" ", $line);
       			$mac = trim(strtolower($array[0]));
       			if ($mac == '') {
