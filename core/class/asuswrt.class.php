@@ -175,6 +175,7 @@ class asuswrt extends eqLogic {
 			//84529 01:e0:4c:68:15:8e 192.168.0.102 host2 01:00:e0:4c:68:15:8e
 			//55822 28:5c:07:f6:97:80 192.168.0.32 host *
 			$array=explode(" ", $line);
+			if ($mac == '') { continue; }
 			$mac = trim(strtolower($array[1]));
 			$result[$mac]['mac'] = $mac;
 			$result[$mac]['ip'] = $array[2];
