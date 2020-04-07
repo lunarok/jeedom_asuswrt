@@ -219,6 +219,7 @@ class asuswrt extends eqLogic {
 			$array=explode(" ", $line);
 			if ($array[3] == 'lladdr') {
 				$mac = trim(strtolower($array[4]));
+        if ($mac == '') { continue; }
 				if (!array_key_exists($mac,$result)) {
 					$result[$mac]['mac'] = $mac;
 					$result[$mac]['ip'] = $array[0];
@@ -259,6 +260,7 @@ class asuswrt extends eqLogic {
 			//assoclist 44:07:0B:4A:A9:96
 			$array=explode(" ", $line);
 			$mac = trim(strtolower($array[0]));
+      if ($mac == '') { continue; }
 			$result[$mac]['connexion'] = 'wifi2.4';
 			$wifi[] = $mac;
 			if ($result[$mac]['status'] == 'UNKNOWN') {
@@ -281,9 +283,7 @@ class asuswrt extends eqLogic {
 		while($line = fgets($stream)) {
 			$array=explode(" ", $line);
 			$mac = trim(strtolower($array[0]));
-			if ($mac == '') {
-				continue;
-			}
+			if ($mac == '') { continue; }
 			$result[$mac]['connexion'] = 'wifi5';
 			$wifi[] = $mac;
 			if ($result[$mac]['status'] == 'UNKNOWN') {
@@ -342,6 +342,7 @@ class asuswrt extends eqLogic {
     		stream_set_blocking($stream, true);
     		$wls = stream_get_contents($stream);
     		$array=explode(" ", $line);
+        log::add('asuswrt', 'debug', 'Cards ' . $line);
     		$wl0 = $array[0];
     		$wl1 = $array[1];
     		fclose($stream);
@@ -355,6 +356,7 @@ class asuswrt extends eqLogic {
       			//assoclist 44:07:0B:4A:A9:96
       			$array=explode(" ", $line);
       			$mac = trim(strtolower($array[0]));
+            if ($mac == '') { continue; }
       			$result[$mac]['connexion'] = 'wifi2.4';
       			$wifi[] = $mac;
       			if ($result[$mac]['status'] == 'UNKNOWN') {
@@ -377,9 +379,7 @@ class asuswrt extends eqLogic {
       		while($line = fgets($stream)) {
       			$array=explode(" ", $line);
       			$mac = trim(strtolower($array[0]));
-      			if ($mac == '') {
-      				continue;
-      			}
+      			if ($mac == '') { continue; }
       			$result[$mac]['connexion'] = 'wifi5';
       			$wifi[] = $mac;
       			if ($result[$mac]['status'] == 'UNKNOWN') {
@@ -403,9 +403,7 @@ class asuswrt extends eqLogic {
             log::add('asuswrt', 'debug', '2.4 : ' . $line);
       			$array=explode(" ", $line);
       			$mac = trim(strtolower($array[0]));
-      			if ($mac == '') {
-      				continue;
-      			}
+      			if ($mac == '') { continue; }
       			$result[$mac]['connexion'] = 'wifi2.4';
             $result[$mac]['rssi'] = $array[5];
       			if ($result[$mac]['status'] == 'UNKNOWN') {
@@ -421,9 +419,7 @@ class asuswrt extends eqLogic {
             log::add('asuswrt', 'debug', '2.4 : ' . $line);
       			$array=explode(" ", $line);
       			$mac = trim(strtolower($array[0]));
-      			if ($mac == '') {
-      				continue;
-      			}
+      			if ($mac == '') { continue; }
       			$result[$mac]['connexion'] = 'wifi5';
             $result[$mac]['rssi'] = $array[5];
       			if ($result[$mac]['status'] == 'UNKNOWN') {
