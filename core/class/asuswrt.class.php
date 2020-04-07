@@ -292,7 +292,7 @@ class asuswrt extends eqLogic {
 		fclose($stream);
 
 		foreach ($wifi as $value) {
-			$stream = ssh2_exec($connection, 'wl -i " . $wl1 . " rssi ' . $value);
+			$stream = ssh2_exec($connection, 'wl -i ' . $wl1 . ' rssi ' . $value);
 			stream_set_blocking($stream, true);
 			$result[$value]['rssi'] = stream_get_contents($stream);
 			fclose($stream);
