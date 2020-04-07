@@ -347,7 +347,7 @@ class asuswrt extends eqLogic {
     		fclose($stream);
 
         if (strpos($wl0,'ath') === false) {
-          log::add('asuswrt', 'debug', 'AP AIMesh non Atheros');
+          log::add('asuswrt', 'debug', 'AP AIMesh non Atheros ' . $wl0 . ' ' . $wl1);
           $stream = ssh2_exec($connection, "wl -i " . $wl0 . " assoclist | cut -d' ' -f2");
           stream_set_blocking($stream, true);
       		while($line = fgets($stream)) {
@@ -396,7 +396,7 @@ class asuswrt extends eqLogic {
       			fclose($stream);
       		}
         } else {
-          log::add('asuswrt', 'debug', 'AP AIMesh Atheros');
+          log::add('asuswrt', 'debug', 'AP AIMesh Atheros ' . $wl0 . ' ' . $wl1);
           $stream = ssh2_exec($connection, "wlanconfig " . $wl0 . " list sta sed '1 d'");
           stream_set_blocking($stream, true);
       		while($line = fgets($stream)) {
