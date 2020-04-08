@@ -408,6 +408,7 @@ if (config::byKey('aimesh', 'asuswrt') != '') {
       fclose($stream);
 
       $stream = ssh2_exec($connection, "wlanconfig " . $wl1 . " list sta | sed '1 d' | awk '{print $1\" \"$6}'");
+      log::add('asuswrt', 'debug', "wlanconfig " . $wl1 . " list sta | sed '1 d' | awk '{print $1\" \"$6}'");
       stream_set_blocking($stream, true);
       while($line = fgets($stream)) {
         $array=explode("   ", $line);
