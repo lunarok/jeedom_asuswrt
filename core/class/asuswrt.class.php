@@ -294,6 +294,7 @@ fclose($stream);
 
 foreach ($wifi as $value) {
   $stream = ssh2_exec($connection, 'wl -i ' . $wl1 . ' rssi ' . $value);
+  log::add('asuswrt', 'debug', 'wl -i ' . $wl1 . ' rssi ' . $value);
   stream_set_blocking($stream, true);
   $rssi = stream_get_contents($stream);
   $result[$value]['rssi'] = $rssi;
@@ -408,10 +409,9 @@ if (config::byKey('aimesh', 'asuswrt') != '') {
       fclose($stream);
 
       $stream = ssh2_exec($connection, "wlanconfig " . $wl1 . " list sta | sed '1 d' | awk '{print $1\" \"$6}'");
-      log::add('asuswrt', 'debug', "wlanconfig " . $wl1 . " list sta | sed '1 d' | awk '{print $1\" \"$6}'");
       stream_set_blocking($stream, true);
       while($line = fgets($stream)) {
-        $array=explode("   ", $line);
+        $array=explode(" ", $line);
         $mac = trim(strtolower($array[0]));
         if ($mac == '') { continue; }
         $result[$mac]['connexion'] = 'wifi5';
