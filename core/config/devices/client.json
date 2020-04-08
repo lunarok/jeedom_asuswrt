@@ -43,6 +43,13 @@
       "logicalId": "connexion"
     },
     {
+      "name": "Access Point",
+      "type": "info",
+      "subtype": "string",
+      "isVisible": 0,
+      "logicalId": "ap"
+    },
+    {
       "name": "RSSI",
       "type": "info",
       "subtype": "numeric",

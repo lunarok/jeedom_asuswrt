@@ -31,6 +31,7 @@ $eqLogics = asuswrt::byType('asuswrt');
       <th>{{IP}}</th>
       <th>{{MAC}}</th>
       <th>{{Connexion}}</th>
+      <th>{{AP}}</th>
       <th>{{RSSI}}</th>
       <th>{{Presence}}</th>
     </tr>
@@ -49,6 +50,8 @@ $eqLogics = asuswrt::byType('asuswrt');
       $mac = (is_object($cmd)) ? $cmd->execCmd():'';
       $cmd = $eqLogic->getCmd(null, 'connexion');
       $connexion = (is_object($cmd)) ? $cmd->execCmd():'';
+      $cmd = $eqLogic->getCmd(null, 'ap');
+      $ap = (is_object($cmd)) ? $cmd->execCmd():'';
       $cmd = $eqLogic->getCmd(null, 'rssi');
       $rssi = (is_object($cmd)) ? $cmd->execCmd():'';
       $cmd = $eqLogic->getCmd(null, 'presence');
@@ -60,6 +63,7 @@ $eqLogics = asuswrt::byType('asuswrt');
       echo '<td><center><span class="label label-info" style="font-size : 0.8em;cursor:default">' . $ip . '</span></br></br>';
       echo '<td><center><span class="label label-info" style="font-size : 0.8em;cursor:default">' . $mac . '</span></br></br>';
       echo '<td><center><span class="label label-info" style="font-size : 0.8em;cursor:default">' . $connexion . '</span></br></br>';
+      echo '<td><center><span class="label label-info" style="font-size : 0.8em;cursor:default">' . $ap . '</span></br></br>';
       echo '<td><center><span class="label label-info" style="font-size : 0.8em;cursor:default">' . $rssi . '</span></br></br>';
       echo '<td><center><span class="label label-info" style="font-size : 0.8em;cursor:default">' . $presence . '</span></br></br>';
       echo '</tr>';

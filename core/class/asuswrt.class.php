@@ -227,6 +227,7 @@ class asuswrt extends eqLogic {
 					$result[$mac]['rssi'] = 0;
 					$result[$mac]['internet'] = 1;
 					$result[$mac]['connexion'] = 'ethernet';
+          $result[$mac]['ap'] = 'routeur';
 				}
 				$result[$mac]['status'] = $array[5];
 			}
@@ -358,6 +359,7 @@ class asuswrt extends eqLogic {
       			$mac = trim(strtolower($array[0]));
             if ($mac == '') { continue; }
       			$result[$mac]['connexion'] = 'wifi2.4';
+            $result[$mac]['ap'] = 'ap ' . $aimesh;
       			$wifi[] = $mac;
       			if ($result[$mac]['status'] == 'UNKNOWN') {
       				$result[$mac]['status'] = 'WIFI';
@@ -381,6 +383,7 @@ class asuswrt extends eqLogic {
       			$mac = trim(strtolower($array[0]));
       			if ($mac == '') { continue; }
       			$result[$mac]['connexion'] = 'wifi5';
+            $result[$mac]['ap'] = 'ap ' . $aimesh;
       			$wifi[] = $mac;
       			if ($result[$mac]['status'] == 'UNKNOWN') {
       				$result[$mac]['status'] = 'WIFI';
@@ -404,6 +407,7 @@ class asuswrt extends eqLogic {
       			$mac = trim(strtolower($array[0]));
       			if ($mac == '') { continue; }
       			$result[$mac]['connexion'] = 'wifi2.4';
+            $result[$mac]['ap'] = 'ap ' . $aimesh;
             $result[$mac]['rssi'] = $array[3];
             log::add('asuswrt', 'debug', '2.4 : ' . $mac . ' rssi ' . $array[3]);
       			if ($result[$mac]['status'] == 'UNKNOWN') {
@@ -420,6 +424,7 @@ class asuswrt extends eqLogic {
       			$mac = trim(strtolower($array[0]));
       			if ($mac == '') { continue; }
       			$result[$mac]['connexion'] = 'wifi5';
+            $result[$mac]['ap'] = 'ap ' . $aimesh;
             $result[$mac]['rssi'] = $array[3];
             log::add('asuswrt', 'debug', '5 : ' . $mac . ' rssi ' . $array[3]);
       			if ($result[$mac]['status'] == 'UNKNOWN') {
