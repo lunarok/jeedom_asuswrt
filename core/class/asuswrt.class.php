@@ -282,10 +282,12 @@ foreach ($wifi as $value) {
 $wifi = array();
 
 $stream = ssh2_exec($connection, "wl -i " . $wl1 . " assoclist | awk '{print $2}'");
+log::add('asuswrt', 'debug', "wl -i " . $wl1 . " assoclist | awk '{print $2}'");
 stream_set_blocking($stream, true);
 while($line = fgets($stream)) {
   $mac = trim(strtolower($line));
   if ($mac == '') { continue; }
+  log::add('asuswrt', 'debug', 'MAC ' . $mac);
   $result[$mac]['connexion'] = 'wifi5';
   $result[$mac]['status'] = 'WIFI';
   $wifi[] = $mac;
