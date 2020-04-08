@@ -58,9 +58,6 @@ class asuswrt extends eqLogic {
   public static function scanDevices() {
     $result = asuswrt::scan();
     foreach ($result as $asuswrt) {
-      if ($asuswrt['mac'] == '') {
-        continue;
-      }
       if ($asuswrt['ip'] == '' && $asuswrt['hostname'] == '') {
         continue;
       }
@@ -161,6 +158,7 @@ public static function scan() {
       continue;
     }
     $result[$asuswrt->getConfiguration('mac')]['status'] = "OFFLINE";
+    $result[$mac]['ap'] = 'none';
   }
 
   if (!$connection = ssh2_connect(config::byKey('addr', 'asuswrt'),'22')) {
@@ -210,6 +208,7 @@ public static function scan() {
       $result[$mac]['rssi'] = 0;
       $result[$mac]['internet'] = 1;
       $result[$mac]['connexion'] = 'ethernet';
+      $result[$mac]['ap'] = 'routeur';
     }
     $result[$mac]['status'] = 'ARP';
   }
@@ -231,6 +230,7 @@ public static function scan() {
         $result[$mac]['rssi'] = 0;
         $result[$mac]['internet'] = 1;
         $result[$mac]['connexion'] = 'ethernet';
+        $result[$mac]['ap'] = 'routeur';
       }
       $result[$mac]['status'] = $array[5];
     }
@@ -348,8 +348,8 @@ if (config::byKey('aimesh', 'asuswrt') != '') {
     $line = stream_get_contents($stream);
     fclose($stream);
     $array=explode(" ", $line);
-    $wl0 = $array[0];
-    $wl1 = $array[1];
+    $wl0 = trim(strtolower($array[0]));
+    $wl1 = trim(strtolower($array[1]));
 
     if (strpos($wl0,'ath') === false) {
       log::add('asuswrt', 'debug', 'AP AIMesh non Atheros ' . $wl0 . ' ' . $wl1);
