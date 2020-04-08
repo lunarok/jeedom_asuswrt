@@ -354,6 +354,7 @@ if (config::byKey('aimesh', 'asuswrt') != '') {
     if (strpos($wl0,'ath') === false) {
       log::add('asuswrt', 'debug', 'AP AIMesh non Atheros ' . $wl0 . ' ' . $wl1);
       $stream = ssh2_exec($connection, "wl -i " . $wl0 . " assoclist | awk '{print $2}'");
+      log::add('asuswrt', 'debug', "wl -i " . $wl0 . " assoclist | awk '{print $2}'");
       stream_set_blocking($stream, true);
       while($line = fgets($stream)) {
         $mac = trim(strtolower($line));
@@ -376,6 +377,7 @@ if (config::byKey('aimesh', 'asuswrt') != '') {
       $wifi = array();
 
       $stream = ssh2_exec($connection, "wl -i " . $wl1 . " assoclist | awk '{print $2}'");
+      log::add('asuswrt', 'debug', "wl -i " . $wl1 . " assoclist | awk '{print $2}'");
       stream_set_blocking($stream, true);
       while($line = fgets($stream)) {
         $mac = trim(strtolower($line));
