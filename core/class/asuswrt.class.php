@@ -268,10 +268,7 @@ while($line = fgets($stream)) {
   if ($mac == '') { continue; }
   $result[$mac]['connexion'] = 'wifi2.4';
   $wifi[] = $mac;
-  if ($result[$mac]['status'] == 'UNKNOWN') {
-    $result[$mac]['status'] = 'WIFI';
-  }
-  //log::add('asuswrt', 'debug', 'Wifi 2.4 ' . $array[0]);
+  $result[$mac]['status'] = 'WIFI';
 }
 fclose($stream);
 
@@ -291,10 +288,7 @@ while($line = fgets($stream)) {
   if ($mac == '') { continue; }
   $result[$mac]['connexion'] = 'wifi5';
   $wifi[] = $mac;
-  if ($result[$mac]['status'] == 'UNKNOWN') {
-    $result[$mac]['status'] = 'WIFI';
-  }
-  //log::add('asuswrt', 'debug', 'Wifi 5 ' . $array[0]);
+  $result[$mac]['status'] = 'WIFI';
 }
 fclose($stream);
 
@@ -364,10 +358,7 @@ if (config::byKey('aimesh', 'asuswrt') != '') {
         $result[$mac]['connexion'] = 'wifi2.4';
         $result[$mac]['ap'] = 'ap ' . $aimesh;
         $wifi[] = $mac;
-        if ($result[$mac]['status'] == 'UNKNOWN') {
-          $result[$mac]['status'] = 'WIFI';
-        }
-        //log::add('asuswrt', 'debug', 'Wifi 2.4 ' . $array[0]);
+        $result[$mac]['status'] = 'WIFI';
       }
       fclose($stream);
 
@@ -388,10 +379,7 @@ if (config::byKey('aimesh', 'asuswrt') != '') {
         $result[$mac]['connexion'] = 'wifi5';
         $result[$mac]['ap'] = 'ap ' . $aimesh;
         $wifi[] = $mac;
-        if ($result[$mac]['status'] == 'UNKNOWN') {
-          $result[$mac]['status'] = 'WIFI';
-        }
-        //log::add('asuswrt', 'debug', 'Wifi 5 ' . $array[0]);
+        $result[$mac]['status'] = 'WIFI';
       }
       fclose($stream);
 
@@ -412,11 +400,8 @@ if (config::byKey('aimesh', 'asuswrt') != '') {
         $result[$mac]['connexion'] = 'wifi2.4';
         $result[$mac]['ap'] = 'ap ' . $aimesh;
         $result[$mac]['rssi'] = $array[3];
-        log::add('asuswrt', 'debug', '2.4 : ' . $mac . ' rssi ' . $array[3]);
-        if ($result[$mac]['status'] == 'UNKNOWN') {
-          $result[$mac]['status'] = 'WIFI';
-        }
-        //log::add('asuswrt', 'debug', 'Wifi 5 ' . $array[0]);
+        $result[$mac]['status'] = 'WIFI';
+        log::add('asuswrt', 'debug', '2.4 : ' . $mac . ' rssi ' . $array[4]);
       }
       fclose($stream);
 
@@ -429,11 +414,8 @@ if (config::byKey('aimesh', 'asuswrt') != '') {
         $result[$mac]['connexion'] = 'wifi5';
         $result[$mac]['ap'] = 'ap ' . $aimesh;
         $result[$mac]['rssi'] = $array[3];
-        log::add('asuswrt', 'debug', '5 : ' . $mac . ' rssi ' . $array[3]);
-        if ($result[$mac]['status'] == 'UNKNOWN') {
-          $result[$mac]['status'] = 'WIFI';
-        }
-        //log::add('asuswrt', 'debug', 'Wifi 5 ' . $array[0]);
+        $result[$mac]['status'] = 'WIFI';
+        log::add('asuswrt', 'debug', '5 : ' . $mac . ' rssi ' . $array[4]);
       }
       fclose($stream);
     }
