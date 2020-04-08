@@ -254,11 +254,12 @@ stream_set_blocking($stream, true);
 $line = stream_get_contents($stream);
 fclose($stream);
 $array=explode(" ", $line);
-$wl0 = $array[0];
-$wl1 = $array[1];
+$wl0 = trim(strtolower($array[0]));
+$wl1 = trim(strtolower($array[1]));
 log::add('asuswrt', 'debug', 'Wifi ' . $wl0 . ' ' . $wl1);
 
 $stream = ssh2_exec($connection, "wl -i " . $wl0 . " assoclist | awk '{print $2}'");
+log::add('asuswrt', 'debug', "wl -i " . $wl0 . " assoclist | awk '{print $2}'");
 stream_set_blocking($stream, true);
 while($line = fgets($stream)) {
   //assoclist 1C:F2:9A:34:4D:37
