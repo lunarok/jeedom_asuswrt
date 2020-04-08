@@ -1,4 +1,4 @@
-  <?php
+<?php
 
 /* This file is part of Jeedom.
 *
@@ -20,653 +20,656 @@
 require_once dirname(__FILE__) . '/../../../../core/php/core.inc.php';
 
 class asuswrt extends eqLogic {
-	public function loadCmdFromConf($type) {
-		if (!is_file(dirname(__FILE__) . '/../config/devices/' . $type . '.json')) {
-			return;
-		}
-		$content = file_get_contents(dirname(__FILE__) . '/../config/devices/' . $type . '.json');
-		if (!is_json($content)) {
-			return;
-		}
-		$device = json_decode($content, true);
-		if (!is_array($device) || !isset($device['commands'])) {
-			return true;
-		}
-		foreach ($device['commands'] as $command) {
-			$cmd = null;
-			foreach ($this->getCmd() as $liste_cmd) {
-				if ((isset($command['logicalId']) && $liste_cmd->getLogicalId() == $command['logicalId'])
-				|| (isset($command['name']) && $liste_cmd->getName() == $command['name'])) {
-					$cmd = $liste_cmd;
-					break;
-				}
-			}
-			if ($cmd == null || !is_object($cmd)) {
-				$cmd = new asuswrtCmd();
-				$cmd->setEqLogic_id($this->getId());
-				utils::a2o($cmd, $command);
-				$cmd->save();
-			}
-		}
-	}
+  public function loadCmdFromConf($type) {
+    if (!is_file(dirname(__FILE__) . '/../config/devices/' . $type . '.json')) {
+      return;
+    }
+    $content = file_get_contents(dirname(__FILE__) . '/../config/devices/' . $type . '.json');
+    if (!is_json($content)) {
+      return;
+    }
+    $device = json_decode($content, true);
+    if (!is_array($device) || !isset($device['commands'])) {
+      return true;
+    }
+    foreach ($device['commands'] as $command) {
+      $cmd = null;
+      foreach ($this->getCmd() as $liste_cmd) {
+        if ((isset($command['logicalId']) && $liste_cmd->getLogicalId() == $command['logicalId'])
+        || (isset($command['name']) && $liste_cmd->getName() == $command['name'])) {
+          $cmd = $liste_cmd;
+          break;
+        }
+      }
+      if ($cmd == null || !is_object($cmd)) {
+        $cmd = new asuswrtCmd();
+        $cmd->setEqLogic_id($this->getId());
+        utils::a2o($cmd, $command);
+        $cmd->save();
+      }
+    }
+  }
 
-	public static function cron() {
-		asuswrt::scanDevices();
-		asuswrt::scanRouteur();
-	}
+  public static function cron() {
+    asuswrt::scanDevices();
+    asuswrt::scanRouteur();
+  }
 
-	public static function scanDevices() {
-		$result = asuswrt::scan();
-		foreach ($result as $asuswrt) {
-			if ($asuswrt['mac'] == '' && $asuswrt['ip'] == '' && $asuswrt['hostname'] == '') {
-				continue;
-			}
-			$eqlogic=asuswrt::byLogicalId($asuswrt['mac'], 'asuswrt');
-			if (!is_object($eqlogic)) {
-				$eqlogic = new asuswrt();
-				$eqlogic->setEqType_name('asuswrt');
-				$eqlogic->setLogicalId($asuswrt['mac']);
-				$eqlogic->setIsEnable(1);
-				$eqlogic->setIsVisible(0);
-				$eqlogic->setName($asuswrt['hostname'] . ' - ' . $asuswrt['ip']);
-				$eqlogic->setConfiguration('hostname', $asuswrt['hostname']);
-				$eqlogic->setConfiguration('mac', $asuswrt['mac']);
-				$eqlogic->setConfiguration('ip', $asuswrt['ip']);
-				$eqlogic->save();
-			}
-			if (($eqlogic->getConfiguration('hostname') !=  $asuswrt['hostname']) || ($eqlogic->getConfiguration('ip') !=  $asuswrt['ip'])) {
-				$eqlogic->setConfiguration('hostname', $asuswrt['hostname']);
-				$eqlogic->setConfiguration('ip', $asuswrt['ip']);
-				$eqlogic->save();
-			}
-			$eqlogic->loadCmdFromConf('client');
-			foreach ($asuswrt as $logicalid => $value) {
-				$eqlogic->checkAndUpdateCmd($logicalid, $value);
-			}
-			$presence = ($asuswrt['status'] == 'UNKNOWN') ? 0 : 1;
-			/*$cmd = asuswrtCmd::byEqLogicIdAndLogicalId($eqlogic->getId(),'presence');
-			if (is_object($cmd)) {
-				if (($presence != asuswrtCmd::byEqLogicIdAndLogicalId($eqlogic->getId(),'presence')->execCmd()) && ($eqlogic->getConfiguration('activation') != '')) {
-					$manageEq = eqLogic::byLogicalId($eqlogic->getConfiguration('ip'),$eqlogic->getConfiguration('activation'));
-					$manageEq->setIsEnable($presence);
-					$manageEq->save();
-				}
-			}*/
-			$eqlogic->checkAndUpdateCmd('presence', $presence);
-		}
-	}
+  public static function scanDevices() {
+    $result = asuswrt::scan();
+    foreach ($result as $asuswrt) {
+      if ($asuswrt['mac'] == '') {
+        continue;
+      }
+      if ($asuswrt['ip'] == '' && $asuswrt['hostname'] == '') {
+        continue;
+      }
+      $eqlogic=asuswrt::byLogicalId($asuswrt['mac'], 'asuswrt');
+      if (!is_object($eqlogic)) {
+        $eqlogic = new asuswrt();
+        $eqlogic->setEqType_name('asuswrt');
+        $eqlogic->setLogicalId($asuswrt['mac']);
+        $eqlogic->setIsEnable(1);
+        $eqlogic->setIsVisible(0);
+        $eqlogic->setName($asuswrt['hostname'] . ' - ' . $asuswrt['ip']);
+        $eqlogic->setConfiguration('hostname', $asuswrt['hostname']);
+        $eqlogic->setConfiguration('mac', $asuswrt['mac']);
+        $eqlogic->setConfiguration('ip', $asuswrt['ip']);
+        $eqlogic->save();
+      }
+      if (($eqlogic->getConfiguration('hostname') !=  $asuswrt['hostname']) || ($eqlogic->getConfiguration('ip') !=  $asuswrt['ip'])) {
+        $eqlogic->setConfiguration('hostname', $asuswrt['hostname']);
+        $eqlogic->setConfiguration('ip', $asuswrt['ip']);
+        $eqlogic->save();
+      }
+      $eqlogic->loadCmdFromConf('client');
+      foreach ($asuswrt as $logicalid => $value) {
+        $eqlogic->checkAndUpdateCmd($logicalid, $value);
+      }
+      $presence = ($asuswrt['status'] == 'UNKNOWN') ? 0 : 1;
+      /*$cmd = asuswrtCmd::byEqLogicIdAndLogicalId($eqlogic->getId(),'presence');
+      if (is_object($cmd)) {
+      if (($presence != asuswrtCmd::byEqLogicIdAndLogicalId($eqlogic->getId(),'presence')->execCmd()) && ($eqlogic->getConfiguration('activation') != '')) {
+      $manageEq = eqLogic::byLogicalId($eqlogic->getConfiguration('ip'),$eqlogic->getConfiguration('activation'));
+      $manageEq->setIsEnable($presence);
+      $manageEq->save();
+    }
+  }*/
+  $eqlogic->checkAndUpdateCmd('presence', $presence);
+}
+}
 
-	public static function scanRouteur() {
-		$result = asuswrt::speed();
-		$eqlogic=asuswrt::byLogicalId('router', 'asuswrt');
-		if (!is_object($eqlogic)) {
-			$eqlogic = new asuswrt();
-			$eqlogic->setEqType_name('asuswrt');
-			$eqlogic->setLogicalId('router');
-			$eqlogic->setIsEnable(1);
-			$eqlogic->setIsVisible(1);
-			$eqlogic->setName('Router');
-			$eqlogic->save();
-		}
-		$eqlogic->loadCmdFromConf('router');
-		$cmd = cmd::byEqLogicIdAndLogicalId($eqlogic->getId(),'txtotal');
-		$past = $cmd->execCmd();
-		$speed = round(($result['txtotal'] - $past)/60000000,2);
-		$eqlogic->checkAndUpdateCmd('txspeed', $speed);
-		$cmd = cmd::byEqLogicIdAndLogicalId($eqlogic->getId(),'rxtotal');
-		$past = $cmd->execCmd();
-		$speed = round(($result['rxtotal'] - $past)/60000000,2);
-		$eqlogic->checkAndUpdateCmd('rxspeed', $speed);
-		foreach ($result as $logicalid => $value) {
-			if ($logicalid == "ethernet") {
-				foreach ($value as $id => $values) {
-					$cmdlogic = asuswrtCmd::byEqLogicIdAndLogicalId($eqlogic->getId(),'ethernet' . $id . 'link');
-					      if (!is_object($cmdlogic)) {
-						$cmdlogic = new asuswrtCmd();
-						$cmdlogic->setName('Ethernet ' . $id . ' Lien');
-						$cmdlogic->setEqLogic_id($eqlogic->getId());
-						$cmdlogic->setLogicalId('ethernet' . $id . 'link');
-						$cmdlogic->setType('info');
-						$cmdlogic->setSubType('string');
-						$cmdlogic->save();
-					      }
-					$eqlogic->checkAndUpdateCmd('ethernet' . $id . 'link', $result['ethernet'][$id]['link']);
-					$cmdlogic = asuswrtCmd::byEqLogicIdAndLogicalId($eqlogic->getId(),'ethernet' . $id . 'mac');
-					      if (!is_object($cmdlogic)) {
-						$cmdlogic = new asuswrtCmd();
-						$cmdlogic->setName('Ethernet ' . $id . ' MAC');
-						$cmdlogic->setEqLogic_id($eqlogic->getId());
-						$cmdlogic->setLogicalId('ethernet' . $id . 'mac');
-						$cmdlogic->setType('info');
-						$cmdlogic->setSubType('string');
-						$cmdlogic->save();
-					      }
-					  $eqlogic->checkAndUpdateCmd('ethernet' . $id . 'mac', $result['ethernet'][$id]['mac']);
-				}
-			} else {
-				$eqlogic->checkAndUpdateCmd($logicalid, $value);
-			}
-		}
-	}
+public static function scanRouteur() {
+  $result = asuswrt::speed();
+  $eqlogic=asuswrt::byLogicalId('router', 'asuswrt');
+  if (!is_object($eqlogic)) {
+    $eqlogic = new asuswrt();
+    $eqlogic->setEqType_name('asuswrt');
+    $eqlogic->setLogicalId('router');
+    $eqlogic->setIsEnable(1);
+    $eqlogic->setIsVisible(1);
+    $eqlogic->setName('Router');
+    $eqlogic->save();
+  }
+  $eqlogic->loadCmdFromConf('router');
+  $cmd = cmd::byEqLogicIdAndLogicalId($eqlogic->getId(),'txtotal');
+  $past = $cmd->execCmd();
+  $speed = round(($result['txtotal'] - $past)/60000000,2);
+  $eqlogic->checkAndUpdateCmd('txspeed', $speed);
+  $cmd = cmd::byEqLogicIdAndLogicalId($eqlogic->getId(),'rxtotal');
+  $past = $cmd->execCmd();
+  $speed = round(($result['rxtotal'] - $past)/60000000,2);
+  $eqlogic->checkAndUpdateCmd('rxspeed', $speed);
+  foreach ($result as $logicalid => $value) {
+    if ($logicalid == "ethernet") {
+      foreach ($value as $id => $values) {
+        $cmdlogic = asuswrtCmd::byEqLogicIdAndLogicalId($eqlogic->getId(),'ethernet' . $id . 'link');
+        if (!is_object($cmdlogic)) {
+          $cmdlogic = new asuswrtCmd();
+          $cmdlogic->setName('Ethernet ' . $id . ' Lien');
+          $cmdlogic->setEqLogic_id($eqlogic->getId());
+          $cmdlogic->setLogicalId('ethernet' . $id . 'link');
+          $cmdlogic->setType('info');
+          $cmdlogic->setSubType('string');
+          $cmdlogic->save();
+        }
+        $eqlogic->checkAndUpdateCmd('ethernet' . $id . 'link', $result['ethernet'][$id]['link']);
+        $cmdlogic = asuswrtCmd::byEqLogicIdAndLogicalId($eqlogic->getId(),'ethernet' . $id . 'mac');
+        if (!is_object($cmdlogic)) {
+          $cmdlogic = new asuswrtCmd();
+          $cmdlogic->setName('Ethernet ' . $id . ' MAC');
+          $cmdlogic->setEqLogic_id($eqlogic->getId());
+          $cmdlogic->setLogicalId('ethernet' . $id . 'mac');
+          $cmdlogic->setType('info');
+          $cmdlogic->setSubType('string');
+          $cmdlogic->save();
+        }
+        $eqlogic->checkAndUpdateCmd('ethernet' . $id . 'mac', $result['ethernet'][$id]['mac']);
+      }
+    } else {
+      $eqlogic->checkAndUpdateCmd($logicalid, $value);
+    }
+  }
+}
 
-	public static function scan() {
-		$result = array();
-		$wifi = array();
-		$blocked = array();
-		foreach (eqLogic::byType('asuswrt') as $asuswrt) {
-			if ($asuswrt->getLogicalId('id') == 'router') {
-				continue;
-			}
-			$result[$asuswrt->getConfiguration('mac')]['status'] = "OFFLINE";
-		}
+public static function scan() {
+  $result = array();
+  $wifi = array();
+  $blocked = array();
+  foreach (eqLogic::byType('asuswrt') as $asuswrt) {
+    if ($asuswrt->getLogicalId('id') == 'router') {
+      continue;
+    }
+    $result[$asuswrt->getConfiguration('mac')]['status'] = "OFFLINE";
+  }
 
-		if (!$connection = ssh2_connect(config::byKey('addr', 'asuswrt'),'22')) {
-			log::add('asuswrt', 'error', 'connexion SSH KO');
-			return 'error connecting';
-		}
-		if (!ssh2_auth_password($connection,config::byKey('user', 'asuswrt'),config::byKey('password', 'asuswrt'))){
-			log::add('asuswrt', 'error', 'Authentification SSH KO');
-			return 'error connecting';
-		}
+  if (!$connection = ssh2_connect(config::byKey('addr', 'asuswrt'),'22')) {
+    log::add('asuswrt', 'error', 'connexion SSH KO');
+    return 'error connecting';
+  }
+  if (!ssh2_auth_password($connection,config::byKey('user', 'asuswrt'),config::byKey('password', 'asuswrt'))){
+    log::add('asuswrt', 'error', 'Authentification SSH KO');
+    return 'error connecting';
+  }
 
-		$stream = ssh2_exec($connection, 'cat /var/lib/misc/dnsmasq.leases');
-		stream_set_blocking($stream, true);
-		while($line = fgets($stream)) {
-			//84529 01:e0:4c:68:15:8e 192.168.0.102 host2 01:00:e0:4c:68:15:8e
-			//55822 28:5c:07:f6:97:80 192.168.0.32 host *
-			$array=explode(" ", $line);
-			if ($mac == '') { continue; }
-			$mac = trim(strtolower($array[1]));
-			$result[$mac]['mac'] = $mac;
-			$result[$mac]['ip'] = $array[2];
-			$result[$mac]['hostname'] = $array[3];
-			$result[$mac]['rssi'] = 0;
-			$result[$mac]['status'] = 'UNKNOWN';
-			$result[$mac]['internet'] = 1;
-			$result[$mac]['connexion'] = 'ethernet';
-		}
-		fclose($stream);
+  $stream = ssh2_exec($connection, 'cat /var/lib/misc/dnsmasq.leases');
+  stream_set_blocking($stream, true);
+  while($line = fgets($stream)) {
+    //84529 01:e0:4c:68:15:8e 192.168.0.102 host2 01:00:e0:4c:68:15:8e
+    //55822 28:5c:07:f6:97:80 192.168.0.32 host *
+    $array=explode(" ", $line);
+    if ($mac == '') { continue; }
+    $mac = trim(strtolower($array[1]));
+    $result[$mac]['mac'] = $mac;
+    $result[$mac]['ip'] = $array[2];
+    $result[$mac]['hostname'] = $array[3];
+    $result[$mac]['rssi'] = 0;
+    $result[$mac]['status'] = 'UNKNOWN';
+    $result[$mac]['internet'] = 1;
+    $result[$mac]['connexion'] = 'ethernet';
+    $result[$mac]['ap'] = 'routeur';
+  }
+  fclose($stream);
 
-		$stream = ssh2_exec($connection, 'arp -v');
-		stream_set_blocking($stream, true);
-		while($line = fgets($stream)) {
-			//? (192.168.0.23) at 64:db:8b:7c:b8:2b [ether]  on br0
-			//? (192.168.0.67) at 04:cf:8c:9c:51:e4 [ether]  on br0
-			$array=explode(" (", $line);
-			$hostname = trim(strtolower($array[0]));
-			$array2=explode(") at ", $array[1]);
-			$ip = trim(strtolower($array2[0]));
-			$array3=explode(" ", $array[2]);
-			$mac = trim(strtolower($array3[0]));
+  $stream = ssh2_exec($connection, 'arp -v');
+  stream_set_blocking($stream, true);
+  while($line = fgets($stream)) {
+    //? (192.168.0.23) at 64:db:8b:7c:b8:2b [ether]  on br0
+    //? (192.168.0.67) at 04:cf:8c:9c:51:e4 [ether]  on br0
+    $array=explode(" (", $line);
+    $hostname = trim(strtolower($array[0]));
+    $array2=explode(") at ", $array[1]);
+    $ip = trim(strtolower($array2[0]));
+    $array3=explode(" ", $array[2]);
+    $mac = trim(strtolower($array3[0]));
+    if ($mac == '') { continue; }
+    if (!array_key_exists($mac,$result)) {
+      $result[$mac]['mac'] = $mac;
+      $result[$mac]['ip'] = $ip;
+      $result[$mac]['hostname'] = $hostname;
+      $result[$mac]['rssi'] = 0;
+      $result[$mac]['internet'] = 1;
+      $result[$mac]['connexion'] = 'ethernet';
+    }
+    $result[$mac]['status'] = 'ARP';
+  }
+  fclose($stream);
+
+  $stream = ssh2_exec($connection, 'ip neigh');
+  stream_set_blocking($stream, true);
+  while($line = fgets($stream)) {
+    //192.168.0.23 dev br0 lladdr 64:db:8b:7c:b8:2b REACHABLE
+    //192.168.0.67 dev br0 lladdr 04:cf:8c:9c:51:e4 STALE
+    $array=explode(" ", $line);
+    if ($array[3] == 'lladdr') {
+      $mac = trim(strtolower($array[4]));
       if ($mac == '') { continue; }
-			if (!array_key_exists($mac,$result)) {
-				$result[$mac]['mac'] = $mac;
-				$result[$mac]['ip'] = $ip;
-				$result[$mac]['hostname'] = $hostname;
-				$result[$mac]['rssi'] = 0;
-				$result[$mac]['internet'] = 1;
-				$result[$mac]['connexion'] = 'ethernet';
-			}
-			$result[$mac]['status'] = 'ARP';
-		}
-		fclose($stream);
+      if (!array_key_exists($mac,$result)) {
+        $result[$mac]['mac'] = $mac;
+        $result[$mac]['ip'] = $array[0];
+        $result[$mac]['hostname'] = "?";
+        $result[$mac]['rssi'] = 0;
+        $result[$mac]['internet'] = 1;
+        $result[$mac]['connexion'] = 'ethernet';
+      }
+      $result[$mac]['status'] = $array[5];
+    }
+  }
+  fclose($stream);
 
-		$stream = ssh2_exec($connection, 'ip neigh');
-		stream_set_blocking($stream, true);
-		while($line = fgets($stream)) {
-			//192.168.0.23 dev br0 lladdr 64:db:8b:7c:b8:2b REACHABLE
-			//192.168.0.67 dev br0 lladdr 04:cf:8c:9c:51:e4 STALE
-			$array=explode(" ", $line);
-			if ($array[3] == 'lladdr') {
-				$mac = trim(strtolower($array[4]));
-        if ($mac == '') { continue; }
-				if (!array_key_exists($mac,$result)) {
-					$result[$mac]['mac'] = $mac;
-					$result[$mac]['ip'] = $array[0];
-					$result[$mac]['hostname'] = "?";
-					$result[$mac]['rssi'] = 0;
-					$result[$mac]['internet'] = 1;
-					$result[$mac]['connexion'] = 'ethernet';
-          $result[$mac]['ap'] = 'routeur';
-				}
-				$result[$mac]['status'] = $array[5];
-			}
-		}
-		fclose($stream);
+  /*$stream = ssh2_exec($connection, 'cat /tmp/wiredclientlist.json');
+  stream_set_blocking($stream, true);
+  $ethernet = explode("[",stream_get_contents($stream));
+  $ethernet = explode("]", $ethernet[1]);
+  $ethernet = explode(",", $ethernet[0]);
+  foreach ($ethernet as $value) {
+  $mac = trim(strtolower($value),'"');
+  $result[$mac]['connexion'] = 'ethernet';
+  //log::add('asuswrt', 'debug', 'Ethernet ' . $mac);
+}
+fclose($stream);*/
 
-		/*$stream = ssh2_exec($connection, 'cat /tmp/wiredclientlist.json');
-		stream_set_blocking($stream, true);
-		$ethernet = explode("[",stream_get_contents($stream));
-		$ethernet = explode("]", $ethernet[1]);
-		$ethernet = explode(",", $ethernet[0]);
-		foreach ($ethernet as $value) {
-			$mac = trim(strtolower($value),'"');
-			$result[$mac]['connexion'] = 'ethernet';
-			//log::add('asuswrt', 'debug', 'Ethernet ' . $mac);
-		}
-		fclose($stream);*/
+$stream = ssh2_exec($connection, "nvram get wl_ifnames");
+stream_set_blocking($stream, true);
+$line = stream_get_contents($stream);
+fclose($stream);
+$array=explode(" ", $line);
+log::add('asuswrt', 'debug', 'Wifi ' . $line);
+$wl0 = $array[0];
+$wl1 = $array[1];
 
-		$stream = ssh2_exec($connection, "nvram get wl_ifnames");
+$stream = ssh2_exec($connection, "wl -i " . $wl0 . " assoclist | cut -d' ' -f2");
+stream_set_blocking($stream, true);
+while($line = fgets($stream)) {
+  //assoclist 1C:F2:9A:34:4D:37
+  //assoclist 44:07:0B:4A:A9:96
+  $array=explode(" ", $line);
+  $mac = trim(strtolower($array[0]));
+  if ($mac == '') { continue; }
+  $result[$mac]['connexion'] = 'wifi2.4';
+  $wifi[] = $mac;
+  if ($result[$mac]['status'] == 'UNKNOWN') {
+    $result[$mac]['status'] = 'WIFI';
+  }
+  //log::add('asuswrt', 'debug', 'Wifi 2.4 ' . $array[0]);
+}
+fclose($stream);
+
+foreach ($wifi as $value) {
+  $stream = ssh2_exec($connection, 'wl -i ' . $wl0 . ' rssi ' . $value);
+  stream_set_blocking($stream, true);
+  $result[$value]['rssi'] = stream_get_contents($stream);
+  fclose($stream);
+}
+$wifi = array();
+
+$stream = ssh2_exec($connection, "wl -i " . $wl1 . " assoclist | cut -d' ' -f2");
+stream_set_blocking($stream, true);
+while($line = fgets($stream)) {
+  $array=explode(" ", $line);
+  $mac = trim(strtolower($array[0]));
+  if ($mac == '') { continue; }
+  $result[$mac]['connexion'] = 'wifi5';
+  $wifi[] = $mac;
+  if ($result[$mac]['status'] == 'UNKNOWN') {
+    $result[$mac]['status'] = 'WIFI';
+  }
+  //log::add('asuswrt', 'debug', 'Wifi 5 ' . $array[0]);
+}
+fclose($stream);
+
+foreach ($wifi as $value) {
+  $stream = ssh2_exec($connection, 'wl -i ' . $wl1 . ' rssi ' . $value);
+  stream_set_blocking($stream, true);
+  $result[$value]['rssi'] = stream_get_contents($stream);
+  fclose($stream);
+}
+
+
+//	iptables -S | grep "FORWARD -s" | grep DROP
+$stream = ssh2_exec($connection, 'iptables -S | grep "FORWARD -s" | grep DROP');
+stream_set_blocking($stream, true);
+while($line = fgets($stream)) {
+  $array=explode(" ", $line);
+  $array2 =explode("/", $array[3]);
+  $blocked[$array2[0]] = $array2[0];
+  //log::add('asuswrt', 'debug', 'Blocked ' . $array2[0]);
+}
+fclose($stream);
+
+foreach ($result as $array ) {
+  if (array_key_exists('ip',$array)) {
+    if (array_key_exists($array['ip'], $blocked)) {
+      $result[$array['mac']]['internet'] = 0;
+      log::add('asuswrt', 'debug', 'IP Blocked ' . $array['ip']);
+    }
+  }
+}
+
+$closesession = ssh2_exec($connection, 'exit');
+stream_set_blocking($closesession, true);
+stream_get_contents($closesession);
+
+if (config::byKey('aimesh', 'asuswrt') != '') {
+  $aimeshs = explode(';',config::byKey('aimesh', 'asuswrt'));
+  foreach ($aimeshs as $aimesh) {
+    log::add('asuswrt', 'debug', 'AP AIMesh ' . $aimesh);
+    if (!$connection = ssh2_connect($aimesh,'22')) {
+      log::add('asuswrt', 'error', 'connexion SSH KO');
+      return 'error connecting';
+    }
+    if (!ssh2_auth_password($connection,config::byKey('user', 'asuswrt'),config::byKey('password', 'asuswrt'))){
+      log::add('asuswrt', 'error', 'Authentification SSH KO');
+      return 'error connecting';
+    }
+
+    $stream = ssh2_exec($connection, "nvram get wl_ifnames");
     stream_set_blocking($stream, true);
     $line = stream_get_contents($stream);
     fclose($stream);
     $array=explode(" ", $line);
-    log::add('asuswrt', 'debug', 'Wifi ' . $line);
     $wl0 = $array[0];
     $wl1 = $array[1];
 
-		$stream = ssh2_exec($connection, "wl -i " . $wl0 . " assoclist | cut -d' ' -f2");
-		stream_set_blocking($stream, true);
-		while($line = fgets($stream)) {
-			//assoclist 1C:F2:9A:34:4D:37
-			//assoclist 44:07:0B:4A:A9:96
-			$array=explode(" ", $line);
-			$mac = trim(strtolower($array[0]));
-      if ($mac == '') { continue; }
-			$result[$mac]['connexion'] = 'wifi2.4';
-			$wifi[] = $mac;
-			if ($result[$mac]['status'] == 'UNKNOWN') {
-				$result[$mac]['status'] = 'WIFI';
-			}
-			//log::add('asuswrt', 'debug', 'Wifi 2.4 ' . $array[0]);
-		}
-		fclose($stream);
-
-		foreach ($wifi as $value) {
-			$stream = ssh2_exec($connection, 'wl -i ' . $wl0 . ' rssi ' . $value);
-			stream_set_blocking($stream, true);
-			$result[$value]['rssi'] = stream_get_contents($stream);
-			fclose($stream);
-		}
-		$wifi = array();
-
-		$stream = ssh2_exec($connection, "wl -i " . $wl1 . " assoclist | cut -d' ' -f2");
-		stream_set_blocking($stream, true);
-		while($line = fgets($stream)) {
-			$array=explode(" ", $line);
-			$mac = trim(strtolower($array[0]));
-			if ($mac == '') { continue; }
-			$result[$mac]['connexion'] = 'wifi5';
-			$wifi[] = $mac;
-			if ($result[$mac]['status'] == 'UNKNOWN') {
-				$result[$mac]['status'] = 'WIFI';
-			}
-			//log::add('asuswrt', 'debug', 'Wifi 5 ' . $array[0]);
-		}
-		fclose($stream);
-
-		foreach ($wifi as $value) {
-			$stream = ssh2_exec($connection, 'wl -i ' . $wl1 . ' rssi ' . $value);
-			stream_set_blocking($stream, true);
-			$result[$value]['rssi'] = stream_get_contents($stream);
-			fclose($stream);
-		}
-
-
-		//	iptables -S | grep "FORWARD -s" | grep DROP
-		$stream = ssh2_exec($connection, 'iptables -S | grep "FORWARD -s" | grep DROP');
-		stream_set_blocking($stream, true);
-		while($line = fgets($stream)) {
-			$array=explode(" ", $line);
-			$array2 =explode("/", $array[3]);
-			$blocked[$array2[0]] = $array2[0];
-			//log::add('asuswrt', 'debug', 'Blocked ' . $array2[0]);
-		}
-		fclose($stream);
-
-		foreach ($result as $array ) {
-			if (array_key_exists('ip',$array)) {
-				if (array_key_exists($array['ip'], $blocked)) {
-					$result[$array['mac']]['internet'] = 0;
-					log::add('asuswrt', 'debug', 'IP Blocked ' . $array['ip']);
-				}
-			}
-		}
-
-		$closesession = ssh2_exec($connection, 'exit');
-		stream_set_blocking($closesession, true);
-		stream_get_contents($closesession);
-
-    if (config::byKey('aimesh', 'asuswrt') != '') {
-      $aimeshs = explode(';',config::byKey('aimesh', 'asuswrt'));
-      foreach ($aimeshs as $aimesh) {
-        log::add('asuswrt', 'debug', 'AP AIMesh ' . $aimesh);
-        if (!$connection = ssh2_connect($aimesh,'22')) {
-          log::add('asuswrt', 'error', 'connexion SSH KO');
-          return 'error connecting';
-        }
-        if (!ssh2_auth_password($connection,config::byKey('user', 'asuswrt'),config::byKey('password', 'asuswrt'))){
-          log::add('asuswrt', 'error', 'Authentification SSH KO');
-          return 'error connecting';
-        }
-
-        $stream = ssh2_exec($connection, "nvram get wl_ifnames");
-    		stream_set_blocking($stream, true);
-        $line = stream_get_contents($stream);
-        fclose($stream);
+    if (strpos($wl0,'ath') === false) {
+      log::add('asuswrt', 'debug', 'AP AIMesh non Atheros ' . $wl0 . ' ' . $wl1);
+      $stream = ssh2_exec($connection, "wl -i " . $wl0 . " assoclist | cut -d' ' -f2");
+      stream_set_blocking($stream, true);
+      while($line = fgets($stream)) {
+        //assoclist 1C:F2:9A:34:4D:37
+        //assoclist 44:07:0B:4A:A9:96
         $array=explode(" ", $line);
-        $wl0 = $array[0];
-        $wl1 = $array[1];
-
-        if (strpos($wl0,'ath') === false) {
-          log::add('asuswrt', 'debug', 'AP AIMesh non Atheros ' . $wl0 . ' ' . $wl1);
-          $stream = ssh2_exec($connection, "wl -i " . $wl0 . " assoclist | cut -d' ' -f2");
-          stream_set_blocking($stream, true);
-      		while($line = fgets($stream)) {
-      			//assoclist 1C:F2:9A:34:4D:37
-      			//assoclist 44:07:0B:4A:A9:96
-      			$array=explode(" ", $line);
-      			$mac = trim(strtolower($array[0]));
-            if ($mac == '') { continue; }
-      			$result[$mac]['connexion'] = 'wifi2.4';
-            $result[$mac]['ap'] = 'ap ' . $aimesh;
-      			$wifi[] = $mac;
-      			if ($result[$mac]['status'] == 'UNKNOWN') {
-      				$result[$mac]['status'] = 'WIFI';
-      			}
-      			//log::add('asuswrt', 'debug', 'Wifi 2.4 ' . $array[0]);
-      		}
-      		fclose($stream);
-
-      		foreach ($wifi as $value) {
-      			$stream = ssh2_exec($connection, 'wl -i " . $wl0 . " rssi ' . $value);
-      			stream_set_blocking($stream, true);
-      			$result[$value]['rssi'] = stream_get_contents($stream);
-      			fclose($stream);
-      		}
-      		$wifi = array();
-
-      		$stream = ssh2_exec($connection, "wl -i " . $wl1 . " assoclist | cut -d' ' -f2");
-      		stream_set_blocking($stream, true);
-      		while($line = fgets($stream)) {
-      			$array=explode(" ", $line);
-      			$mac = trim(strtolower($array[0]));
-      			if ($mac == '') { continue; }
-      			$result[$mac]['connexion'] = 'wifi5';
-            $result[$mac]['ap'] = 'ap ' . $aimesh;
-      			$wifi[] = $mac;
-      			if ($result[$mac]['status'] == 'UNKNOWN') {
-      				$result[$mac]['status'] = 'WIFI';
-      			}
-      			//log::add('asuswrt', 'debug', 'Wifi 5 ' . $array[0]);
-      		}
-      		fclose($stream);
-
-      		foreach ($wifi as $value) {
-      			$stream = ssh2_exec($connection, 'wl -i ' . $wl1 . ' rssi ' . $value);
-      			stream_set_blocking($stream, true);
-      			$result[$value]['rssi'] = stream_get_contents($stream);
-      			fclose($stream);
-      		}
-        } else {
-          log::add('asuswrt', 'debug', 'AP AIMesh Atheros ' . $wl0 . ' ' . $wl1);
-          $stream = ssh2_exec($connection, "wlanconfig " . $wl0 . " list sta | sed '1 d'");
-          stream_set_blocking($stream, true);
-      		while($line = fgets($stream)) {
-      			$array=explode("   ", $line);
-      			$mac = trim(strtolower($array[0]));
-      			if ($mac == '') { continue; }
-      			$result[$mac]['connexion'] = 'wifi2.4';
-            $result[$mac]['ap'] = 'ap ' . $aimesh;
-            $result[$mac]['rssi'] = $array[3];
-            log::add('asuswrt', 'debug', '2.4 : ' . $mac . ' rssi ' . $array[3]);
-      			if ($result[$mac]['status'] == 'UNKNOWN') {
-      				$result[$mac]['status'] = 'WIFI';
-      			}
-      			//log::add('asuswrt', 'debug', 'Wifi 5 ' . $array[0]);
-      		}
-      		fclose($stream);
-
-          $stream = ssh2_exec($connection, "wlanconfig " . $wl1 . " list sta | sed '1 d'");
-          stream_set_blocking($stream, true);
-      		while($line = fgets($stream)) {
-      			$array=explode("   ", $line);
-      			$mac = trim(strtolower($array[0]));
-      			if ($mac == '') { continue; }
-      			$result[$mac]['connexion'] = 'wifi5';
-            $result[$mac]['ap'] = 'ap ' . $aimesh;
-            $result[$mac]['rssi'] = $array[3];
-            log::add('asuswrt', 'debug', '5 : ' . $mac . ' rssi ' . $array[3]);
-      			if ($result[$mac]['status'] == 'UNKNOWN') {
-      				$result[$mac]['status'] = 'WIFI';
-      			}
-      			//log::add('asuswrt', 'debug', 'Wifi 5 ' . $array[0]);
-      		}
-      		fclose($stream);
+        $mac = trim(strtolower($array[0]));
+        if ($mac == '') { continue; }
+        $result[$mac]['connexion'] = 'wifi2.4';
+        $result[$mac]['ap'] = 'ap ' . $aimesh;
+        $wifi[] = $mac;
+        if ($result[$mac]['status'] == 'UNKNOWN') {
+          $result[$mac]['status'] = 'WIFI';
         }
-
-
-        $closesession = ssh2_exec($connection, 'exit');
-    		stream_set_blocking($closesession, true);
-    		stream_get_contents($closesession);
+        //log::add('asuswrt', 'debug', 'Wifi 2.4 ' . $array[0]);
       }
+      fclose($stream);
+
+      foreach ($wifi as $value) {
+        $stream = ssh2_exec($connection, 'wl -i " . $wl0 . " rssi ' . $value);
+        stream_set_blocking($stream, true);
+        $result[$value]['rssi'] = stream_get_contents($stream);
+        fclose($stream);
+      }
+      $wifi = array();
+
+      $stream = ssh2_exec($connection, "wl -i " . $wl1 . " assoclist | cut -d' ' -f2");
+      stream_set_blocking($stream, true);
+      while($line = fgets($stream)) {
+        $array=explode(" ", $line);
+        $mac = trim(strtolower($array[0]));
+        if ($mac == '') { continue; }
+        $result[$mac]['connexion'] = 'wifi5';
+        $result[$mac]['ap'] = 'ap ' . $aimesh;
+        $wifi[] = $mac;
+        if ($result[$mac]['status'] == 'UNKNOWN') {
+          $result[$mac]['status'] = 'WIFI';
+        }
+        //log::add('asuswrt', 'debug', 'Wifi 5 ' . $array[0]);
+      }
+      fclose($stream);
+
+      foreach ($wifi as $value) {
+        $stream = ssh2_exec($connection, 'wl -i ' . $wl1 . ' rssi ' . $value);
+        stream_set_blocking($stream, true);
+        $result[$value]['rssi'] = stream_get_contents($stream);
+        fclose($stream);
+      }
+    } else {
+      log::add('asuswrt', 'debug', 'AP AIMesh Atheros ' . $wl0 . ' ' . $wl1);
+      $stream = ssh2_exec($connection, "wlanconfig " . $wl0 . " list sta | sed '1 d'");
+      stream_set_blocking($stream, true);
+      while($line = fgets($stream)) {
+        $array=explode("   ", $line);
+        $mac = trim(strtolower($array[0]));
+        if ($mac == '') { continue; }
+        $result[$mac]['connexion'] = 'wifi2.4';
+        $result[$mac]['ap'] = 'ap ' . $aimesh;
+        $result[$mac]['rssi'] = $array[3];
+        log::add('asuswrt', 'debug', '2.4 : ' . $mac . ' rssi ' . $array[3]);
+        if ($result[$mac]['status'] == 'UNKNOWN') {
+          $result[$mac]['status'] = 'WIFI';
+        }
+        //log::add('asuswrt', 'debug', 'Wifi 5 ' . $array[0]);
+      }
+      fclose($stream);
+
+      $stream = ssh2_exec($connection, "wlanconfig " . $wl1 . " list sta | sed '1 d'");
+      stream_set_blocking($stream, true);
+      while($line = fgets($stream)) {
+        $array=explode("   ", $line);
+        $mac = trim(strtolower($array[0]));
+        if ($mac == '') { continue; }
+        $result[$mac]['connexion'] = 'wifi5';
+        $result[$mac]['ap'] = 'ap ' . $aimesh;
+        $result[$mac]['rssi'] = $array[3];
+        log::add('asuswrt', 'debug', '5 : ' . $mac . ' rssi ' . $array[3]);
+        if ($result[$mac]['status'] == 'UNKNOWN') {
+          $result[$mac]['status'] = 'WIFI';
+        }
+        //log::add('asuswrt', 'debug', 'Wifi 5 ' . $array[0]);
+      }
+      fclose($stream);
     }
 
-		//REACHABLE, DELAY, STABLE, ARP
-		log::add('asuswrt', 'debug', 'Scan Asus, result ' . json_encode($result));
-		return $result;
-	}
 
-	public static function speed() {
-		$result = array();
+    $closesession = ssh2_exec($connection, 'exit');
+    stream_set_blocking($closesession, true);
+    stream_get_contents($closesession);
+  }
+}
 
-		if (!$connection = ssh2_connect(config::byKey('addr', 'asuswrt'),'22')) {
-			log::add('asuswrt', 'error', 'connexion SSH KO');
-			return 'error connecting';
-		}
-		if (!ssh2_auth_password($connection,config::byKey('user', 'asuswrt'),config::byKey('password', 'asuswrt'))){
-			log::add('sshcommander', 'error', 'Authentification SSH KO');
-			return 'error connecting';
-		}
+//REACHABLE, DELAY, STABLE, ARP
+log::add('asuswrt', 'debug', 'Scan Asus, result ' . json_encode($result));
+return $result;
+}
 
-		$stream = ssh2_exec($connection, 'cat /sys/class/net/eth0/statistics/tx_bytes');
-		stream_set_blocking($stream, true);
-		$result['txtotal'] = stream_get_contents($stream);
-		fclose($stream);
+public static function speed() {
+  $result = array();
 
-		$stream = ssh2_exec($connection, 'cat /sys/class/net/eth0/statistics/rx_bytes');
-		stream_set_blocking($stream, true);
-		$result['rxtotal'] = stream_get_contents($stream);
-		fclose($stream);
+  if (!$connection = ssh2_connect(config::byKey('addr', 'asuswrt'),'22')) {
+    log::add('asuswrt', 'error', 'connexion SSH KO');
+    return 'error connecting';
+  }
+  if (!ssh2_auth_password($connection,config::byKey('user', 'asuswrt'),config::byKey('password', 'asuswrt'))){
+    log::add('sshcommander', 'error', 'Authentification SSH KO');
+    return 'error connecting';
+  }
 
-		$stream = ssh2_exec($connection, 'nvram get wl0_radio');
-		stream_set_blocking($stream, true);
-		$result['wifi24'] = stream_get_contents($stream);
-		fclose($stream);
+  $stream = ssh2_exec($connection, 'cat /sys/class/net/eth0/statistics/tx_bytes');
+  stream_set_blocking($stream, true);
+  $result['txtotal'] = stream_get_contents($stream);
+  fclose($stream);
 
-		$stream = ssh2_exec($connection, 'nvram get wl1_radio');
-		stream_set_blocking($stream, true);
-		$result['wifi5'] = stream_get_contents($stream);
-		fclose($stream);
+  $stream = ssh2_exec($connection, 'cat /sys/class/net/eth0/statistics/rx_bytes');
+  stream_set_blocking($stream, true);
+  $result['rxtotal'] = stream_get_contents($stream);
+  fclose($stream);
 
-		$stream = ssh2_exec($connection, 'nvram get wl0.1_radio');
-		stream_set_blocking($stream, true);
-		$result['guest24'] = stream_get_contents($stream);
-		fclose($stream);
+  $stream = ssh2_exec($connection, 'nvram get wl0_radio');
+  stream_set_blocking($stream, true);
+  $result['wifi24'] = stream_get_contents($stream);
+  fclose($stream);
 
-		$stream = ssh2_exec($connection, 'nvram get wl1.1_radio');
-		stream_set_blocking($stream, true);
-		$result['guest5'] = stream_get_contents($stream);
-		fclose($stream);
+  $stream = ssh2_exec($connection, 'nvram get wl1_radio');
+  stream_set_blocking($stream, true);
+  $result['wifi5'] = stream_get_contents($stream);
+  fclose($stream);
 
-		$stream = ssh2_exec($connection, 'nvram get wan0_state_t');
-		stream_set_blocking($stream, true);
-		$result['wan0_state'] = asuswrt::vpnStatus(stream_get_contents($stream));
-		fclose($stream);
+  $stream = ssh2_exec($connection, 'nvram get wl0.1_radio');
+  stream_set_blocking($stream, true);
+  $result['guest24'] = stream_get_contents($stream);
+  fclose($stream);
 
-		$stream = ssh2_exec($connection, 'nvram get wan0_ipaddr');
-		stream_set_blocking($stream, true);
-		$result['wan0_ipaddr'] = stream_get_contents($stream);
-		fclose($stream);
+  $stream = ssh2_exec($connection, 'nvram get wl1.1_radio');
+  stream_set_blocking($stream, true);
+  $result['guest5'] = stream_get_contents($stream);
+  fclose($stream);
 
-		$stream = ssh2_exec($connection, 'nvram get wan0_ifname');
-		stream_set_blocking($stream, true);
-		$result['wan0_ifname'] = stream_get_contents($stream);
-		fclose($stream);
+  $stream = ssh2_exec($connection, 'nvram get wan0_state_t');
+  stream_set_blocking($stream, true);
+  $result['wan0_state'] = asuswrt::vpnStatus(stream_get_contents($stream));
+  fclose($stream);
 
-		$stream = ssh2_exec($connection, 'nvram get wan1_state_t');
-		stream_set_blocking($stream, true);
-		$result['wan1_state'] = asuswrt::vpnStatus(stream_get_contents($stream));
-		fclose($stream);
+  $stream = ssh2_exec($connection, 'nvram get wan0_ipaddr');
+  stream_set_blocking($stream, true);
+  $result['wan0_ipaddr'] = stream_get_contents($stream);
+  fclose($stream);
 
-		$stream = ssh2_exec($connection, 'nvram get wan1_ipaddr');
-		stream_set_blocking($stream, true);
-		$result['wan1_ipaddr'] = stream_get_contents($stream);
-		fclose($stream);
+  $stream = ssh2_exec($connection, 'nvram get wan0_ifname');
+  stream_set_blocking($stream, true);
+  $result['wan0_ifname'] = stream_get_contents($stream);
+  fclose($stream);
 
-		$stream = ssh2_exec($connection, 'nvram get wan1_ifname');
-		stream_set_blocking($stream, true);
-		$result['wan1_ifname'] = stream_get_contents($stream);
-		fclose($stream);
+  $stream = ssh2_exec($connection, 'nvram get wan1_state_t');
+  stream_set_blocking($stream, true);
+  $result['wan1_state'] = asuswrt::vpnStatus(stream_get_contents($stream));
+  fclose($stream);
 
-		$stream = ssh2_exec($connection, 'nvram get vpn_client1_state');
-		stream_set_blocking($stream, true);
-		$result['vpn_client1_state'] = asuswrt::vpnStatus(stream_get_contents($stream));
-		fclose($stream);
+  $stream = ssh2_exec($connection, 'nvram get wan1_ipaddr');
+  stream_set_blocking($stream, true);
+  $result['wan1_ipaddr'] = stream_get_contents($stream);
+  fclose($stream);
 
-		$stream = ssh2_exec($connection, 'nvram get vpn_client2_state');
-		stream_set_blocking($stream, true);
-		$result['vpn_client2_state'] = asuswrt::vpnStatus(stream_get_contents($stream));
-		fclose($stream);
+  $stream = ssh2_exec($connection, 'nvram get wan1_ifname');
+  stream_set_blocking($stream, true);
+  $result['wan1_ifname'] = stream_get_contents($stream);
+  fclose($stream);
 
-		$stream = ssh2_exec($connection, 'nvram get vpn_client3_state');
-		stream_set_blocking($stream, true);
-		$result['vpn_client3_state'] = asuswrt::vpnStatus(stream_get_contents($stream));
-		fclose($stream);
+  $stream = ssh2_exec($connection, 'nvram get vpn_client1_state');
+  stream_set_blocking($stream, true);
+  $result['vpn_client1_state'] = asuswrt::vpnStatus(stream_get_contents($stream));
+  fclose($stream);
 
-		$stream = ssh2_exec($connection, 'nvram get vpn_client4_state');
-		stream_set_blocking($stream, true);
-		$result['vpn_client4_state'] = asuswrt::vpnStatus(stream_get_contents($stream));
-		fclose($stream);
+  $stream = ssh2_exec($connection, 'nvram get vpn_client2_state');
+  stream_set_blocking($stream, true);
+  $result['vpn_client2_state'] = asuswrt::vpnStatus(stream_get_contents($stream));
+  fclose($stream);
 
-		$stream = ssh2_exec($connection, 'nvram get vpn_client5_state');
-		stream_set_blocking($stream, true);
-		$result['vpn_client5_state'] = asuswrt::vpnStatus(stream_get_contents($stream));
-		fclose($stream);
+  $stream = ssh2_exec($connection, 'nvram get vpn_client3_state');
+  stream_set_blocking($stream, true);
+  $result['vpn_client3_state'] = asuswrt::vpnStatus(stream_get_contents($stream));
+  fclose($stream);
 
-		$stream = ssh2_exec($connection, 'robocfg showports | tail -n +2');
-		stream_set_blocking($stream, true);
-		while($line = fgets($stream)) {
-			/*# robocfg showports | tail -n +2
-	Port 0:   DOWN enabled stp: none vlan: 1 jumbo: off mac: 00:00:00:00:00:00
-	Port 1:   DOWN enabled stp: none vlan: 1 jumbo: off mac: 00:00:00:00:00:00
-	Port 2:   DOWN enabled stp: none vlan: 1 jumbo: off mac: 00:00:00:00:00:00
-	Port 3:   DOWN enabled stp: none vlan: 1 jumbo: off mac: 00:00:00:00:00:00
-	Port 4: 1000FD enabled stp: none vlan: 2 jumbo: off mac: 34:27:92:42:d7:03*/
-			$array=explode(": ", $line);
-			$mac = trim(strtolower($array[5]));
-			$indice = str_replace('Port ','',$array[0]);
-			$array2=explode(" ", trim($array[1]));
-			$result['ethernet'][$indice]['mac'] = $mac;
-			$result['ethernet'][$indice]['link'] = $array2[0];
-		}
-		fclose($stream);
+  $stream = ssh2_exec($connection, 'nvram get vpn_client4_state');
+  stream_set_blocking($stream, true);
+  $result['vpn_client4_state'] = asuswrt::vpnStatus(stream_get_contents($stream));
+  fclose($stream);
 
-		$closesession = ssh2_exec($connection, 'exit');
-		stream_set_blocking($closesession, true);
-		stream_get_contents($closesession);
+  $stream = ssh2_exec($connection, 'nvram get vpn_client5_state');
+  stream_set_blocking($stream, true);
+  $result['vpn_client5_state'] = asuswrt::vpnStatus(stream_get_contents($stream));
+  fclose($stream);
 
-		log::add('asuswrt', 'debug', 'Speed Asus, result ' . json_encode($result));
-		return $result;
-	}
+  $stream = ssh2_exec($connection, 'robocfg showports | tail -n +2');
+  stream_set_blocking($stream, true);
+  while($line = fgets($stream)) {
+    /*# robocfg showports | tail -n +2
+    Port 0:   DOWN enabled stp: none vlan: 1 jumbo: off mac: 00:00:00:00:00:00
+    Port 1:   DOWN enabled stp: none vlan: 1 jumbo: off mac: 00:00:00:00:00:00
+    Port 2:   DOWN enabled stp: none vlan: 1 jumbo: off mac: 00:00:00:00:00:00
+    Port 3:   DOWN enabled stp: none vlan: 1 jumbo: off mac: 00:00:00:00:00:00
+    Port 4: 1000FD enabled stp: none vlan: 2 jumbo: off mac: 34:27:92:42:d7:03*/
+    $array=explode(": ", $line);
+    $mac = trim(strtolower($array[5]));
+    $indice = str_replace('Port ','',$array[0]);
+    $array2=explode(" ", trim($array[1]));
+    $result['ethernet'][$indice]['mac'] = $mac;
+    $result['ethernet'][$indice]['link'] = $array2[0];
+  }
+  fclose($stream);
 
-  public function vpnStatus($_value) {
-  		switch (intval($_value)) {
-  		    case 0:
-  			$result = "Stopped";
-  			break;
-  		    case 1:
-  			$result = "Connecting";
-  			break;
-  		case 2:
-  			$result = "Connected";
-  			break;
-  		default:
-  			$result = "Unknow";
-  			break;
-  		}
+  $closesession = ssh2_exec($connection, 'exit');
+  stream_set_blocking($closesession, true);
+  stream_get_contents($closesession);
 
-  		return $result;
-  	}
+  log::add('asuswrt', 'debug', 'Speed Asus, result ' . json_encode($result));
+  return $result;
+}
 
-	public function manageWifi($_enable = true, $_wifi = '0') {
-		if (!$connection = ssh2_connect(config::byKey('addr', 'asuswrt'),'22')) {
-			log::add('asuswrt', 'error', 'connexion SSH KO');
-			return 'error connecting';
-		}
-		if (!ssh2_auth_password($connection,config::byKey('user', 'asuswrt'),config::byKey('password', 'asuswrt'))){
-			log::add('sshcommander', 'error', 'Authentification SSH KO');
-			return 'error connecting';
-		}
-		//active wifi5, wifi24 c'est wl0, couper c'est 0, statut : nvram get wl1_radio
-		//nvram set wl1_radio=1
-		//nvram commit
-		//service restart_wireless
+public function vpnStatus($_value) {
+  switch (intval($_value)) {
+    case 0:
+    $result = "Stopped";
+    break;
+    case 1:
+    $result = "Connecting";
+    break;
+    case 2:
+    $result = "Connected";
+    break;
+    default:
+    $result = "Unknow";
+    break;
+  }
 
-		$active = ($_enable) ? '1' : '0';
-		$stream = ssh2_exec($connection, 'nvram set wl' . $_wifi . '_radio=' . $active);
-		$stream = ssh2_exec($connection, 'nvram commit');
-		$stream = ssh2_exec($connection, 'service restart_wireless');
+  return $result;
+}
 
-		$closesession = ssh2_exec($connection, 'exit');
-		stream_set_blocking($closesession, true);
-		stream_get_contents($closesession);
-	}
+public function manageWifi($_enable = true, $_wifi = '0') {
+  if (!$connection = ssh2_connect(config::byKey('addr', 'asuswrt'),'22')) {
+    log::add('asuswrt', 'error', 'connexion SSH KO');
+    return 'error connecting';
+  }
+  if (!ssh2_auth_password($connection,config::byKey('user', 'asuswrt'),config::byKey('password', 'asuswrt'))){
+    log::add('sshcommander', 'error', 'Authentification SSH KO');
+    return 'error connecting';
+  }
+  //active wifi5, wifi24 c'est wl0, couper c'est 0, statut : nvram get wl1_radio
+  //nvram set wl1_radio=1
+  //nvram commit
+  //service restart_wireless
 
-	public function manageInternet($_enable = true) {
-		//iptables -I FORWARD -s 192.168.2.100 -j DROP
-		//iptables -D FORWARD -s 192.168.2.101 -j DROP
-		$active = ($_enable) ? 'D' : 'I';
-		$ip = $this->getConfiguration('ip');
-		$this->sendAsus('iptables -' . $active . ' FORWARD -s ' . $ip . ' -j DROP');
-	}
+  $active = ($_enable) ? '1' : '0';
+  $stream = ssh2_exec($connection, 'nvram set wl' . $_wifi . '_radio=' . $active);
+  $stream = ssh2_exec($connection, 'nvram commit');
+  $stream = ssh2_exec($connection, 'service restart_wireless');
 
-	public function wakeOnLan() {
-		$this->sendAsus('/usr/sbin/ether-wake ' . $this->getConfiguration('mac'));
-	}
+  $closesession = ssh2_exec($connection, 'exit');
+  stream_set_blocking($closesession, true);
+  stream_get_contents($closesession);
+}
 
-	public function restartAsus() {
-		$this->sendAsus('sudo reboot');
-	}
+public function manageInternet($_enable = true) {
+  //iptables -I FORWARD -s 192.168.2.100 -j DROP
+  //iptables -D FORWARD -s 192.168.2.101 -j DROP
+  $active = ($_enable) ? 'D' : 'I';
+  $ip = $this->getConfiguration('ip');
+  $this->sendAsus('iptables -' . $active . ' FORWARD -s ' . $ip . ' -j DROP');
+}
 
-	public function sendAsus($_cmd = '') {
-		if (!$connection = ssh2_connect(config::byKey('addr', 'asuswrt'),'22')) {
-			log::add('asuswrt', 'error', 'connexion SSH KO');
-			return 'error connecting';
-		}
-		if (!ssh2_auth_password($connection,config::byKey('user', 'asuswrt'),config::byKey('password', 'asuswrt'))){
-			log::add('sshcommander', 'error', 'Authentification SSH KO');
-			return 'error connecting';
-		}
-		log::add('asuswrt', 'error', 'Send : ' . $_cmd);
-		$stream = ssh2_exec($connection, $_cmd);
+public function wakeOnLan() {
+  $this->sendAsus('/usr/sbin/ether-wake ' . $this->getConfiguration('mac'));
+}
 
-		$closesession = ssh2_exec($connection, 'exit');
-		stream_set_blocking($closesession, true);
-		stream_get_contents($closesession);
-	}
+public function restartAsus() {
+  $this->sendAsus('sudo reboot');
+}
+
+public function sendAsus($_cmd = '') {
+  if (!$connection = ssh2_connect(config::byKey('addr', 'asuswrt'),'22')) {
+    log::add('asuswrt', 'error', 'connexion SSH KO');
+    return 'error connecting';
+  }
+  if (!ssh2_auth_password($connection,config::byKey('user', 'asuswrt'),config::byKey('password', 'asuswrt'))){
+    log::add('sshcommander', 'error', 'Authentification SSH KO');
+    return 'error connecting';
+  }
+  log::add('asuswrt', 'error', 'Send : ' . $_cmd);
+  $stream = ssh2_exec($connection, $_cmd);
+
+  $closesession = ssh2_exec($connection, 'exit');
+  stream_set_blocking($closesession, true);
+  stream_get_contents($closesession);
+}
 
 }
 
 class asuswrtCmd extends cmd {
-	public function execute($_options = null) {
-		if ($this->getType() == "info") {
-		} else {
-			$eqLogic = $this->getEqLogic();
-			if ($this->getConfiguration('type') == 'wifi') {
-				$eqLogic->manageWifi($this->getConfiguration('enable'),$this->getConfiguration('wifi'));
-			}
-			if ($this->getConfiguration('type') == 'internet') {
-				$eqLogic->manageInternet($this->getConfiguration('enable'));
-			}
-			if ($this->getConfiguration('type') == 'restart') {
-				$eqLogic->restartAsus();
-			}
-			if ($this->getConfiguration('type') == 'wol') {
-				$eqLogic->wakeOnLan();
-			}
-		}
-	}
+  public function execute($_options = null) {
+    if ($this->getType() == "info") {
+    } else {
+      $eqLogic = $this->getEqLogic();
+      if ($this->getConfiguration('type') == 'wifi') {
+        $eqLogic->manageWifi($this->getConfiguration('enable'),$this->getConfiguration('wifi'));
+      }
+      if ($this->getConfiguration('type') == 'internet') {
+        $eqLogic->manageInternet($this->getConfiguration('enable'));
+      }
+      if ($this->getConfiguration('type') == 'restart') {
+        $eqLogic->restartAsus();
+      }
+      if ($this->getConfiguration('type') == 'wol') {
+        $eqLogic->wakeOnLan();
+      }
+    }
+  }
 
 }
 
