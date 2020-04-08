@@ -277,7 +277,7 @@ foreach ($wifi as $value) {
   $rssi = stream_get_contents($stream);
   $result[$value]['rssi'] = $rssi;
   fclose($stream);
-  log::add('asuswrt', 'debug', 'Wifi 2.4 ' . $mac . ' ' . $rssi);
+  log::add('asuswrt', 'debug', 'Wifi 2.4 ' . $value . ' ' . $rssi);
 }
 $wifi = array();
 
@@ -298,7 +298,7 @@ foreach ($wifi as $value) {
   $rssi = stream_get_contents($stream);
   $result[$value]['rssi'] = $rssi;
   fclose($stream);
-  log::add('asuswrt', 'debug', 'Wifi 5 ' . $mac . ' ' . $rssi);
+  log::add('asuswrt', 'debug', 'Wifi 5 ' . $value . ' ' . $rssi);
 }
 
 
