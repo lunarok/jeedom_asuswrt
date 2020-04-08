@@ -269,6 +269,7 @@ while($line = fgets($stream)) {
   $result[$mac]['connexion'] = 'wifi2.4';
   $wifi[] = $mac;
   $result[$mac]['status'] = 'WIFI';
+  log::add('asuswrt', 'debug', 'Wifi 2.4 ' . $mac);
 }
 fclose($stream);
 
@@ -289,6 +290,7 @@ while($line = fgets($stream)) {
   $result[$mac]['connexion'] = 'wifi5';
   $wifi[] = $mac;
   $result[$mac]['status'] = 'WIFI';
+  log::add('asuswrt', 'debug', 'Wifi 5 ' . $mac);
 }
 fclose($stream);
 
