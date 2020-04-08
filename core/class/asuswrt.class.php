@@ -254,51 +254,51 @@ stream_set_blocking($stream, true);
 $line = stream_get_contents($stream);
 fclose($stream);
 $array=explode(" ", $line);
-log::add('asuswrt', 'debug', 'Wifi ' . $line);
 $wl0 = $array[0];
 $wl1 = $array[1];
+log::add('asuswrt', 'debug', 'Wifi ' . $wl0 . ' ' . $wl1);
 
-$stream = ssh2_exec($connection, "wl -i " . $wl0 . " assoclist | cut -d' ' -f2");
+$stream = ssh2_exec($connection, "wl -i " . $wl0 . " assoclist | awk '{print $2}'");
 stream_set_blocking($stream, true);
 while($line = fgets($stream)) {
   //assoclist 1C:F2:9A:34:4D:37
   //assoclist 44:07:0B:4A:A9:96
-  $array=explode(" ", $line);
-  $mac = trim(strtolower($array[0]));
+  $mac = trim(strtolower($line));
   if ($mac == '') { continue; }
   $result[$mac]['connexion'] = 'wifi2.4';
-  $wifi[] = $mac;
   $result[$mac]['status'] = 'WIFI';
-  log::add('asuswrt', 'debug', 'Wifi 2.4 ' . $mac);
+  $wifi[] = $mac;
 }
 fclose($stream);
 
 foreach ($wifi as $value) {
   $stream = ssh2_exec($connection, 'wl -i ' . $wl0 . ' rssi ' . $value);
   stream_set_blocking($stream, true);
-  $result[$value]['rssi'] = stream_get_contents($stream);
+  $rssi = stream_get_contents($stream);
+  $result[$value]['rssi'] = $rssi;
   fclose($stream);
+  log::add('asuswrt', 'debug', 'Wifi 2.4 ' . $mac . ' ' . $rssi);
 }
 $wifi = array();
 
-$stream = ssh2_exec($connection, "wl -i " . $wl1 . " assoclist | cut -d' ' -f2");
+$stream = ssh2_exec($connection, "wl -i " . $wl1 . " assoclist | awk '{print $2}'");
 stream_set_blocking($stream, true);
 while($line = fgets($stream)) {
-  $array=explode(" ", $line);
-  $mac = trim(strtolower($array[0]));
+  $mac = trim(strtolower($line));
   if ($mac == '') { continue; }
   $result[$mac]['connexion'] = 'wifi5';
-  $wifi[] = $mac;
   $result[$mac]['status'] = 'WIFI';
-  log::add('asuswrt', 'debug', 'Wifi 5 ' . $mac);
+  $wifi[] = $mac;
 }
 fclose($stream);
 
 foreach ($wifi as $value) {
   $stream = ssh2_exec($connection, 'wl -i ' . $wl1 . ' rssi ' . $value);
   stream_set_blocking($stream, true);
-  $result[$value]['rssi'] = stream_get_contents($stream);
+  $rssi = stream_get_contents($stream);
+  $result[$value]['rssi'] = $rssi;
   fclose($stream);
+  log::add('asuswrt', 'debug', 'Wifi 5 ' . $mac . ' ' . $rssi);
 }
 
 
@@ -349,65 +349,65 @@ if (config::byKey('aimesh', 'asuswrt') != '') {
 
     if (strpos($wl0,'ath') === false) {
       log::add('asuswrt', 'debug', 'AP AIMesh non Atheros ' . $wl0 . ' ' . $wl1);
-      $stream = ssh2_exec($connection, "wl -i " . $wl0 . " assoclist | cut -d' ' -f2");
+      $stream = ssh2_exec($connection, "wl -i " . $wl0 . " assoclist | awk '{print $2}'");
       stream_set_blocking($stream, true);
       while($line = fgets($stream)) {
-        //assoclist 1C:F2:9A:34:4D:37
-        //assoclist 44:07:0B:4A:A9:96
-        $array=explode(" ", $line);
-        $mac = trim(strtolower($array[0]));
+        $mac = trim(strtolower($line));
         if ($mac == '') { continue; }
         $result[$mac]['connexion'] = 'wifi2.4';
         $result[$mac]['ap'] = 'ap ' . $aimesh;
-        $wifi[] = $mac;
         $result[$mac]['status'] = 'WIFI';
+        $wifi[] = $mac;
       }
       fclose($stream);
 
       foreach ($wifi as $value) {
         $stream = ssh2_exec($connection, 'wl -i " . $wl0 . " rssi ' . $value);
         stream_set_blocking($stream, true);
-        $result[$value]['rssi'] = stream_get_contents($stream);
+        $rssi = stream_get_contents($stream);
+        $result[$value]['rssi'] = $rssi;
         fclose($stream);
+        log::add('asuswrt', 'debug', 'Wifi 2.4 ' . $mac . ' ' . $rssi);
       }
       $wifi = array();
 
-      $stream = ssh2_exec($connection, "wl -i " . $wl1 . " assoclist | cut -d' ' -f2");
+      $stream = ssh2_exec($connection, "wl -i " . $wl1 . " assoclist | awk '{print $2}'");
       stream_set_blocking($stream, true);
       while($line = fgets($stream)) {
-        $array=explode(" ", $line);
-        $mac = trim(strtolower($array[0]));
+        $mac = trim(strtolower($line));
         if ($mac == '') { continue; }
         $result[$mac]['connexion'] = 'wifi5';
         $result[$mac]['ap'] = 'ap ' . $aimesh;
-        $wifi[] = $mac;
         $result[$mac]['status'] = 'WIFI';
+        $wifi[] = $mac;
       }
       fclose($stream);
 
       foreach ($wifi as $value) {
         $stream = ssh2_exec($connection, 'wl -i ' . $wl1 . ' rssi ' . $value);
         stream_set_blocking($stream, true);
-        $result[$value]['rssi'] = stream_get_contents($stream);
+        $rssi = stream_get_contents($stream);
+        $result[$value]['rssi'] = $rssi;
         fclose($stream);
+        log::add('asuswrt', 'debug', 'Wifi 5 ' . $mac . ' ' . $rssi);
       }
     } else {
       log::add('asuswrt', 'debug', 'AP AIMesh Atheros ' . $wl0 . ' ' . $wl1);
-      $stream = ssh2_exec($connection, "wlanconfig " . $wl0 . " list sta | sed '1 d'");
+      $stream = ssh2_exec($connection, "wlanconfig " . $wl0 . " list sta | sed '1 d' | awk '{print $1\" \"$6}'");
       stream_set_blocking($stream, true);
       while($line = fgets($stream)) {
-        $array=explode("   ", $line);
+        $array=explode(" ", $line);
         $mac = trim(strtolower($array[0]));
         if ($mac == '') { continue; }
         $result[$mac]['connexion'] = 'wifi2.4';
         $result[$mac]['ap'] = 'ap ' . $aimesh;
-        $result[$mac]['rssi'] = $array[3];
+        $result[$mac]['rssi'] = $array[1];
         $result[$mac]['status'] = 'WIFI';
-        log::add('asuswrt', 'debug', '2.4 : ' . $mac . ' rssi ' . $array[4]);
+        log::add('asuswrt', 'debug', '2.4 : ' . $mac . ' rssi ' . $array[1]);
       }
       fclose($stream);
 
-      $stream = ssh2_exec($connection, "wlanconfig " . $wl1 . " list sta | sed '1 d'");
+      $stream = ssh2_exec($connection, "wlanconfig " . $wl1 . " list sta | sed '1 d' | awk '{print $1\" \"$6}'");
       stream_set_blocking($stream, true);
       while($line = fgets($stream)) {
         $array=explode("   ", $line);
@@ -415,9 +415,9 @@ if (config::byKey('aimesh', 'asuswrt') != '') {
         if ($mac == '') { continue; }
         $result[$mac]['connexion'] = 'wifi5';
         $result[$mac]['ap'] = 'ap ' . $aimesh;
-        $result[$mac]['rssi'] = $array[3];
+        $result[$mac]['rssi'] = $array[1];
         $result[$mac]['status'] = 'WIFI';
-        log::add('asuswrt', 'debug', '5 : ' . $mac . ' rssi ' . $array[4]);
+        log::add('asuswrt', 'debug', '5 : ' . $mac . ' rssi ' . $array[1]);
       }
       fclose($stream);
     }
