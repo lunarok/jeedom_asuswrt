@@ -60,10 +60,10 @@ class asuswrt extends eqLogic {
     foreach ($result as $asuswrt) {
       $eqlogic=asuswrt::byLogicalId($asuswrt['mac'], 'asuswrt');
       if (!is_object($eqlogic)) {
-        if ($asuswrt['mac'] != '') {
+        if ($asuswrt['mac'] == '') {
           continue;
         }
-        if ($asuswrt['ip'] != '' && $asuswrt['hostname'] != '') {
+        if ($asuswrt['ip'] == '' && $asuswrt['hostname'] == '') {
           continue;
         }
         $eqlogic = new asuswrt();
