@@ -58,6 +58,9 @@ class asuswrt extends eqLogic {
   public static function scanDevices() {
     $result = asuswrt::scan();
     foreach ($result as $asuswrt) {
+      if ($asuswrt['mac'] == '') {
+        continue;
+      }
       if ($asuswrt['ip'] == '' && $asuswrt['hostname'] == '') {
         continue;
       }
