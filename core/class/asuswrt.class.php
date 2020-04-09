@@ -58,29 +58,27 @@ class asuswrt extends eqLogic {
   public static function scanDevices() {
     $result = asuswrt::scan();
     foreach ($result as $asuswrt) {
-      if ($asuswrt['mac'] == '') {
-        continue;
-      }
-      if ($asuswrt['ip'] == '' && $asuswrt['hostname'] == '') {
-        continue;
-      }
       $eqlogic=asuswrt::byLogicalId($asuswrt['mac'], 'asuswrt');
-      if (!is_object($eqlogic)) {
-        $eqlogic = new asuswrt();
-        $eqlogic->setEqType_name('asuswrt');
-        $eqlogic->setLogicalId($asuswrt['mac']);
-        $eqlogic->setIsEnable(1);
-        $eqlogic->setIsVisible(0);
-        $eqlogic->setName($asuswrt['hostname'] . ' - ' . $asuswrt['ip']);
-        $eqlogic->setConfiguration('hostname', $asuswrt['hostname']);
-        $eqlogic->setConfiguration('mac', $asuswrt['mac']);
-        $eqlogic->setConfiguration('ip', $asuswrt['ip']);
-        $eqlogic->save();
-      }
-      if (($eqlogic->getConfiguration('hostname') !=  $asuswrt['hostname']) || ($eqlogic->getConfiguration('ip') !=  $asuswrt['ip'])) {
-        $eqlogic->setConfiguration('hostname', $asuswrt['hostname']);
-        $eqlogic->setConfiguration('ip', $asuswrt['ip']);
-        $eqlogic->save();
+      if ($asuswrt['mac'] != '') {
+        if ($asuswrt['ip'] != '' && $asuswrt['hostname'] != '') {
+          if (!is_object($eqlogic)) {
+            $eqlogic = new asuswrt();
+            $eqlogic->setEqType_name('asuswrt');
+            $eqlogic->setLogicalId($asuswrt['mac']);
+            $eqlogic->setIsEnable(1);
+            $eqlogic->setIsVisible(0);
+            $eqlogic->setName($asuswrt['hostname'] . ' - ' . $asuswrt['ip']);
+            $eqlogic->setConfiguration('hostname', $asuswrt['hostname']);
+            $eqlogic->setConfiguration('mac', $asuswrt['mac']);
+            $eqlogic->setConfiguration('ip', $asuswrt['ip']);
+            $eqlogic->save();
+          }
+          if (($eqlogic->getConfiguration('hostname') !=  $asuswrt['hostname']) || ($eqlogic->getConfiguration('ip') !=  $asuswrt['ip'])) {
+            $eqlogic->setConfiguration('hostname', $asuswrt['hostname']);
+            $eqlogic->setConfiguration('ip', $asuswrt['ip']);
+            $eqlogic->save();
+          }
+        }
       }
       $eqlogic->loadCmdFromConf('client');
       foreach ($asuswrt as $logicalid => $value) {
