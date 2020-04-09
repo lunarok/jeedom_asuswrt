@@ -161,7 +161,7 @@ public static function scan() {
       continue;
     }
     $result[$asuswrt->getConfiguration('mac')]['status'] = "OFFLINE";
-    $result[$mac]['ap'] = 'none';
+    $result[$asuswrt->getConfiguration('mac')]['status']['ap'] = 'none';
   }
 
   if (!$connection = ssh2_connect(config::byKey('addr', 'asuswrt'),'22')) {
@@ -217,6 +217,7 @@ public static function scan() {
       $result[$mac]['hostname'] = $hostname;
     }
     $result[$mac]['status'] = 'ARP';
+    $result[$mac]['ap'] = 'routeur';
   }
   fclose($stream);
 
@@ -239,6 +240,7 @@ public static function scan() {
         $result[$mac]['ap'] = 'routeur';
       }
       $result[$mac]['status'] = $array[5];
+      $result[$mac]['ap'] = 'routeur';
     }
   }
   fclose($stream);
@@ -274,6 +276,7 @@ while($line = fgets($stream)) {
   if ($mac == '') { continue; }
   $result[$mac]['connexion'] = 'wifi2.4';
   $result[$mac]['status'] = 'WIFI';
+  $result[$mac]['ap'] = 'routeur';
   $wifi[] = $mac;
 }
 fclose($stream);
@@ -297,6 +300,7 @@ while($line = fgets($stream)) {
   log::add('asuswrt', 'debug', 'MAC ' . $mac);
   $result[$mac]['connexion'] = 'wifi5';
   $result[$mac]['status'] = 'WIFI';
+  $result[$mac]['ap'] = 'routeur';
   $wifi[] = $mac;
 }
 fclose($stream);
