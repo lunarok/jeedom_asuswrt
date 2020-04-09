@@ -330,6 +330,8 @@ $closesession = ssh2_exec($connection, 'exit');
 stream_set_blocking($closesession, true);
 stream_get_contents($closesession);
 
+log::add('asuswrt', 'debug', 'Scan Routeur, result ' . json_encode($result));
+
 if (config::byKey('aimesh', 'asuswrt') != '') {
   $aimeshs = explode(';',config::byKey('aimesh', 'asuswrt'));
   foreach ($aimeshs as $aimesh) {
