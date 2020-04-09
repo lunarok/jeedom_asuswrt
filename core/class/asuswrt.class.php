@@ -170,17 +170,17 @@ public static function scan() {
     return 'error connecting';
   }
 
-  $stream = ssh2_exec($connection, 'cat /var/lib/misc/dnsmasq.leases');
+  $stream = ssh2_exec($connection, "cat /var/lib/misc/dnsmasq.leases | awk '{print $2\" \"$3\" \"$4}'");
   stream_set_blocking($stream, true);
   while($line = fgets($stream)) {
     //84529 01:e0:4c:68:15:8e 192.168.0.102 host2 01:00:e0:4c:68:15:8e
     //55822 28:5c:07:f6:97:80 192.168.0.32 host *
     $array=explode(" ", $line);
+    $mac = trim(strtolower($array[0]));
     if ($mac == '') { continue; }
-    $mac = trim(strtolower($array[1]));
     $result[$mac]['mac'] = $mac;
-    $result[$mac]['ip'] = $array[2];
-    $result[$mac]['hostname'] = $array[3];
+    $result[$mac]['ip'] = $array[1];
+    $result[$mac]['hostname'] = $array[2];
     $result[$mac]['rssi'] = 0;
     $result[$mac]['status'] = 'UNKNOWN';
     $result[$mac]['internet'] = 1;
@@ -209,6 +209,9 @@ public static function scan() {
       $result[$mac]['internet'] = 1;
       $result[$mac]['connexion'] = 'ethernet';
       $result[$mac]['ap'] = 'routeur';
+    }
+    if ($hostname != '?') {
+      $result[$mac]['hostname'] = $hostname;
     }
     $result[$mac]['status'] = 'ARP';
   }
