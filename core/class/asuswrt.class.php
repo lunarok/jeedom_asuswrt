@@ -461,6 +461,40 @@ if (config::byKey('aimesh', 'asuswrt') != '') {
   }
 }
 
+if (!$connection = ssh2_connect(config::byKey('addr', 'asuswrt'),'22')) {
+  log::add('asuswrt', 'error', 'connexion SSH KO');
+  return 'error connecting';
+}
+if (!ssh2_auth_password($connection,config::byKey('user', 'asuswrt'),config::byKey('password', 'asuswrt'))){
+  log::add('asuswrt', 'error', 'Authentification SSH KO');
+  return 'error connecting';
+}
+
+foreach ($result as $array ) {
+  if (array_key_exists('ip',$array)) {
+    log::add('asuswrt', 'debug', 'Check blocked and hostname ' . print_r($array,true));
+    if (array_key_exists($array['ip'], $blocked)) {
+      $result[$array['mac']]['internet'] = 0;
+      log::add('asuswrt', 'debug', 'IP Blocked ' . $array['ip']);
+    }
+    if ((strpos($array['hostname'],'?') !== false) || (strpos($array['hostname'],'*') !== false)) {
+      log::add('asuswrt', 'debug', 'Check hostname ' . $array['hostname'] . ' present');
+      $stream = ssh2_exec($connection, "cat /jffs/configs/dnsmasq.conf.add | grep " . $array['ip'] . " | awk -F'/' '{print $2}'");
+      stream_set_blocking($stream, true);
+      $hostname = stream_get_contents($stream);
+      fclose($stream);
+      if ($hostname != '') {
+        $result[$array['mac']]['hostname'] = $hostname;
+        log::add('asuswrt', 'debug', 'Resolve ' . $hostname);
+      }
+    }
+  }
+}
+
+$closesession = ssh2_exec($connection, 'exit');
+stream_set_blocking($closesession, true);
+stream_get_contents($closesession);
+
 //REACHABLE, DELAY, STABLE, ARP
 log::add('asuswrt', 'debug', 'Scan Asus, result ' . json_encode($result));
 return $result;
