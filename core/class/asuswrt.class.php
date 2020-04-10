@@ -339,6 +339,7 @@ foreach ($result as $array ) {
       $hostname = stream_get_contents($stream);
       fclose($stream);
       $result[$array['mac']]['hostname'] = $hostname;
+      log::add('asuswrt', 'debug', 'Resolve ' . $hostname);
     }
   }
 }
