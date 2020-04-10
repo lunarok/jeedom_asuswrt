@@ -333,6 +333,13 @@ foreach ($result as $array ) {
       $result[$array['mac']]['internet'] = 0;
       log::add('asuswrt', 'debug', 'IP Blocked ' . $array['ip']);
     }
+    if ($array['hostname'] == "?") {
+      $stream = ssh2_exec($connection, "cat /jffs/configs/dnsmasq.conf.add | grep " . $array['ip'] . " | awk -F'/' '{print $2}'");
+      stream_set_blocking($stream, true);
+      $hostname = stream_get_contents($stream);
+      fclose($stream);
+      $result[$array['mac']]['hostname'] = $hostname;
+    }
   }
 }
 
