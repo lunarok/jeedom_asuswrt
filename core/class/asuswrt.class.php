@@ -162,6 +162,7 @@ public static function scan() {
     }
     $result[$asuswrt->getConfiguration('mac')]['status'] = "OFFLINE";
     $result[$asuswrt->getConfiguration('mac')]['ap'] = 'none';
+    $result[$asuswrt->getConfiguration('mac')]['ip'] = $asuswrt->getConfiguration('ip');
     $result[$asuswrt->getConfiguration('mac')]['mac'] = $asuswrt->getConfiguration('mac');
     $result[$asuswrt->getConfiguration('mac')]['hostname'] = $asuswrt->getConfiguration('hostname');
   }
@@ -218,6 +219,7 @@ public static function scan() {
     if ($hostname != '?') {
       $result[$mac]['hostname'] = $hostname;
     }
+    $result[$mac]['ip'] = $ip;
     $result[$mac]['status'] = 'ARP';
     $result[$mac]['ap'] = 'routeur';
   }
@@ -241,6 +243,7 @@ public static function scan() {
         $result[$mac]['connexion'] = 'ethernet';
         $result[$mac]['ap'] = 'routeur';
       }
+      $result[$mac]['ip'] = $ip;
       $result[$mac]['status'] = $array[5];
       $result[$mac]['ap'] = 'routeur';
     }
