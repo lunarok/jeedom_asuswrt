@@ -328,6 +328,7 @@ while($line = fgets($stream)) {
 fclose($stream);
 
 foreach ($result as $array ) {
+  log::add('asuswrt', 'debug', 'Check blocked and hostname ' . print_r($array,true));
   if (array_key_exists('ip',$array)) {
     if (array_key_exists($array['ip'], $blocked)) {
       $result[$array['mac']]['internet'] = 0;
