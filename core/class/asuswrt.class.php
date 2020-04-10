@@ -162,6 +162,8 @@ public static function scan() {
     }
     $result[$asuswrt->getConfiguration('mac')]['status'] = "OFFLINE";
     $result[$asuswrt->getConfiguration('mac')]['ap'] = 'none';
+    $result[$asuswrt->getConfiguration('mac')]['mac'] = $asuswrt->getConfiguration('mac');
+    $result[$asuswrt->getConfiguration('mac')]['hostname'] = $asuswrt->getConfiguration('hostname');
   }
 
   if (!$connection = ssh2_connect(config::byKey('addr', 'asuswrt'),'22')) {
@@ -328,13 +330,13 @@ while($line = fgets($stream)) {
 fclose($stream);
 
 foreach ($result as $array ) {
-  log::add('asuswrt', 'debug', 'Check blocked and hostname ' . print_r($array,true));
   if (array_key_exists('ip',$array)) {
+    log::add('asuswrt', 'debug', 'Check blocked and hostname ' . print_r($array,true));
     if (array_key_exists($array['ip'], $blocked)) {
       $result[$array['mac']]['internet'] = 0;
       log::add('asuswrt', 'debug', 'IP Blocked ' . $array['ip']);
     }
-    if ($array['hostname'] == "?") {
+    if ($array['hostname'] == "?" || $array['hostname'] == "*") {
       $stream = ssh2_exec($connection, "cat /jffs/configs/dnsmasq.conf.add | grep " . $array['ip'] . " | awk -F'/' '{print $2}'");
       stream_set_blocking($stream, true);
       $hostname = stream_get_contents($stream);
