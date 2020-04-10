@@ -379,7 +379,7 @@ if (config::byKey('aimesh', 'asuswrt') != '') {
       fclose($stream);
 
       foreach ($wifi as $value) {
-        $stream = ssh2_exec($connection, 'wl -i " . $wl0 . " rssi ' . $value);
+        $stream = ssh2_exec($connection, 'wl -i ' . $wl0 . ' rssi ' . $value);
         stream_set_blocking($stream, true);
         $rssi = stream_get_contents($stream);
         $result[$value]['rssi'] = $rssi;
