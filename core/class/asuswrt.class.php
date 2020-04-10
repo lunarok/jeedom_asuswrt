@@ -201,7 +201,7 @@ public static function scan() {
     $hostname = trim(strtolower($array[0]));
     $array2=explode(") at ", $array[1]);
     $ip = trim(strtolower($array2[0]));
-    $array3=explode(" ", $array[2]);
+    $array3=explode(" ", $array2[1]);
     $mac = trim(strtolower($array3[0]));
     if ($mac == '') { continue; }
     if (!array_key_exists($mac,$result)) {
