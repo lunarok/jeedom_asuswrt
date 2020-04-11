@@ -86,7 +86,7 @@ class asuswrt extends eqLogic {
       foreach ($asuswrt as $logicalid => $value) {
         $eqlogic->checkAndUpdateCmd($logicalid, $value);
       }
-      $presence = (($asuswrt['status'] == 'UNKNOWN') || ($asuswrt['status'] == 'OFFLINE')) ? 0 : 1
+      $presence = (($asuswrt['status'] == 'UNKNOWN') || ($asuswrt['status'] == 'OFFLINE')) ? 0 : 1;
       $eqlogic->checkAndUpdateCmd('presence', $presence);
       /*$cmd = asuswrtCmd::byEqLogicIdAndLogicalId($eqlogic->getId(),'presence');
       if (is_object($cmd)) {
