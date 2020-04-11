@@ -436,7 +436,7 @@ if (config::byKey('aimesh', 'asuswrt') != '') {
         if ($mac == '') { continue; }
         $result[$mac]['connexion'] = 'wifi2.4';
         $result[$mac]['ap'] = 'ap ' . $aimesh;
-        $result[$mac]['rssi'] = $array[1];
+        $result[$mac]['rssi'] = '-' . $array[1];
         $result[$mac]['status'] = 'WIFI';
         log::add('asuswrt', 'debug', '2.4 : ' . $mac . ' rssi ' . $array[1]);
       }
@@ -450,7 +450,7 @@ if (config::byKey('aimesh', 'asuswrt') != '') {
         if ($mac == '') { continue; }
         $result[$mac]['connexion'] = 'wifi5';
         $result[$mac]['ap'] = 'ap ' . $aimesh;
-        $result[$mac]['rssi'] = $array[1];
+        $result[$mac]['rssi'] = '-' . $array[1];
         $result[$mac]['status'] = 'WIFI';
         log::add('asuswrt', 'debug', '5 : ' . $mac . ' rssi ' . $array[1]);
       }
