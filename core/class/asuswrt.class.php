@@ -213,9 +213,7 @@ public static function scan() {
       $result[$mac]['connexion'] = 'ethernet';
       $result[$mac]['ap'] = 'routeur';
     }
-    if ($hostname != '?') {
-      $result[$mac]['hostname'] = $hostname;
-    }
+    $result[$mac]['hostname'] = $hostname;
     $result[$mac]['ip'] = $ip;
     $result[$mac]['status'] = 'ARP';
     $result[$mac]['ap'] = 'routeur';
