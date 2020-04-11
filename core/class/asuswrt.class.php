@@ -78,6 +78,7 @@ class asuswrt extends eqLogic {
         $eqlogic->save();
       }
       if (($eqlogic->getConfiguration('hostname') !=  $asuswrt['hostname']) || ($eqlogic->getConfiguration('ip') !=  $asuswrt['ip'])) {
+        log::add('asuswrt', 'debug', 'New hostname or IP ' . $asuswrt['hostname']);
         $eqlogic->setConfiguration('hostname', $asuswrt['hostname']);
         $eqlogic->setConfiguration('ip', $asuswrt['ip']);
         $eqlogic->save();
@@ -266,7 +267,7 @@ $wl1 = trim(strtolower($array[1]));
 log::add('asuswrt', 'debug', 'Wifi ' . $wl0 . ' ' . $wl1);
 
 $stream = ssh2_exec($connection, "wl -i " . $wl0 . " assoclist | awk '{print $2}'");
-log::add('asuswrt', 'debug', "wl -i " . $wl0 . " assoclist | awk '{print $2}'");
+//log::add('asuswrt', 'debug', "wl -i " . $wl0 . " assoclist | awk '{print $2}'");
 stream_set_blocking($stream, true);
 while($line = fgets($stream)) {
   //assoclist 1C:F2:9A:34:4D:37
@@ -286,17 +287,17 @@ foreach ($wifi as $value) {
   $rssi = stream_get_contents($stream);
   $result[$value]['rssi'] = $rssi;
   fclose($stream);
-  log::add('asuswrt', 'debug', 'Wifi 2.4 ' . $value . ' ' . $rssi);
+  //log::add('asuswrt', 'debug', 'Wifi 2.4 ' . $value . ' ' . $rssi);
 }
 $wifi = array();
 
 $stream = ssh2_exec($connection, "wl -i " . $wl1 . " assoclist | awk '{print $2}'");
-log::add('asuswrt', 'debug', "wl -i " . $wl1 . " assoclist | awk '{print $2}'");
+//log::add('asuswrt', 'debug', "wl -i " . $wl1 . " assoclist | awk '{print $2}'");
 stream_set_blocking($stream, true);
 while($line = fgets($stream)) {
   $mac = trim(strtolower($line));
   if ($mac == '') { continue; }
-  log::add('asuswrt', 'debug', 'MAC ' . $mac);
+  //log::add('asuswrt', 'debug', 'MAC ' . $mac);
   $result[$mac]['connexion'] = 'wifi5';
   $result[$mac]['status'] = 'WIFI';
   $result[$mac]['ap'] = 'routeur';
@@ -306,12 +307,12 @@ fclose($stream);
 
 foreach ($wifi as $value) {
   $stream = ssh2_exec($connection, 'wl -i ' . $wl1 . ' rssi ' . $value);
-  log::add('asuswrt', 'debug', 'wl -i ' . $wl1 . ' rssi ' . $value);
+  //log::add('asuswrt', 'debug', 'wl -i ' . $wl1 . ' rssi ' . $value);
   stream_set_blocking($stream, true);
   $rssi = stream_get_contents($stream);
   $result[$value]['rssi'] = $rssi;
   fclose($stream);
-  log::add('asuswrt', 'debug', 'Wifi 5 ' . $value . ' ' . $rssi);
+  //log::add('asuswrt', 'debug', 'Wifi 5 ' . $value . ' ' . $rssi);
 }
 
 
@@ -328,7 +329,7 @@ fclose($stream);
 
 foreach ($result as $array ) {
   if (array_key_exists('ip',$array)) {
-    log::add('asuswrt', 'debug', 'Check blocked and hostname ' . print_r($array,true));
+    //log::add('asuswrt', 'debug', 'Check blocked and hostname ' . print_r($array,true));
     if (array_key_exists($array['ip'], $blocked)) {
       $result[$array['mac']]['internet'] = 0;
       log::add('asuswrt', 'debug', 'IP Blocked ' . $array['ip']);
@@ -336,27 +337,6 @@ foreach ($result as $array ) {
     if ((strpos($array['hostname'],'?') !== false) || (strpos($array['hostname'],'*') !== false)) {
       log::add('asuswrt', 'debug', 'Check hostname ' . $array['hostname'] . ' present');
       $stream = ssh2_exec($connection, "cat /jffs/configs/dnsmasq.conf.add | grep " . $array['ip'] . " | awk -F'/' '{print $2}'");
-      stream_set_blocking($stream, true);
-      $hostname = stream_get_contents($stream);
-      fclose($stream);
-      if ($hostname != '') {
-        $result[$array['mac']]['hostname'] = $hostname;
-        log::add('asuswrt', 'debug', 'Resolve ' . $hostname);
-      }
-    }
-  }
-}
-
-foreach ($result as $array ) {
-  if (array_key_exists('ip',$array)) {
-    log::add('asuswrt', 'debug', 'Check blocked and hostname ' . print_r($array,true));
-    if (array_key_exists($array['ip'], $blocked)) {
-      $result[$array['mac']]['internet'] = 0;
-      log::add('asuswrt', 'debug', 'IP Blocked ' . $array['ip']);
-    }
-    if ((strpos($array['hostname'],'?') !== false) || (strpos($array['hostname'],'*') !== false) || (!$array['hostname'])) {
-      log::add('asuswrt', 'debug', 'Check hostname ' . $array['hostname'] . ' present');
-      $stream = ssh2_exec($connection, "cat /jffs/configs/dnsmasq.conf.add | grep " . $array['ip'] . "$ | awk -F'/' '{print $2}'");
       stream_set_blocking($stream, true);
       $hostname = stream_get_contents($stream);
       fclose($stream);
