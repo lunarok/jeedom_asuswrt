@@ -354,7 +354,7 @@ foreach ($result as $array ) {
       $result[$array['mac']]['internet'] = 0;
       log::add('asuswrt', 'debug', 'IP Blocked ' . $array['ip']);
     }
-    if ((strpos($array['hostname'],'?') !== false) || (strpos($array['hostname'],'*') !== false)) {
+    if ((strpos($array['hostname'],'?') !== false) || (strpos($array['hostname'],'*') !== false) || (!$array['hostname'])) {
       log::add('asuswrt', 'debug', 'Check hostname ' . $array['hostname'] . ' present');
       $stream = ssh2_exec($connection, "cat /jffs/configs/dnsmasq.conf.add | grep " . $array['ip'] . " | awk -F'/' '{print $2}'");
       stream_set_blocking($stream, true);
