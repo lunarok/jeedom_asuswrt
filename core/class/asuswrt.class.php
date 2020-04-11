@@ -58,11 +58,11 @@ class asuswrt extends eqLogic {
   public static function scanDevices() {
     $result = asuswrt::scan();
     foreach ($result as $asuswrt) {
+      if ((!$asuswrt['mac']) || ($asuswrt['mac'] == '')) {
+        continue;
+      }
       $eqlogic=asuswrt::byLogicalId($asuswrt['mac'], 'asuswrt');
       if (!is_object($eqlogic)) {
-        if ((!$asuswrt['mac']) || ($asuswrt['mac'] == '')) {
-          continue;
-        }
         if ($asuswrt['ip'] == '' && $asuswrt['hostname'] == '') {
           continue;
         }
@@ -346,7 +346,7 @@ foreach ($result as $array ) {
     }
   }
 }
-  
+
 foreach ($result as $array ) {
   if (array_key_exists('ip',$array)) {
     log::add('asuswrt', 'debug', 'Check blocked and hostname ' . print_r($array,true));
