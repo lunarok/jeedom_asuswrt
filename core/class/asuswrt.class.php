@@ -66,6 +66,7 @@ class asuswrt extends eqLogic {
         if ($asuswrt['ip'] == '' && $asuswrt['hostname'] == '') {
           continue;
         }
+        log::add('asuswrt', 'debug', 'New host ' . $asuswrt['hostname'] . ' or IP ' . $asuswrt['ip'] . ' MAC ' . $asuswrt['mac']);
         $eqlogic = new asuswrt();
         $eqlogic->setEqType_name('asuswrt');
         $eqlogic->setLogicalId($asuswrt['mac']);
@@ -77,9 +78,13 @@ class asuswrt extends eqLogic {
         $eqlogic->setConfiguration('ip', $asuswrt['ip']);
         $eqlogic->save();
       }
-      if (($eqlogic->getConfiguration('hostname') !=  $asuswrt['hostname']) || ($eqlogic->getConfiguration('ip') !=  $asuswrt['ip'])) {
-        log::add('asuswrt', 'debug', 'New hostname ' . $asuswrt['hostname'] . ' or IP ' . $asuswrt['ip']);
+      if (($eqlogic->getConfiguration('hostname') !=  $asuswrt['hostname']) && ($asuswrt['hostname'] != '')) {
+        log::add('asuswrt', 'debug', 'New hostname ' . $asuswrt['hostname'] . ' from ' . $eqlogic->getConfiguration('hostname'));
         $eqlogic->setConfiguration('hostname', $asuswrt['hostname']);
+        $eqlogic->save();
+      }
+      if (($eqlogic->getConfiguration('ip') !=  $asuswrt['ip']) && ($asuswrt['ip'] != '')) {
+        log::add('asuswrt', 'debug', 'New IP ' . $asuswrt['ip'] . ' from ' . $eqlogic->getConfiguration('ip'));
         $eqlogic->setConfiguration('ip', $asuswrt['ip']);
         $eqlogic->save();
       }
