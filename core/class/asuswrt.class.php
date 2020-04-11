@@ -60,7 +60,7 @@ class asuswrt extends eqLogic {
     foreach ($result as $asuswrt) {
       $eqlogic=asuswrt::byLogicalId($asuswrt['mac'], 'asuswrt');
       if (!is_object($eqlogic)) {
-        if ((!$asuswrt['mac']) || (!$asuswrt['mac'] == '')) {
+        if ((!$asuswrt['mac']) || ($asuswrt['mac'] == '')) {
           continue;
         }
         if ($asuswrt['ip'] == '' && $asuswrt['hostname'] == '') {
@@ -162,9 +162,7 @@ public static function scan() {
     }
     $result[$asuswrt->getConfiguration('mac')]['status'] = "OFFLINE";
     $result[$asuswrt->getConfiguration('mac')]['ap'] = 'none';
-    $result[$asuswrt->getConfiguration('mac')]['ip'] = $asuswrt->getConfiguration('ip');
     $result[$asuswrt->getConfiguration('mac')]['mac'] = $asuswrt->getConfiguration('mac');
-    $result[$asuswrt->getConfiguration('mac')]['hostname'] = $asuswrt->getConfiguration('hostname');
   }
 
   if (!$connection = ssh2_connect(config::byKey('addr', 'asuswrt'),'22')) {
@@ -209,7 +207,6 @@ public static function scan() {
     if ($mac == '') { continue; }
     if (!array_key_exists($mac,$result)) {
       $result[$mac]['mac'] = $mac;
-      $result[$mac]['ip'] = $ip;
       $result[$mac]['hostname'] = $hostname;
       $result[$mac]['rssi'] = 0;
       $result[$mac]['internet'] = 1;
@@ -236,14 +233,13 @@ public static function scan() {
       if ($mac == '') { continue; }
       if (!array_key_exists($mac,$result)) {
         $result[$mac]['mac'] = $mac;
-        $result[$mac]['ip'] = $array[0];
         $result[$mac]['hostname'] = "?";
         $result[$mac]['rssi'] = 0;
         $result[$mac]['internet'] = 1;
         $result[$mac]['connexion'] = 'ethernet';
         $result[$mac]['ap'] = 'routeur';
       }
-      $result[$mac]['ip'] = $ip;
+      $result[$mac]['ip'] = $array[0];
       $result[$mac]['status'] = $array[5];
       $result[$mac]['ap'] = 'routeur';
     }
