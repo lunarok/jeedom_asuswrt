@@ -356,7 +356,7 @@ foreach ($result as $array ) {
     }
     if ((strpos($array['hostname'],'?') !== false) || (strpos($array['hostname'],'*') !== false) || (!$array['hostname'])) {
       log::add('asuswrt', 'debug', 'Check hostname ' . $array['hostname'] . ' present');
-      $stream = ssh2_exec($connection, "cat /jffs/configs/dnsmasq.conf.add | grep " . $array['ip'] . " | awk -F'/' '{print $2}'");
+      $stream = ssh2_exec($connection, "cat /jffs/configs/dnsmasq.conf.add | grep " . $array['ip'] . "$ | awk -F'/' '{print $2}'");
       stream_set_blocking($stream, true);
       $hostname = stream_get_contents($stream);
       fclose($stream);
