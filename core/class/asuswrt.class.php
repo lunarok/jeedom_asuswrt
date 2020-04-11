@@ -87,7 +87,7 @@ class asuswrt extends eqLogic {
       foreach ($asuswrt as $logicalid => $value) {
         $eqlogic->checkAndUpdateCmd($logicalid, $value);
       }
-      $presence = (($asuswrt['status'] == 'UNKNOWN') || ($asuswrt['status'] == 'OFFLINE')) ? 0 : 1;
+      $presence = ($asuswrt['status'] == 'OFFLINE') ? 0 : 1;
       $eqlogic->checkAndUpdateCmd('presence', $presence);
       /*$cmd = asuswrtCmd::byEqLogicIdAndLogicalId($eqlogic->getId(),'presence');
       if (is_object($cmd)) {
@@ -187,7 +187,7 @@ public static function scan() {
     $result[$mac]['ip'] = $array[1];
     $result[$mac]['hostname'] = $array[2];
     $result[$mac]['rssi'] = 0;
-    $result[$mac]['status'] = 'UNKNOWN';
+    $result[$mac]['status'] = 'OFFLINE';
     $result[$mac]['internet'] = 1;
     $result[$mac]['connexion'] = 'ethernet';
     $result[$mac]['ap'] = 'routeur';
@@ -336,7 +336,7 @@ foreach ($result as $array ) {
     }
     if ((strpos($array['hostname'],'?') !== false) || (strpos($array['hostname'],'*') !== false)) {
       log::add('asuswrt', 'debug', 'Check hostname ' . $array['hostname'] . ' present');
-      $stream = ssh2_exec($connection, "cat /jffs/configs/dnsmasq.conf.add | grep " . $array['ip'] . " | awk -F'/' '{print $2}'");
+      $stream = ssh2_exec($connection, "cat /jffs/configs/dnsmasq.conf.add | grep " . $array['ip'] . "$ | awk -F'/' '{print $2}'");
       stream_set_blocking($stream, true);
       $hostname = stream_get_contents($stream);
       fclose($stream);
