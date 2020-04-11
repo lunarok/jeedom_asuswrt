@@ -58,7 +58,7 @@ class asuswrt extends eqLogic {
   public static function scanDevices() {
     $result = asuswrt::scan();
     foreach ($result as $asuswrt) {
-      if ((!$asuswrt['mac']) || ($asuswrt['mac'] == '')) {
+      if ((!$asuswrt['mac']) || ($asuswrt['mac'] == '') || ($asuswrt['mac'] == '<incomplete>')) {
         continue;
       }
       $eqlogic=asuswrt::byLogicalId($asuswrt['mac'], 'asuswrt');
