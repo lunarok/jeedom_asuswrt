@@ -78,7 +78,7 @@ class asuswrt extends eqLogic {
         $eqlogic->save();
       }
       if (($eqlogic->getConfiguration('hostname') !=  $asuswrt['hostname']) || ($eqlogic->getConfiguration('ip') !=  $asuswrt['ip'])) {
-        log::add('asuswrt', 'debug', 'New hostname or IP ' . $asuswrt['hostname']);
+        log::add('asuswrt', 'debug', 'New hostname ' . $asuswrt['hostname'] . ' or IP ' . $asuswrt['ip']);
         $eqlogic->setConfiguration('hostname', $asuswrt['hostname']);
         $eqlogic->setConfiguration('ip', $asuswrt['ip']);
         $eqlogic->save();
@@ -335,7 +335,7 @@ foreach ($result as $array ) {
       log::add('asuswrt', 'debug', 'IP Blocked ' . $array['ip']);
     }
     if ((strpos($array['hostname'],'?') !== false) || (strpos($array['hostname'],'*') !== false)) {
-      log::add('asuswrt', 'debug', 'Check hostname ' . $array['hostname'] . ' present');
+      log::add('asuswrt', 'debug', 'Check hostname ' . $array['hostname'] . ' present ' . $array['ip']);
       $stream = ssh2_exec($connection, "cat /jffs/configs/dnsmasq.conf.add | grep " . $array['ip'] . "$ | awk -F'/' '{print $2}'");
       stream_set_blocking($stream, true);
       $hostname = stream_get_contents($stream);
