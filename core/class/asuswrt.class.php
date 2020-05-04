@@ -230,7 +230,7 @@ public static function scan() {
   foreach ($array[$asus_mac]['wired_mac'] as $id => $elt) {
     $result[$id]['mac'] = $id;
     $result[$id]['ip'] = $elt['ip'];
-    if (!isset($result[$id]['hostname']) {
+    if (!isset($result[$id]['hostname'])) {
       $result[$id]['hostname'] = 'unknow';
     }
     $result[$id]['rssi'] = 0;
@@ -243,7 +243,7 @@ public static function scan() {
   foreach ($array[$asus_mac]['2G'] as $id => $elt) {
     $result[$id]['mac'] = $id;
     $result[$id]['ip'] = $elt['ip'];
-    if (!isset($result[$id]['hostname']) {
+    if (!isset($result[$id]['hostname'])) {
       $result[$id]['hostname'] = 'unknow';
     }
     $result[$id]['rssi'] = $elt['rssi'];
@@ -256,7 +256,7 @@ public static function scan() {
   foreach ($array[$asus_mac]['5G'] as $id => $elt) {
     $result[$id]['mac'] = $id;
     $result[$id]['ip'] = $elt['ip'];
-    if (!isset($result[$id]['hostname']) {
+    if (!isset($result[$id]['hostname'])) {
       $result[$id]['hostname'] = 'unknow';
     }
     $result[$id]['rssi'] = $elt['rssi'];
@@ -272,7 +272,7 @@ public static function scan() {
     foreach ($elts['2G'] as $id => $elt) {
       $result[$id]['mac'] = $id;
       $result[$id]['ip'] = $elt['ip'];
-      if (!isset($result[$id]['hostname']) {
+      if (!isset($result[$id]['hostname'])) {
         $result[$id]['hostname'] = 'unknow';
       }
       $result[$id]['rssi'] = $elt['rssi'];
@@ -285,7 +285,7 @@ public static function scan() {
     foreach ($elts['5G'] as $id => $elt) {
       $result[$id]['mac'] = $id;
       $result[$id]['ip'] = $elt['ip'];
-      if (!isset($result[$id]['hostname']) {
+      if (!isset($result[$id]['hostname'])) {
         $result[$id]['hostname'] = 'unknow';
       }
       $result[$id]['rssi'] = $elt['rssi'];
