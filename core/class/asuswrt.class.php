@@ -82,7 +82,7 @@ class asuswrt extends eqLogic {
         $eqlogic->setConfiguration('hostname', $asuswrt['hostname']);
         $eqlogic->save();
       }
-      if ((isset($asuswrt['ip']) && ($eqlogic->getConfiguration('ip') !=  $asuswrt['ip']) && ($asuswrt['ip'] != '')) {
+      if ((isset($asuswrt['ip'])) && ($eqlogic->getConfiguration('ip') !=  $asuswrt['ip']) && ($asuswrt['ip'] != '')) {
         log::add('asuswrt', 'debug', 'New IP ' . $asuswrt['ip'] . ' from ' . $eqlogic->getConfiguration('ip'));
         $eqlogic->setConfiguration('ip', $asuswrt['ip']);
         $eqlogic->save();
@@ -179,6 +179,26 @@ public static function scan() {
     return 'error connecting';
   }
 
+  $stream = ssh2_exec($connection, "nvram get cfg_device_list");
+  stream_set_blocking($stream, true);
+  $line = stream_get_contents($stream);
+  fclose($stream);
+  $array=explode("<", $line);
+  $i = 0;
+  $aimesh = array();
+  foreach ($array as $elt) {
+    $elts = explode(">", $elt);
+    if ($i == 0) {
+      $asus_mac = $elts[2];
+    } else {
+      $aimesh[$elts[3]]['mac'] = $elts[3];
+      $aimesh[$elts[3]]['ip'] = $elts[2];
+    }
+    $i++;
+  }
+
+  log::add('asuswrt', 'error', 'MAC Routeur ' . $asus_mac);
+
   $stream = ssh2_exec($connection, "cat /var/lib/misc/dnsmasq.leases | awk '{print $2\" \"$3\" \"$4}'");
   stream_set_blocking($stream, true);
   while($line = fgets($stream)) {
@@ -194,8 +214,13 @@ public static function scan() {
     $result[$mac]['status'] = 'OFFLINE';
     $result[$mac]['internet'] = 1;
     $result[$mac]['connexion'] = 'ethernet';
-    $result[$mac]['ap'] = 'routeur';
+    $result[$mac]['ap'] = $asus_mac;
   }
+  fclose($stream);
+
+  $stream = ssh2_exec($connection, "cat /tmp/clientlist.json");
+  stream_set_blocking($stream, true);
+  $line = stream_get_contents($stream);
   fclose($stream);
 
   $stream = ssh2_exec($connection, 'arp -v');
