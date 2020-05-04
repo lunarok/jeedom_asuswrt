@@ -197,7 +197,7 @@ public static function scan() {
     $i++;
   }
 
-  log::add('asuswrt', 'error', 'MAC Routeur ' . $asus_mac);
+  log::add('asuswrt', 'error', 'Array ' . print_r($array, true));
 
   $stream = ssh2_exec($connection, "cat /var/lib/misc/dnsmasq.leases | awk '{print $2\" \"$3\" \"$4}'");
   stream_set_blocking($stream, true);
@@ -222,6 +222,9 @@ public static function scan() {
   stream_set_blocking($stream, true);
   $line = stream_get_contents($stream);
   fclose($stream);
+  $array = json_encode($line,true)
+
+  log::add('asuswrt', 'error', 'Array ' . print_r($array, true));
 
   $stream = ssh2_exec($connection, 'arp -v');
   stream_set_blocking($stream, true);
