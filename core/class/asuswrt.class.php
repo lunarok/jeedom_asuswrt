@@ -193,14 +193,15 @@ public static function scan() {
     } else if ($i == 1) {
       $asus_mac = $elts[2];
     } else {
-      $aimesh[$elts[3]]['mac'] = $elts[3];
-      $aimesh[$elts[3]]['ip'] = $elts[2];
+      $aimesh[$elts[2]]['mac'] = $elts[2];
+      $aimesh[$elts[2]]['ip'] = $elts[1];
+      log::add('asuswrt', 'debug', 'AIMesh ' . $elts[2]);
     }
     $i++;
   }
 
-  log::add('asuswrt', 'error', 'AIMesh ' . print_r($aimesh, true));
-  log::add('asuswrt', 'error', 'Routeur ' . $asus_mac);
+  log::add('asuswrt', 'debug', 'AIMesh ' . print_r($aimesh, true));
+  //log::add('asuswrt', 'debug', 'Routeur ' . $asus_mac);
 
   $stream = ssh2_exec($connection, "cat /var/lib/misc/dnsmasq.leases | awk '{print $2\" \"$3\" \"$4}'");
   stream_set_blocking($stream, true);
@@ -226,8 +227,10 @@ public static function scan() {
   $line = stream_get_contents($stream);
   fclose($stream);
   $array = json_encode($line,true);
+  log::add('asuswrt', 'debug', 'cientlist ' . print_r($array, true));
 
   foreach ($array[$asus_mac]['wired_mac'] as $id => $elt) {
+    log::add('asuswrt', 'debug', 'wired_mac ' . print_r($elt, true));
     $result[$id]['mac'] = $id;
     $result[$id]['ip'] = $elt['ip'];
     if (!isset($result[$id]['hostname'])) {
