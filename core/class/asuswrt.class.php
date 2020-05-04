@@ -222,7 +222,7 @@ public static function scan() {
   stream_set_blocking($stream, true);
   $line = stream_get_contents($stream);
   fclose($stream);
-  $array = json_encode($line,true)
+  $array = json_encode($line,true);
 
   log::add('asuswrt', 'error', 'Array ' . print_r($array, true));
 
