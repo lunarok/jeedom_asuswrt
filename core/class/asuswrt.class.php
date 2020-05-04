@@ -189,6 +189,8 @@ public static function scan() {
   foreach ($array as $elt) {
     $elts = explode(">", $elt);
     if ($i == 0) {
+      //first component is empty
+    } else if ($i == 1) {
       $asus_mac = $elts[2];
     } else {
       $aimesh[$elts[3]]['mac'] = $elts[3];
@@ -197,7 +199,8 @@ public static function scan() {
     $i++;
   }
 
-  log::add('asuswrt', 'error', 'Array ' . print_r($array, true));
+  log::add('asuswrt', 'error', 'AIMesh ' . print_r($aimesh, true));
+  log::add('asuswrt', 'error', 'Routeur ' . $asus_mac);
 
   $stream = ssh2_exec($connection, "cat /var/lib/misc/dnsmasq.leases | awk '{print $2\" \"$3\" \"$4}'");
   stream_set_blocking($stream, true);
@@ -224,6 +227,76 @@ public static function scan() {
   fclose($stream);
   $array = json_encode($line,true);
 
+  foreach ($array[$asus_mac]['wired_mac'] as $id => $elt) {
+    $result[$id]['mac'] = $id;
+    $result[$id]['ip'] = $elt['ip'];
+    if (!isset($result[$id]['hostname']) {
+      $result[$id]['hostname'] = 'unknow';
+    }
+    $result[$id]['rssi'] = 0;
+    $result[$id]['status'] = 'ONLINE';
+    $result[$id]['internet'] = 1;
+    $result[$id]['connexion'] = 'ethernet';
+    $result[$id]['ap'] = $asus_mac;
+  }
+
+  foreach ($array[$asus_mac]['2G'] as $id => $elt) {
+    $result[$id]['mac'] = $id;
+    $result[$id]['ip'] = $elt['ip'];
+    if (!isset($result[$id]['hostname']) {
+      $result[$id]['hostname'] = 'unknow';
+    }
+    $result[$id]['rssi'] = $elt['rssi'];
+    $result[$id]['status'] = 'WIFI';
+    $result[$id]['internet'] = 1;
+    $result[$id]['connexion'] = 'wifi2.4';
+    $result[$id]['ap'] = $asus_mac;
+  }
+
+  foreach ($array[$asus_mac]['5G'] as $id => $elt) {
+    $result[$id]['mac'] = $id;
+    $result[$id]['ip'] = $elt['ip'];
+    if (!isset($result[$id]['hostname']) {
+      $result[$id]['hostname'] = 'unknow';
+    }
+    $result[$id]['rssi'] = $elt['rssi'];
+    $result[$id]['status'] = 'WIFI';
+    $result[$id]['internet'] = 1;
+    $result[$id]['connexion'] = 'wifi5';
+    $result[$id]['ap'] = $asus_mac;
+  }
+
+  unset($array[$asus_mac]);
+
+  foreach ($array as $aimesh_mac => $elts) {
+    foreach ($elts['2G'] as $id => $elt) {
+      $result[$id]['mac'] = $id;
+      $result[$id]['ip'] = $elt['ip'];
+      if (!isset($result[$id]['hostname']) {
+        $result[$id]['hostname'] = 'unknow';
+      }
+      $result[$id]['rssi'] = $elt['rssi'];
+      $result[$id]['status'] = 'WIFI';
+      $result[$id]['internet'] = 1;
+      $result[$id]['connexion'] = 'wifi2.4';
+      $result[$id]['ap'] = $aimesh_mac;
+    }
+
+    foreach ($elts['5G'] as $id => $elt) {
+      $result[$id]['mac'] = $id;
+      $result[$id]['ip'] = $elt['ip'];
+      if (!isset($result[$id]['hostname']) {
+        $result[$id]['hostname'] = 'unknow';
+      }
+      $result[$id]['rssi'] = $elt['rssi'];
+      $result[$id]['status'] = 'WIFI';
+      $result[$id]['internet'] = 1;
+      $result[$id]['connexion'] = 'wifi5';
+      $result[$id]['ap'] = $aimesh_mac;
+    }
+  }
+
+
   log::add('asuswrt', 'error', 'Array ' . print_r($array, true));
 
   $stream = ssh2_exec($connection, 'arp -v');
@@ -244,12 +317,11 @@ public static function scan() {
       $result[$mac]['rssi'] = 0;
       $result[$mac]['internet'] = 1;
       $result[$mac]['connexion'] = 'ethernet';
-      $result[$mac]['ap'] = 'routeur';
+      $result[$mac]['ap'] = $asus_mac;
     }
     $result[$mac]['hostname'] = $hostname;
     $result[$mac]['ip'] = $ip;
     $result[$mac]['status'] = 'ARP';
-    $result[$mac]['ap'] = 'routeur';
   }
   fclose($stream);
 
@@ -268,26 +340,13 @@ public static function scan() {
         $result[$mac]['rssi'] = 0;
         $result[$mac]['internet'] = 1;
         $result[$mac]['connexion'] = 'ethernet';
-        $result[$mac]['ap'] = 'routeur';
+        $result[$mac]['ap'] = $asus_mac;
       }
       $result[$mac]['ip'] = $array[0];
       $result[$mac]['status'] = $array[5];
-      $result[$mac]['ap'] = 'routeur';
     }
   }
   fclose($stream);
-
-  /*$stream = ssh2_exec($connection, 'cat /tmp/wiredclientlist.json');
-  stream_set_blocking($stream, true);
-  $ethernet = explode("[",stream_get_contents($stream));
-  $ethernet = explode("]", $ethernet[1]);
-  $ethernet = explode(",", $ethernet[0]);
-  foreach ($ethernet as $value) {
-  $mac = trim(strtolower($value),'"');
-  $result[$mac]['connexion'] = 'ethernet';
-  //log::add('asuswrt', 'debug', 'Ethernet ' . $mac);
-}
-fclose($stream);*/
 
 $stream = ssh2_exec($connection, "nvram get wl_ifnames");
 stream_set_blocking($stream, true);
@@ -308,7 +367,7 @@ while($line = fgets($stream)) {
   if ($mac == '') { continue; }
   $result[$mac]['connexion'] = 'wifi2.4';
   $result[$mac]['status'] = 'WIFI';
-  $result[$mac]['ap'] = 'routeur';
+  $result[$mac]['ap'] = $asus_mac;
   $wifi[] = $mac;
 }
 fclose($stream);
@@ -332,7 +391,7 @@ while($line = fgets($stream)) {
   //log::add('asuswrt', 'debug', 'MAC ' . $mac);
   $result[$mac]['connexion'] = 'wifi5';
   $result[$mac]['status'] = 'WIFI';
-  $result[$mac]['ap'] = 'routeur';
+  $result[$mac]['ap'] = $asus_mac;
   $wifi[] = $mac;
 }
 fclose($stream);
@@ -385,7 +444,7 @@ stream_set_blocking($closesession, true);
 stream_get_contents($closesession);
 
 //log::add('asuswrt', 'debug', 'Scan Routeur, result ' . json_encode($result));
-
+/*
 if (config::byKey('aimesh', 'asuswrt') != '') {
   $aimeshs = explode(';',config::byKey('aimesh', 'asuswrt'));
   foreach ($aimeshs as $aimesh) {
@@ -490,6 +549,7 @@ if (config::byKey('aimesh', 'asuswrt') != '') {
     stream_get_contents($closesession);
   }
 }
+*/
 
 //REACHABLE, DELAY, STABLE, ARP
 log::add('asuswrt', 'debug', 'Scan Asus, result ' . json_encode($result));
