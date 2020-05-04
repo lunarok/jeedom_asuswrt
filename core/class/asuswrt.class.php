@@ -195,7 +195,7 @@ public static function scan() {
     } else {
       $aimesh[$elts[2]]['mac'] = $elts[2];
       $aimesh[$elts[2]]['ip'] = $elts[1];
-      log::add('asuswrt', 'debug', 'AIMesh ' . $elts[2]);
+      //log::add('asuswrt', 'debug', 'AIMesh ' . $elts[2]);
     }
     $i++;
   }
@@ -227,15 +227,11 @@ public static function scan() {
   $line = stream_get_contents($stream);
   fclose($stream);
   $array = json_decode($line,true);
-  log::add('asuswrt', 'debug', 'cientlist ' . print_r($array, true));
+  //log::add('asuswrt', 'debug', 'cientlist ' . print_r($array, true));
 
   foreach ($array[$asus_mac]['wired_mac'] as $id => $elt) {
-    log::add('asuswrt', 'debug', 'wired_mac ' . print_r($elt, true));
     $result[$id]['mac'] = $id;
     $result[$id]['ip'] = $elt['ip'];
-    if (!isset($result[$id]['hostname'])) {
-      $result[$id]['hostname'] = 'unknow';
-    }
     $result[$id]['rssi'] = 0;
     $result[$id]['status'] = 'ONLINE';
     $result[$id]['internet'] = 1;
@@ -246,9 +242,6 @@ public static function scan() {
   foreach ($array[$asus_mac]['2G'] as $id => $elt) {
     $result[$id]['mac'] = $id;
     $result[$id]['ip'] = $elt['ip'];
-    if (!isset($result[$id]['hostname'])) {
-      $result[$id]['hostname'] = 'unknow';
-    }
     $result[$id]['rssi'] = $elt['rssi'];
     $result[$id]['status'] = 'WIFI';
     $result[$id]['internet'] = 1;
@@ -259,9 +252,6 @@ public static function scan() {
   foreach ($array[$asus_mac]['5G'] as $id => $elt) {
     $result[$id]['mac'] = $id;
     $result[$id]['ip'] = $elt['ip'];
-    if (!isset($result[$id]['hostname'])) {
-      $result[$id]['hostname'] = 'unknow';
-    }
     $result[$id]['rssi'] = $elt['rssi'];
     $result[$id]['status'] = 'WIFI';
     $result[$id]['internet'] = 1;
@@ -273,11 +263,9 @@ public static function scan() {
 
   foreach ($array as $aimesh_mac => $elts) {
     foreach ($elts['2G'] as $id => $elt) {
+      log::add('asuswrt', 'debug', '2G ' . print_r($elt, true));
       $result[$id]['mac'] = $id;
       $result[$id]['ip'] = $elt['ip'];
-      if (!isset($result[$id]['hostname'])) {
-        $result[$id]['hostname'] = 'unknow';
-      }
       $result[$id]['rssi'] = $elt['rssi'];
       $result[$id]['status'] = 'WIFI';
       $result[$id]['internet'] = 1;
@@ -286,11 +274,9 @@ public static function scan() {
     }
 
     foreach ($elts['5G'] as $id => $elt) {
+      log::add('asuswrt', 'debug', '5G ' . print_r($elt, true));
       $result[$id]['mac'] = $id;
       $result[$id]['ip'] = $elt['ip'];
-      if (!isset($result[$id]['hostname'])) {
-        $result[$id]['hostname'] = 'unknow';
-      }
       $result[$id]['rssi'] = $elt['rssi'];
       $result[$id]['status'] = 'WIFI';
       $result[$id]['internet'] = 1;
