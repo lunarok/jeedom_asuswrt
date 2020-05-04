@@ -226,7 +226,7 @@ public static function scan() {
   stream_set_blocking($stream, true);
   $line = stream_get_contents($stream);
   fclose($stream);
-  $array = json_encode($line,true);
+  $array = json_decode($line,true);
   log::add('asuswrt', 'debug', 'cientlist ' . print_r($array, true));
 
   foreach ($array[$asus_mac]['wired_mac'] as $id => $elt) {
