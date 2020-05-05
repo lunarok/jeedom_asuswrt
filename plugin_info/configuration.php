@@ -46,13 +46,6 @@ if (!isConnect()) {
 
     </div>
 
-    <div class="form-group">
-      <label class="col-lg-4 control-label">AP AIMesh</label>
-      <div class="col-lg-2">
-        <input class="configKey form-control" data-l1key="aimesh" type="text"/>
-      </div>
-
-    </div>
   </fieldset>
 </form>
 
