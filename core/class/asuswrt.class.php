@@ -91,6 +91,12 @@ class asuswrt extends eqLogic {
         $eqlogic->checkAndUpdateCmd($logicalid, $value);
       }
       $presence = ($asuswrt['status'] == 'OFFLINE') ? 0 : 1;
+      if (($asuswrt['connexion'] == 'ethernet') && ($presence == 0)) {
+        exec(system::getCmdSudo() . "ping -c1 " . $asuswrt['ip'], $output, $return_var);
+        if ($return_var == 0) {
+            $presence = 1;
+        }
+      }
       $eqlogic->checkAndUpdateCmd('presence', $presence);
       /*$cmd = asuswrtCmd::byEqLogicIdAndLogicalId($eqlogic->getId(),'presence');
       if (is_object($cmd)) {
