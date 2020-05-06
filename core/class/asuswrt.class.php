@@ -78,8 +78,7 @@ class asuswrt extends eqLogic {
         $eqlogic->setConfiguration('ip', $asuswrt['ip']);
         $eqlogic->save();
       }
-      if ((isset($asuswrt['hostname']) && $eqlogic->getConfiguration('hostname') !=  $asuswrt['hostname']) || (isset($asuswrt['ip']) && $eqlogic->getConfiguration('ip') !=  $asuswrt['ip'])) {        log::add('asuswrt', 'debug', 'New hostname ' . $asuswrt['hostname'] . ' from ' . $eqlogic->getConfiguration('hostname'));
-        $eqlogic->setConfiguration('hostname', $asuswrt['hostname']);
+      if (array_key_exists('hostname', $asuswrt) && (($eqlogic->getConfiguration('hostname') !=  $asuswrt['hostname']) || (isset($asuswrt['ip']) && $eqlogic->getConfiguration('ip') !=  $asuswrt['ip']))) {             $eqlogic->setConfiguration('hostname', $asuswrt['hostname']);
         $eqlogic->save();
       }
       if ((isset($asuswrt['ip'])) && ($eqlogic->getConfiguration('ip') !=  $asuswrt['ip']) && ($asuswrt['ip'] != '')) {
