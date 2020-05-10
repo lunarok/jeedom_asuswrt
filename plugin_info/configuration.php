@@ -47,7 +47,7 @@ if (!isConnect()) {
     </div>
     
     <div class="form-group">
-              <label class="col-lg-4 control-label" >{{Objet parent}}</label>
+              <label class="col-lg-4 control-label" >{{Objet par défaut}}</label>
               <div class="col-lg-2">
                 <select class="configKey tooltips form-control" data-l1key="object_id">
                   <option value="">{{Aucun}}</option>
