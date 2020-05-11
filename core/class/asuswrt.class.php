@@ -293,7 +293,7 @@ public static function scan() {
   }
 
 
-  log::add('asuswrt', 'error', 'Array ' . print_r($array, true));
+  //log::add('asuswrt', 'debug', 'Array ' . print_r($array, true));
 
   $stream = ssh2_exec($connection, 'arp -v');
   stream_set_blocking($stream, true);
