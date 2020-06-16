@@ -650,15 +650,19 @@ public static function speed() {
   $result['vpn_client5_state'] = asuswrt::vpnStatus(stream_get_contents($stream));
   fclose($stream);
   
-  $stream = ssh2_exec($connection, "ping -c1 -W1 www.google.com | grep 'seq=' | sed 's/.*time=\([0-9]*\.[0-9]*\).*$/\1/'");
+  $stream = ssh2_exec($connection, "ping -c1 -W1 www.google.com | tail -1");
   stream_set_blocking($stream, true);
-  $result['ping_google'] = floatval(stream_get_contents($stream));
+  $ping = explode(' = ', stream_get_contents($stream));
+  $ping2 = explode('/', stream_get_contents($ping[1]));
+  $result['ping_google'] = floatval($ping2[0]);
   log::add('asuswrt', 'debug', 'Ping Google ' . $result['ping_google']);
   fclose($stream);
   
-  $stream = ssh2_exec($connection, "ping -c1 -W1 8.8.8.8 | grep 'seq=' | sed 's/.*time=\([0-9]*\.[0-9]*\).*$/\1/'");
+  $stream = ssh2_exec($connection, "ping -c1 -W1 8.8.8.8 | tail -1");
   stream_set_blocking($stream, true);
-  $result['ping_dns'] = floatval(stream_get_contents($stream));
+  $ping = explode(' = ', stream_get_contents($stream));
+  $ping2 = explode('/', stream_get_contents($ping[1]));
+  $result['ping_dns'] = floatval($ping2[0]);
   fclose($stream);
   
   $stream = ssh2_exec($connection, "wl -i eth1 phy_tempsense | awk '{ print $1 * .5 + 20 }'");
