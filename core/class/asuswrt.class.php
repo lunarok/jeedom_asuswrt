@@ -652,8 +652,10 @@ public static function speed() {
   
   $stream = ssh2_exec($connection, "ping -c1 -W1 www.google.com | tail -1");
   stream_set_blocking($stream, true);
-  $ping = explode(' = ', stream_get_contents($stream));
-  $ping2 = explode('/', stream_get_contents($ping[1]));
+  $ping0 = stream_get_contents($stream);
+  log::add('asuswrt', 'debug', 'Ping Google ' . $ping0);
+  $ping = explode(' = ', $ping0);
+  $ping2 = explode('/', $ping[1]);
   $result['ping_google'] = floatval($ping2[0]);
   log::add('asuswrt', 'debug', 'Ping Google ' . $result['ping_google']);
   fclose($stream);
@@ -661,7 +663,7 @@ public static function speed() {
   $stream = ssh2_exec($connection, "ping -c1 -W1 8.8.8.8 | tail -1");
   stream_set_blocking($stream, true);
   $ping = explode(' = ', stream_get_contents($stream));
-  $ping2 = explode('/', stream_get_contents($ping[1]));
+  $ping2 = explode('/', $ping[1]));
   $result['ping_dns'] = floatval($ping2[0]);
   fclose($stream);
   
