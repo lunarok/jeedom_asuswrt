@@ -234,6 +234,84 @@
       "type": "info",
       "subtype": "string",
       "logicalId": "vpn_client5_state"
+    },
+    {
+      "name": "Ping Google.com",
+      "type": "info",
+      "subtype": "numeric",
+      "logicalId": "ping_google"
+    },
+    {
+      "name": "Ping Google DNS",
+      "type": "info",
+      "subtype": "numeric",
+      "logicalId": "ping_dns"
+    },
+    {
+      "name": "Mémoire occupée kb",
+      "type": "info",
+      "subtype": "numeric",
+      "logicalId": "mem_used"
+    },
+    {
+      "name": "Mémoire libre kb",
+      "type": "info",
+      "subtype": "numeric",
+      "logicalId": "mem_free"
+    },
+    {
+      "name": "Température Wifi 2.4G",
+      "type": "info",
+      "subtype": "numeric",
+      "logicalId": "temp_wl24"
+    },
+    {
+      "name": "Température Wifi 5G",
+      "type": "info",
+      "subtype": "numeric",
+      "logicalId": "temp_wl5"
+    },
+    {
+      "name": "CPU User",
+      "type": "info",
+      "subtype": "numeric",
+      "logicalId": "cpu_user"
+    },
+    {
+      "name": "CPU Sys",
+      "type": "info",
+      "subtype": "numeric",
+      "logicalId": "cpu_sys"
+    },
+    {
+      "name": "CPU Nic",
+      "type": "info",
+      "subtype": "numeric",
+      "logicalId": "cpu_nic"
+    },
+    {
+      "name": "CPU Idle",
+      "type": "info",
+      "subtype": "numeric",
+      "logicalId": "cpu_idle"
+    },
+    {
+      "name": "CPU IO",
+      "type": "info",
+      "subtype": "numeric",
+      "logicalId": "cpu_io"
+    },
+    {
+      "name": "CPU IRQ",
+      "type": "info",
+      "subtype": "numeric",
+      "logicalId": "cpu_irq"
+    },
+    {
+      "name": "CPU SIRQ",
+      "type": "info",
+      "subtype": "numeric",
+      "logicalId": "cpu_sirq"
     }
   ]
 }
