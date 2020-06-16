@@ -649,6 +649,45 @@ public static function speed() {
   stream_set_blocking($stream, true);
   $result['vpn_client5_state'] = asuswrt::vpnStatus(stream_get_contents($stream));
   fclose($stream);
+  
+  $stream = ssh2_exec($connection, "ping -c1 -W1 www.google.com | grep 'seq=' | sed 's/.*time=\([0-9]*\.[0-9]*\).*$/\1/'");
+  stream_set_blocking($stream, true);
+  $result['ping_google'] = stream_get_contents($stream);
+  fclose($stream);
+  
+  $stream = ssh2_exec($connection, "ping -c1 -W1 8.8.8.8 | grep 'seq=' | sed 's/.*time=\([0-9]*\.[0-9]*\).*$/\1/'");
+  stream_set_blocking($stream, true);
+  $result['ping_dns'] = stream_get_contents($stream);
+  fclose($stream);
+  
+  $stream = ssh2_exec($connection, "`wl -i eth1 phy_tempsense | awk '{ print $1 * .5 + 20 }'");
+  stream_set_blocking($stream, true);
+  $result['temp_wl24'] = stream_get_contents($stream);
+  fclose($stream);
+  
+  $stream = ssh2_exec($connection, "`wl -i eth2 phy_tempsense | awk '{ print $1 * .5 + 20 }'");
+  stream_set_blocking($stream, true);
+  $result['temp_wl5'] = stream_get_contents($stream);
+  fclose($stream);
+  
+  $stream = ssh2_exec($connection, "top -bn1 | head -3 | awk '/Mem/ {print $2,$4}' | sed 's/K//g'");
+  stream_set_blocking($stream, true);
+  $memory = explode(' ',stream_get_contents($stream));
+  $result['mem_used'] = $memory[0];
+  $result['mem_free'] = $memory[1];
+  fclose($stream);
+  
+  $stream = ssh2_exec($connection, "top -bn1 | head -3 | awk '/CPU/ {print $2,$4,$6,$8,$10,$12,$14}' | sed 's/%//g'");
+  stream_set_blocking($stream, true);
+  $cpu = explode(' ',stream_get_contents($stream));
+  $result['cpu_usr'] = $cpu[0];
+  $result['cpu_sys'] = $cpu[1];
+  $result['cpu_nic'] = $cpu[2];
+  $result['cpu_idle'] = $cpu[3];
+  $result['cpu_io'] = $cpu[4];
+  $result['cpu_irq'] = $cpu[5];
+  $result['cpu_sirq'] = $cpu[6];
+  fclose($stream);
 
   $stream = ssh2_exec($connection, 'robocfg showports | tail -n +2');
   stream_set_blocking($stream, true);
