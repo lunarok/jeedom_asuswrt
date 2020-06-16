@@ -652,20 +652,21 @@ public static function speed() {
   
   $stream = ssh2_exec($connection, "ping -c1 -W1 www.google.com | grep 'seq=' | sed 's/.*time=\([0-9]*\.[0-9]*\).*$/\1/'");
   stream_set_blocking($stream, true);
-  $result['ping_google'] = stream_get_contents($stream);
+  $result['ping_google'] = floatval(stream_get_contents($stream));
+  log::add('asuswrt', 'debug', 'Ping Google ' . $result['ping_google']);
   fclose($stream);
   
   $stream = ssh2_exec($connection, "ping -c1 -W1 8.8.8.8 | grep 'seq=' | sed 's/.*time=\([0-9]*\.[0-9]*\).*$/\1/'");
   stream_set_blocking($stream, true);
-  $result['ping_dns'] = stream_get_contents($stream);
+  $result['ping_dns'] = floatval(stream_get_contents($stream));
   fclose($stream);
   
-  $stream = ssh2_exec($connection, "`wl -i eth1 phy_tempsense | awk '{ print $1 * .5 + 20 }'");
+  $stream = ssh2_exec($connection, "wl -i eth1 phy_tempsense | awk '{ print $1 * .5 + 20 }'");
   stream_set_blocking($stream, true);
   $result['temp_wl24'] = stream_get_contents($stream);
   fclose($stream);
   
-  $stream = ssh2_exec($connection, "`wl -i eth2 phy_tempsense | awk '{ print $1 * .5 + 20 }'");
+  $stream = ssh2_exec($connection, "wl -i eth2 phy_tempsense | awk '{ print $1 * .5 + 20 }'");
   stream_set_blocking($stream, true);
   $result['temp_wl5'] = stream_get_contents($stream);
   fclose($stream);
@@ -680,7 +681,7 @@ public static function speed() {
   $stream = ssh2_exec($connection, "top -bn1 | head -3 | awk '/CPU/ {print $2,$4,$6,$8,$10,$12,$14}' | sed 's/%//g'");
   stream_set_blocking($stream, true);
   $cpu = explode(' ',stream_get_contents($stream));
-  $result['cpu_usr'] = $cpu[0];
+  $result['cpu_user'] = $cpu[0];
   $result['cpu_sys'] = $cpu[1];
   $result['cpu_nic'] = $cpu[2];
   $result['cpu_idle'] = $cpu[3];
