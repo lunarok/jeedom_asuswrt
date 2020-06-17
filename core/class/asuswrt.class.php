@@ -680,6 +680,7 @@ public static function speed() {
   $stream = ssh2_exec($connection, "cat /proc/dmu/temperature | head -1");
   stream_set_blocking($stream, true);
   $memory = explode(' : ',stream_get_contents($stream));
+  log::add('asuswrt', 'debug', 'Temp, result ' . $memory[1]);
   $result['temp_cpu'] = preg_replace("/[^0-9]/", "", $memory[1] );
   fclose($stream);
   
