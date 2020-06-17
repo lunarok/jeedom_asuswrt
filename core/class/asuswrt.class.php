@@ -677,6 +677,12 @@ public static function speed() {
   $result['temp_wl5'] = stream_get_contents($stream);
   fclose($stream);
   
+  $stream = ssh2_exec($connection, "cat /proc/dmu/temperature | head -1");
+  stream_set_blocking($stream, true);
+  $memory = explode(' : ',stream_get_contents($stream));
+  $result['mem_used'] = floatval($memory[1]);
+  fclose($stream);
+  
   $stream = ssh2_exec($connection, "top -bn1 | head -3 | awk '/Mem/ {print $2,$4}' | sed 's/K//g'");
   stream_set_blocking($stream, true);
   $memory = explode(' ',stream_get_contents($stream));
