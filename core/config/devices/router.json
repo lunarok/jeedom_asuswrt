@@ -272,6 +272,12 @@
       "logicalId": "temp_wl5"
     },
     {
+      "name": "Température CPU",
+      "type": "info",
+      "subtype": "numeric",
+      "logicalId": "temp_cpu"
+    },
+    {
       "name": "CPU User",
       "type": "info",
       "subtype": "numeric",
