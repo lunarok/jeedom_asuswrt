@@ -681,8 +681,7 @@ public static function speed() {
   stream_set_blocking($stream, true);
   $memory = stream_get_contents($stream);
   log::add('asuswrt', 'debug', 'Temp, result ' . $memory);
-  $memory = explode(' : ',stream_get_contents($memory));
-  $result['temp_cpu'] = preg_replace("/[^0-9]/", "", $memory[1] );
+  $result['temp_cpu'] = preg_replace("/[^0-9]/", "", $memory );
   fclose($stream);
   
   $stream = ssh2_exec($connection, "top -bn1 | head -3 | awk '/Mem/ {print $2,$4}' | sed 's/K//g'");
