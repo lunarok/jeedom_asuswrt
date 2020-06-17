@@ -680,7 +680,7 @@ public static function speed() {
   $stream = ssh2_exec($connection, "cat /proc/dmu/temperature | head -1");
   stream_set_blocking($stream, true);
   $memory = explode(' : ',stream_get_contents($stream));
-  $result['temp_cpu'] = floatval($memory[1]);
+  $result['temp_cpu'] = preg_replace("/[^0-9]/", "", $memory[1] );
   fclose($stream);
   
   $stream = ssh2_exec($connection, "top -bn1 | head -3 | awk '/Mem/ {print $2,$4}' | sed 's/K//g'");
