@@ -179,7 +179,7 @@ public static function scan() {
   }
 
   if (!$connection = ssh2_connect(config::byKey('addr', 'asuswrt'),'22')) {
-    log::add('asuswrt', 'error', 'connexion SSH KO');
+    log::add('asuswrt', 'debug', 'connexion SSH KO');
     return 'error connecting';
   }
   if (!ssh2_auth_password($connection,config::byKey('user', 'asuswrt'),config::byKey('password', 'asuswrt'))){
@@ -557,7 +557,7 @@ public static function speed() {
   $result = array();
 
   if (!$connection = ssh2_connect(config::byKey('addr', 'asuswrt'),'22')) {
-    log::add('asuswrt', 'error', 'connexion SSH KO');
+    log::add('asuswrt', 'debug', 'connexion SSH KO');
     return 'error connecting';
   }
   if (!ssh2_auth_password($connection,config::byKey('user', 'asuswrt'),config::byKey('password', 'asuswrt'))){
