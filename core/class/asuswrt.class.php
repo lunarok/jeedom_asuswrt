@@ -91,7 +91,9 @@ class asuswrt extends eqLogic {
       }
       $eqlogic->loadCmdFromConf('client');
       foreach ($asuswrt as $logicalid => $value) {
-        $eqlogic->checkAndUpdateCmd($logicalid, $value);
+        if ($value != '') {
+          $eqlogic->checkAndUpdateCmd($logicalid, $value);
+        }
       }
       $presence = ($asuswrt['status'] == 'OFFLINE') ? 0 : 1;
       if ((isset($asuswrt['connexion'])) && ($asuswrt['connexion'] == 'ethernet') && ($presence == 0)) {
