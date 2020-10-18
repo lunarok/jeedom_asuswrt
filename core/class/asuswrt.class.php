@@ -51,8 +51,10 @@ class asuswrt extends eqLogic {
   }
 
   public static function cron() {
+    log::add(__CLASS__, 'info', 'Start cron ' . date('H:i:s'));
     asuswrt::scanDevices();
     asuswrt::scanRouteur();
+    log::add(__CLASS__, 'info', 'End cron ' . date('H:i:s'));
   }
 
   public static function scanDevices() {
