@@ -96,12 +96,12 @@ class asuswrt extends eqLogic {
         }
       }
       $presence = ($asuswrt['status'] == 'OFFLINE') ? 0 : 1;
-      if ((isset($asuswrt['connexion'])) && ($asuswrt['connexion'] == 'ethernet') && ($presence == 0)) {
+      /*if ((isset($asuswrt['connexion'])) && ($asuswrt['connexion'] == 'ethernet') && ($presence == 0)) {
         exec(system::getCmdSudo() . "ping -c1 " . $asuswrt['ip'], $output, $return_var);
         if ($return_var == 0) {
             $presence = 1;
         }
-      }
+      }*/
       $eqlogic->checkAndUpdateCmd('presence', $presence);
       /*$cmd = asuswrtCmd::byEqLogicIdAndLogicalId($eqlogic->getId(),'presence');
       if (is_object($cmd)) {
@@ -651,7 +651,7 @@ public static function speed() {
   stream_set_blocking($stream, true);
   $result['vpn_client5_state'] = asuswrt::vpnStatus(stream_get_contents($stream));
   fclose($stream);
-  
+
   $stream = ssh2_exec($connection, "ping -c1 -W1 www.google.com | tail -1");
   stream_set_blocking($stream, true);
   $ping0 = stream_get_contents($stream);
@@ -661,38 +661,38 @@ public static function speed() {
   $result['ping_google'] = floatval($ping2[0]);
   log::add('asuswrt', 'debug', 'Ping Google ' . $result['ping_google']);
   fclose($stream);
-  
+
   $stream = ssh2_exec($connection, "ping -c1 -W1 8.8.8.8 | tail -1");
   stream_set_blocking($stream, true);
   $ping = explode(' = ', stream_get_contents($stream));
   $ping2 = explode('/', $ping[1]);
   $result['ping_dns'] = floatval($ping2[0]);
   fclose($stream);
-  
+
   $stream = ssh2_exec($connection, "wl -i eth1 phy_tempsense | awk '{ print $1 * .5 + 20 }'");
   stream_set_blocking($stream, true);
   $result['temp_wl24'] = stream_get_contents($stream);
   fclose($stream);
-  
+
   $stream = ssh2_exec($connection, "wl -i eth2 phy_tempsense | awk '{ print $1 * .5 + 20 }'");
   stream_set_blocking($stream, true);
   $result['temp_wl5'] = stream_get_contents($stream);
   fclose($stream);
-  
+
   $stream = ssh2_exec($connection, "cat /proc/dmu/temperature | head -1");
   stream_set_blocking($stream, true);
   $memory = stream_get_contents($stream);
   log::add('asuswrt', 'debug', 'Temp, result ' . $memory);
   $result['temp_cpu'] = preg_replace("/[^0-9]/", "", $memory );
   fclose($stream);
-  
+
   $stream = ssh2_exec($connection, "top -bn1 | head -3 | awk '/Mem/ {print $2,$4}' | sed 's/K//g'");
   stream_set_blocking($stream, true);
   $memory = explode(' ',stream_get_contents($stream));
   $result['mem_used'] = $memory[0];
   $result['mem_free'] = $memory[1];
   fclose($stream);
-  
+
   $stream = ssh2_exec($connection, "top -bn1 | head -3 | awk '/CPU/ {print $2,$4,$6,$8,$10,$12,$14}' | sed 's/%//g'");
   stream_set_blocking($stream, true);
   $cpu = explode(' ',stream_get_contents($stream));
