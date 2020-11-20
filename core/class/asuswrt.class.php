@@ -65,7 +65,7 @@ class asuswrt extends eqLogic {
       }
       $eqlogic=asuswrt::byLogicalId($asuswrt['mac'], 'asuswrt');
       if (!is_object($eqlogic)) {
-        if (!isset($asuswrt['ip']) || !isset($asuswrt['hostname'])) {
+        if (!isset($asuswrt['ip']) || !isset($asuswrt['hostname']) || (config::byKey('autoCreate', 'asuswrt') != 1)) {
           continue;
         }
         log::add('asuswrt', 'debug', 'New host ' . $asuswrt['hostname'] . ' or IP ' . $asuswrt['ip'] . ' MAC ' . $asuswrt['mac']);
