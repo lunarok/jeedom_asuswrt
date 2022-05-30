@@ -791,6 +791,10 @@ public function wakeOnLan() {
 public function restartAsus() {
   $this->sendAsus('sudo reboot');
 }
+  
+public function changeVPN($_cmd = 'stop', $_vpn = '1') {
+  $this->sendAsus('sudo service ' . $_cmd . '_vpnclient' . $_vpn);
+}
 
 public function sendAsus($_cmd = '') {
   if (!$connection = ssh2_connect(config::byKey('addr', 'asuswrt'),'22')) {
@@ -821,6 +825,9 @@ class asuswrtCmd extends cmd {
       }
       if ($this->getConfiguration('type') == 'internet') {
         $eqLogic->manageInternet($this->getConfiguration('enable'));
+      }
+      if ($this->getConfiguration('type') == 'vpn') {
+        $eqLogic->changeVPN($this->getConfiguration('cmd'),$this->getConfiguration('num'));
       }
       if ($this->getConfiguration('type') == 'restart') {
         $eqLogic->restartAsus();
