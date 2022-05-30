@@ -212,10 +212,58 @@
       "logicalId": "vpn_client1_state"
     },
     {
+      "name": "Activer VPN Client 1",
+      "type": "action",
+      "subtype": "other",
+      "isVisible": 0,
+      "logicalId": "vpn1activate",
+      "configuration" : {
+  			"cmd" : "start",
+        "num" : "1",
+        "type" : "vpn"
+  		}
+    },
+    {
+      "name": "Désactiver VPN Client 1",
+      "type": "action",
+      "subtype": "other",
+      "isVisible": 0,
+      "logicalId": "vpn1unactivate",
+      "configuration" : {
+  			"cmd" : "stop",
+        "num" : "1",
+        "type" : "vpn"
+  		}
+    },
+    {
       "name": "VPN Client 2",
       "type": "info",
       "subtype": "string",
       "logicalId": "vpn_client2_state"
+    },
+    {
+      "name": "Activer VPN Client 2",
+      "type": "action",
+      "subtype": "other",
+      "isVisible": 0,
+      "logicalId": "vpn2activate",
+      "configuration" : {
+  			"cmd" : "start",
+        "num" : "2",
+        "type" : "vpn"
+  		}
+    },
+    {
+      "name": "Désactiver VPN Client 2",
+      "type": "action",
+      "subtype": "other",
+      "isVisible": 0,
+      "logicalId": "vpn2unactivate",
+      "configuration" : {
+  			"cmd" : "stop",
+        "num" : "2",
+        "type" : "vpn"
+  		}
     },
     {
       "name": "VPN Client 3",
@@ -224,16 +272,88 @@
       "logicalId": "vpn_client3_state"
     },
     {
+      "name": "Activer VPN Client 3",
+      "type": "action",
+      "subtype": "other",
+      "isVisible": 0,
+      "logicalId": "vpn3activate",
+      "configuration" : {
+  			"cmd" : "start",
+        "num" : "3",
+        "type" : "vpn"
+  		}
+    },
+    {
+      "name": "Désactiver VPN Client 3",
+      "type": "action",
+      "subtype": "other",
+      "isVisible": 0,
+      "logicalId": "vpn3unactivate",
+      "configuration" : {
+  			"cmd" : "stop",
+        "num" : "3",
+        "type" : "vpn"
+  		}
+    },
+    {
       "name": "VPN Client 4",
       "type": "info",
       "subtype": "string",
       "logicalId": "vpn_client4_state"
     },
     {
+      "name": "Activer VPN Client 4",
+      "type": "action",
+      "subtype": "other",
+      "isVisible": 0,
+      "logicalId": "vpn4activate",
+      "configuration" : {
+  			"cmd" : "start",
+        "num" : "4",
+        "type" : "vpn"
+  		}
+    },
+    {
+      "name": "Désactiver VPN Client 4",
+      "type": "action",
+      "subtype": "other",
+      "isVisible": 0,
+      "logicalId": "vpn4unactivate",
+      "configuration" : {
+  			"cmd" : "stop",
+        "num" : "4",
+        "type" : "vpn"
+  		}
+    },
+    {
       "name": "VPN Client 5",
       "type": "info",
       "subtype": "string",
       "logicalId": "vpn_client5_state"
+    },
+    {
+      "name": "Activer VPN Client 5",
+      "type": "action",
+      "subtype": "other",
+      "isVisible": 0,
+      "logicalId": "vpn5activate",
+      "configuration" : {
+  			"cmd" : "start",
+        "num" : "5",
+        "type" : "vpn"
+  		}
+    },
+    {
+      "name": "Désactiver VPN Client 5",
+      "type": "action",
+      "subtype": "other",
+      "isVisible": 0,
+      "logicalId": "vpn5unactivate",
+      "configuration" : {
+  			"cmd" : "stop",
+        "num" : "5",
+        "type" : "vpn"
+  		}
     },
     {
       "name": "Ping Google.com",
