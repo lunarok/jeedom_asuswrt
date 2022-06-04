@@ -793,7 +793,7 @@ public function restartAsus() {
 }
   
 public function changeVPN($_cmd = 'stop', $_vpn = '1') {
-  $this->sendAsus('sudo service ' . $_cmd . '_vpnclient' . $_vpn);
+  $this->sendAsus('service ' . $_cmd . '_vpnclient' . $_vpn);
 }
 
 public function sendAsus($_cmd = '') {
