@@ -75,6 +75,7 @@ class asuswrt extends eqLogic {
     $xpath = $finder->query('/html/body/div/div[2]/div[1]/div/div[2]/div[4]/div/div/div/div/div[2]/table/tbody/tr[2]/td[2]');
     $value = $xpath[0]->nodeValue;
     $eqlogic=asuswrt::byLogicalId('router', 'asuswrt');
+    log::add('asuswrt', 'info', 'Firmware ' . $value);
     $eqlogic->checkAndUpdateCmd('firmwareUpdate', $value);
   }
 
