@@ -57,6 +57,25 @@ class asuswrt extends eqLogic {
     log::add(__CLASS__, 'info', 'End cron ' . date('H:i:s'));
   }
 
+  public static function cronDaily() {
+    asuswrt::checkFirmmware();
+  }
+
+  public static function postSave() {
+    asuswrt::checkFirmmware();
+  }
+
+  public static function checkFirmmware() {
+    $html = file_get_contents("https://www.asuswrt-merlin.net/");
+    $dom = new DOMDocument();
+    $dom->loadHTML($html);
+    $finder = new DOMXPath($dom);
+    $xpath = $finder->query('/html/body/div/div[2]/div[1]/div/div[2]/div[4]/div/div/div/div/div[2]/table/tbody/tr[2]/td[2]');
+    $value = $xpath[0]->nodeValue;
+    $eqlogic=asuswrt::byLogicalId('router', 'asuswrt');
+    $eqlogic->checkAndUpdateCmd('firmwareUpdate', $value);
+  }
+
   public static function scanDevices() {
     $result = asuswrt::scan();
     foreach ($result as $asuswrt) {

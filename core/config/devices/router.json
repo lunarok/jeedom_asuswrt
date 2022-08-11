@@ -438,6 +438,12 @@
       "type": "info",
       "subtype": "numeric",
       "logicalId": "cpu_sirq"
+    },
+    {
+      "name": "Update Firmware",
+      "type": "info",
+      "subtype": "string",
+      "logicalId": "firmwareUpdate"
     }
   ]
 }
