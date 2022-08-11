@@ -68,14 +68,19 @@ class asuswrt extends eqLogic {
   }
 
   public static function checkFirmmware() {
-    $html = file_get_contents("https://www.asuswrt-merlin.net/");
-    $dom = new DOMDocument();
-    $dom->loadHTML($html);
-    $finder = new DOMXPath($dom);
-    $xpath = $finder->query('/html/body/div/div[2]/div[1]/div/div[2]/div[4]/div/div/div/div/div[2]/table/tbody/tr[2]/td[2]');
-    $value = $xpath[0]->nodeValue;
-    $eqlogic=asuswrt::byLogicalId('router', 'asuswrt');
-    log::add('asuswrt', 'info', 'Firmware ' . $value);
+    if (!$connection = ssh2_connect(config::byKey('addr', 'asuswrt'),'22')) {
+      log::add('asuswrt', 'debug', 'connexion SSH KO');
+      return 'error connecting';
+    }
+    if (!ssh2_auth_password($connection,config::byKey('user', 'asuswrt'),config::byKey('password', 'asuswrt'))){
+      log::add('sshcommander', 'error', 'Authentification SSH KO');
+      return 'error connecting';
+    }
+  
+    $stream = ssh2_exec($connection, 'nvram get firmware_check');
+    stream_set_blocking($stream, true);
+    $value = stream_get_contents($stream);
+    fclose($stream);
     $eqlogic->checkAndUpdateCmd('firmwareUpdate', $value);
   }
 
