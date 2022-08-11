@@ -81,6 +81,7 @@ class asuswrt extends eqLogic {
     stream_set_blocking($stream, true);
     $value = stream_get_contents($stream);
     fclose($stream);
+    $eqlogic=asuswrt::byLogicalId('router', 'asuswrt');
     $eqlogic->checkAndUpdateCmd('firmwareUpdate', $value);
   }
 
