@@ -57,11 +57,13 @@ class asuswrt extends eqLogic {
     log::add(__CLASS__, 'info', 'End cron ' . date('H:i:s'));
   }
 
-  public static function cronDaily() {
+  public static function saveConf() {
+    asuswrt::scanDevices();
+    asuswrt::scanRouteur();
     asuswrt::checkFirmmware();
   }
 
-  public static function postSave() {
+  public static function cronDaily() {
     asuswrt::checkFirmmware();
   }
 

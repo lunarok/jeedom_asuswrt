@@ -49,7 +49,7 @@ try {
   }
 
   if (init('action') == 'discover') {
-    ajax::success(asuswrt::scanDevices());
+    ajax::success(asuswrt::saveConf());
   }
 
   throw new Exception(__('Aucune methode correspondante à : ', __FILE__) . init('action'));
