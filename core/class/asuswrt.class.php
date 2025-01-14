@@ -761,7 +761,7 @@ public static function speed() {
   return $result;
 }
 
-public function vpnStatus($_value) {
+public static function vpnStatus($_value) {
   switch (intval($_value)) {
     case 0:
     $result = "Stopped";
