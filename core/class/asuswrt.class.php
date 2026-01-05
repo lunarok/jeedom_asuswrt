@@ -68,7 +68,7 @@ class asuswrt extends eqLogic {
   }
 
   public static function checkFirmmware() {
-    if (!$connection = ssh2_connect(config::byKey('addr', 'asuswrt'),'22')) {
+    if (!$connection = ssh2_connect(config::byKey('addr', 'asuswrt'),config::byKey('port', 'asuswrt', 22))) {
       log::add('asuswrt', 'debug', 'connexion SSH KO');
       return 'error connecting';
     }
@@ -209,8 +209,7 @@ public static function scan() {
     $result[$asuswrt->getConfiguration('mac')]['ap'] = 'none';
     $result[$asuswrt->getConfiguration('mac')]['mac'] = $asuswrt->getConfiguration('mac');
   }
-
-  if (!$connection = ssh2_connect(config::byKey('addr', 'asuswrt'),'22')) {
+  if (!$connection = ssh2_connect(config::byKey('addr', 'asuswrt'),config::byKey('port', 'asuswrt', 22))) {
     log::add('asuswrt', 'debug', 'connexion SSH KO');
     return 'error connecting';
   }
@@ -587,8 +586,7 @@ return $result;
 
 public static function speed() {
   $result = array();
-
-  if (!$connection = ssh2_connect(config::byKey('addr', 'asuswrt'),'22')) {
+  if (!$connection = ssh2_connect(config::byKey('addr', 'asuswrt'), config::byKey('port', 'asuswrt', 22))) {
     log::add('asuswrt', 'debug', 'connexion SSH KO');
     return 'error connecting';
   }
@@ -781,7 +779,7 @@ public static function vpnStatus($_value) {
 }
 
 public function manageWifi($_enable = true, $_wifi = '0') {
-  if (!$connection = ssh2_connect(config::byKey('addr', 'asuswrt'),'22')) {
+  if (!$connection = ssh2_connect(config::byKey('addr', 'asuswrt'),config::byKey('port', 'asuswrt', 22))) {
     log::add('asuswrt', 'error', 'connexion SSH KO');
     return 'error connecting';
   }
@@ -825,7 +823,7 @@ public function changeVPN($_cmd = 'stop', $_vpn = '1') {
 }
 
 public function sendAsus($_cmd = '') {
-  if (!$connection = ssh2_connect(config::byKey('addr', 'asuswrt'),'22')) {
+  if (!$connection = ssh2_connect(config::byKey('addr', 'asuswrt'),config::byKey('port', 'asuswrt', 22))) {
     log::add('asuswrt', 'error', 'connexion SSH KO');
     return 'error connecting';
   }

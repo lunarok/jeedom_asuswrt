@@ -44,6 +44,13 @@ if (!isConnect()) {
         <input class="configKey form-control" data-l1key="password" type="password"/>
       </div>
     </div>
+
+    <div class="form-group">
+      <label class="col-lg-4 control-label">Port SSH</label>
+      <div class="col-lg-2">
+        <input class="configKey form-control" data-l1key="port" placeholder="22" />
+      </div>
+    </div>
     
     <div class="form-group">
     	<label class="col-lg-4 control-label">{{Créer automatiquement les nouveaux équipements}}</label>
